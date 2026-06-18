@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Filament\Resources\StudyPlans\Pages;
+
+use App\Filament\Resources\StudyPlans\StudyPlanResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateStudyPlan extends CreateRecord
+{
+    protected static string $resource = StudyPlanResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    protected function getCreatedNotificationTitle(): ?string
+    {
+        return 'Study plan created successfully';
+    }
+}

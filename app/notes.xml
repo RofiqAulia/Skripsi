@@ -1,0 +1,11 @@
+serta tambahkan role untuk admin yang mana 
+1. super admin bisa akses all fitur
+2. mentor hanya bisa akses
+- program mentoring sesuai guest yang mememilih 
+jadi misalnya si x (user) memilih mentor si a (mentor) maka proses mentoring si x akan terlibat dengan si a. hal ini prosesnya berkaitan dengan landingpage mentoring mulai dari milih mentor, menentukan jadwal mentoring hingga report mentoring
+3. pimpinan 
+- dashboard
+- PSP For User
+
+
+setuju dengan rencana perubahan alur dan modifikasi database. namun yang perlu saya luruskan yakni jika belum ada jadwal yang di set oleh mentor. maka berikan keterangan schedule belum tersedia dari mentor (english version)

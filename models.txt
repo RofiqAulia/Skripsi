@@ -1,0 +1,812 @@
+﻿<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Document extends Model
+{
+    /**
+     * Required document types for the mentoring program.
+     */
+    public const REQUIRED_TYPES = [
+        'cv'                => 'CV / Curriculum Vitae',
+        'motivation_letter' => 'Motivation Letter',
+        'ielts_toefl'       => 'IELTS / TOEFL Certificate',
+        'transcript'        => 'Academic Transcript',
+        'psp'               => 'Personal Study Plan (PSP)',
+    ];
+
+    protected $fillable = [
+        'user_id',
+        'type',
+        'category',
+        'file',
+        'status',
+        'notes',
+        'reviewed_by',
+        'reviewed_at',
+    ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
+    ];
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Relationships
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Helpers
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    /**
+     * Get the human-readable label for a document type.
+     */
+    public static function typeLabel(string $type): string
+    {
+        return self::REQUIRED_TYPES[$type] ?? ucfirst(str_replace('_', ' ', $type));
+    }
+
+    /**
+     * Check whether a given type key is a required document.
+     */
+    public static function isRequiredType(string $type): bool
+    {
+        return array_key_exists($type, self::REQUIRED_TYPES);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Event extends Model
+{
+    protected $fillable = [
+        'title', 'description', 'date', 'time', 'location', 'link', 'poster',
+        'organizer', 'speaker', 'status',
+    ];
+
+    protected $casts = [
+        'date' => 'date',
+        'time' => 'datetime:H:i',
+    ];
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date', '>=', today())->orderBy('date');
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FinancialDocument extends Model
+{
+    protected $guarded = [];
+
+    public function financialPlan()
+    {
+        return $this->belongsTo(FinancialPlan::class);
+    }
+
+    public function uploader()
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FinancialPlan extends Model
+{
+    protected $guarded = [];
+
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'approved_at' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scholarshipApplication()
+    {
+        return $this->belongsTo(ScholarshipApplication::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(FinancialPlanItem::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(FinancialDocument::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(FinancialReview::class);
+    }
+
+    public function riskAssessments()
+    {
+        return $this->hasMany(FinancialRiskAssessment::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FinancialPlanItem extends Model
+{
+    protected $guarded = [];
+
+    public function financialPlan()
+    {
+        return $this->belongsTo(FinancialPlan::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FinancialReview extends Model
+{
+    protected $guarded = [];
+
+    public function financialPlan()
+    {
+        return $this->belongsTo(FinancialPlan::class);
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewer_id');
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FinancialRiskAssessment extends Model
+{
+    protected $guarded = [];
+
+    public function financialPlan()
+    {
+        return $this->belongsTo(FinancialPlan::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Mentor extends Model
+{
+    protected $fillable = ['user_id', 'current_position', 'company', 'quota', 'photo', 'education', 'career_journey', 'achievements'];
+
+    protected $casts = [
+        'education' => 'array',
+        'career_journey' => 'array',
+        'achievements' => 'array',
+    ];
+
+        public function user()
+        {
+            return $this->belongsTo(\App\Models\User::class);
+        }
+
+    protected static function booted()
+    {
+        static::created(function ($mentor) {
+            if ($mentor->user) {
+                $mentor->user->assignRole('mentor');
+            }
+        });
+
+        static::deleted(function ($mentor) {
+            if ($mentor->user) {
+                $mentor->user->removeRole('mentor');
+            }
+        });
+
+        static::saved(function ($mentor) {
+            if ($mentor->isDirty('photo') && $mentor->user) {
+                if ($mentor->user->photo !== $mentor->photo) {
+                    $mentor->user->updateQuietly(['photo' => $mentor->photo]);
+                }
+            }
+        });
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(MentorSchedule::class);
+    }
+
+    public function sessions()
+    {
+        return $this->hasMany(MentoringSession::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MentoringReport extends Model
+{
+    protected $fillable = [
+        'mentoring_session_id',
+        'meeting_number',
+        'summary',
+        'output',
+        'file',
+        'status',
+        'mentor_notes',
+    ];
+
+    // ðŸ”¥ Status constant (best practice)
+    const STATUS_DRAFT = 'draft';
+    const STATUS_SUBMITTED = 'submitted';
+    const STATUS_REVISION = 'revision';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_APPROVED = 'approved';
+
+    // Relasi
+    public function session()
+    {
+        return $this->belongsTo(MentoringSession::class, 'mentoring_session_id');
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($report) {
+            if (!$report->status) {
+                $report->status = self::STATUS_SUBMITTED;
+            }
+        });
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MentoringSession extends Model
+{
+    protected $fillable = [
+        'user_id','mentor_id','schedule_id','status','link_meet'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function mentor()
+    {
+        return $this->belongsTo(Mentor::class);
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(MentorSchedule::class);
+    }
+
+    public function report()
+    {
+        return $this->hasOne(MentoringReport::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MentorSchedule extends Model
+{
+    protected $fillable = ['mentor_id','date','start_time','end_time'];
+
+    public function mentor()
+    {
+        return $this->belongsTo(Mentor::class);
+    }
+
+    public function session()
+    {
+        return $this->hasOne(MentoringSession::class, 'schedule_id');
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ProgramStudy extends Model
+{
+    protected $fillable = [
+        'name','degree','university','country','website'
+    ];
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PspApplication extends Model
+{
+    protected $fillable = [
+        'user_id', 'study_plan_id', 'scholarship_id', 'study_plan_text', 'status', 'approved_by', 'notes'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function studyPlan()
+    {
+        return $this->belongsTo(StudyPlan::class);
+    }
+
+    public function scholarship()
+    {
+        return $this->belongsTo(Scholarship::class);
+    }
+
+    /**
+     * Scholarship Applications yang terhubung ke PSP ini.
+     * (auto-linked saat mentee input scholarship yg sama dengan PSP)
+     */
+    public function scholarshipApplications()
+    {
+        return $this->hasMany(ScholarshipApplication::class, 'psp_application_id');
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Scholarship extends Model
+{
+    protected $fillable = [
+        'title','description','open_date','deadline','funding_type',
+        'competency','country','age','gpa','english_test','nationality',
+        'other_language','standardized_test','document','other','benefit',
+        'program_study_id',
+    ];
+
+    protected $casts = [
+        'english_test' => 'array',
+        'document'     => 'array',
+        'benefit'      => 'array',
+        'open_date'    => 'date',
+        'deadline'     => 'date',
+    ];
+
+    public function programStudy()
+    {
+        return $this->belongsTo(ProgramStudy::class);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class ScholarshipApplication extends Model
+{
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Constants
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public const STAGES = [
+        'pendaftaran'          => 'Pendaftaran',
+        'seleksi_administrasi' => 'Seleksi Administrasi',
+        'tes_kemampuan'        => 'Tes Kemampuan',
+        'interview'            => 'Interview',
+        'pengumuman'           => 'Pengumuman Akhir',
+    ];
+
+    public const STATUSES = [
+        'pending'     => 'Pending',
+        'tidak_lolos' => 'Tidak Lolos',
+        'lolos'       => 'Lolos',
+    ];
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Fillable & Casts
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    protected $fillable = [
+        'user_id',
+        'scholarship_id',
+        'program_study_id',
+        'psp_application_id',
+        'university',
+        'current_stage',
+        'status',
+        'updated_date',
+        'notes',
+    ];
+
+    protected $casts = [
+        'updated_date' => 'date',
+    ];
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Relationships
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scholarship(): BelongsTo
+    {
+        return $this->belongsTo(Scholarship::class);
+    }
+
+    public function programStudy(): BelongsTo
+    {
+        return $this->belongsTo(ProgramStudy::class);
+    }
+
+    public function pspApplication(): BelongsTo
+    {
+        return $this->belongsTo(PspApplication::class, 'psp_application_id');
+    }
+
+    public function logs(): HasMany
+    {
+        return $this->hasMany(ScholarshipApplicationLog::class);
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Accessors
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    /**
+     * Shortcut: ambil negara dari scholarship terkait.
+     */
+    public function getCountryAttribute(): ?string
+    {
+        return $this->scholarship?->country;
+    }
+
+    /**
+     * Label tahapan terkini (human-readable).
+     */
+    public function getCurrentStageLabelAttribute(): string
+    {
+        return self::STAGES[$this->current_stage] ?? ucfirst($this->current_stage);
+    }
+
+    /**
+     * Label status (human-readable).
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return self::STATUSES[$this->status] ?? ucfirst($this->status);
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Scopes
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function scopeLolos($query)
+    {
+        return $query->where('status', 'lolos');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeTidakLolos($query)
+    {
+        return $query->where('status', 'tidak_lolos');
+    }
+
+    public function scopeByCountry($query, string $country)
+    {
+        return $query->whereHas('scholarship', fn ($q) => $q->where('country', $country));
+    }
+
+    public function scopeByPeriod($query, string $from, string $to)
+    {
+        return $query->whereBetween('updated_date', [$from, $to]);
+    }
+
+    public function scopeByProgram($query, int $programStudyId)
+    {
+        return $query->where('program_study_id', $programStudyId);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class ScholarshipApplicationLog extends Model
+{
+    protected $fillable = [
+        'scholarship_application_id',
+        'stage',
+        'status',
+        'log_date',
+        'notes',
+    ];
+
+    protected $casts = [
+        'log_date' => 'date',
+    ];
+
+    public function application(): BelongsTo
+    {
+        return $this->belongsTo(ScholarshipApplication::class, 'scholarship_application_id');
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Accessors
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function getStageLabelAttribute(): string
+    {
+        return ScholarshipApplication::STAGES[$this->stage] ?? ucfirst($this->stage);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return ScholarshipApplication::STATUSES[$this->status] ?? ucfirst($this->status);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+
+class ScholarshipInsight extends Model
+{
+    protected $fillable = [
+        'title',
+        'slug',
+        'category',
+        'cover_image',
+        'excerpt',
+        'body',
+        'source_url',
+        'is_published',
+        'published_at',
+        'created_by',
+    ];
+
+    protected $casts = [
+        'is_published'  => 'boolean',
+        'published_at'  => 'datetime',
+    ];
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Categories
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public const CATEGORIES = [
+        'article'     => 'Article',
+        'tip'         => 'Tip & Strategy',
+        'guide'       => 'Guide',
+        'opportunity' => 'Scholarship Opportunity',
+    ];
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Auto-slug
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (empty($model->slug)) {
+                $model->slug = Str::slug($model->title);
+            }
+        });
+
+        static::updating(function (self $model) {
+            if ($model->isDirty('title') && ! $model->isDirty('slug')) {
+                $model->slug = Str::slug($model->title);
+            }
+        });
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Scopes
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)
+                     ->whereNotNull('published_at')
+                     ->where('published_at', '<=', now())
+                     ->latest('published_at');
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Relationships
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Helpers
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
+    }
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class StudyPlan extends Model
+{
+    protected $fillable = [
+        'user_id', 'program_study_id', 'scholarship_id', 'future_competence', 'files'
+    ];
+
+    protected $casts = [
+        'files' => 'array',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(ProgramStudy::class, 'program_study_id');
+    }
+
+    public function scholarship()
+    {
+        return $this->belongsTo(Scholarship::class);
+    }
+}
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
+use Filament\Models\Contracts\HasAvatar;
+
+class User extends Authenticatable implements HasAvatar
+{
+    use HasRoles;
+    use HasFactory; 
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'position',
+        'company',
+        'photo',
+        'age',
+        'signature_image',
+        'signature_pad',
+    ];
+
+    public function setPasswordAttribute($value)
+    {
+        // hanya hash kalau belum di-hash
+        if (!password_get_info($value)['algo']) {
+            $this->attributes['password'] = Hash::make($value);
+        } else {
+            $this->attributes['password'] = $value;
+        }
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
+    }
+
+    public function mentor()
+    {
+        return $this->hasOne(\App\Models\Mentor::class);
+    }
+
+
+    public function sessions()
+    {
+        return $this->hasMany(MentoringSession::class);
+    }
+
+    public function studyPlan()
+    {
+        return $this->hasOne(StudyPlan::class);
+    }
+
+    public function pspApplication()
+    {
+        return $this->hasOne(PspApplication::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function scholarshipApplications()
+    {
+        return $this->hasMany(ScholarshipApplication::class);
+    }
+
+    public function financialPlans()
+    {
+        return $this->hasMany(FinancialPlan::class);
+    }
+}
