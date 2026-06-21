@@ -48,34 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
             gapEl.className = fundingGap >= 0 ? 'text-success' : 'text-danger';
         }
 
-        // Calculate Readiness
-        let readiness = totalCost > 0 ? Math.min(100, Math.round((totalFunding / totalCost) * 100)) : 0;
-        
-        document.getElementById('displayReadiness').textContent = readiness + '%';
-        const circlePath = document.getElementById('readinessCirclePath');
-        if(circlePath) circlePath.setAttribute('stroke-dasharray', `${readiness}, 100`);
-        
-        let svg = document.getElementById('readinessSvg');
-        let riskBadge = document.getElementById('displayRisk');
-        let riskWarnings = document.getElementById('riskWarnings');
-        
-        if (svg && riskBadge) {
-            svg.classList.remove('green', 'orange', 'red');
-            if (readiness < 50) {
-                svg.classList.add('red');
-                riskBadge.innerHTML = '<span class="fp-badge status-rejected"><i class="bi bi-exclamation-triangle"></i> High Risk</span>';
-                if(riskWarnings) riskWarnings.style.display = 'block';
-            } else if (readiness < 80) {
-                svg.classList.add('orange');
-                riskBadge.innerHTML = '<span class="fp-badge status-pending"><i class="bi bi-exclamation-circle"></i> Moderate Risk</span>';
-                if(riskWarnings) riskWarnings.style.display = 'block';
-            } else {
-                svg.classList.add('green');
-                riskBadge.innerHTML = '<span class="fp-badge status-approved"><i class="bi bi-shield-check"></i> Low Risk</span>';
-                if(riskWarnings) riskWarnings.style.display = 'none';
-            }
-        }
-
         // Auto-save
         saveDraft();
     }
@@ -121,6 +93,74 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // --- Final Submit form validation ---
+    const submitForm = document.getElementById('financialPlanSubmitForm');
+    if (submitForm) {
+        submitForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate if all required inputs in the main form are filled
+            let allFilled = true;
+            const requiredInputs = form.querySelectorAll('input[required]');
+            
+            requiredInputs.forEach(input => {
+                if (input.value.trim() === '') {
+                    allFilled = false;
+                    input.style.border = '2px solid #dc3545'; // Highlight empty fields
+                } else {
+                    input.style.border = ''; // Reset border
+                }
+            });
+
+            if (!allFilled) {
+                Swal.fire({ title: 'Incomplete Data', text: 'There are empty budget columns. Please fill all columns (enter 0 if not applicable) before submitting.', icon: 'warning', confirmButtonColor: '#3b82f6' });
+                return false;
+            }
+
+            Swal.fire({
+                title: 'Submit Financial Plan?',
+                text: "Are you sure you want to submit this Financial Plan? Data cannot be changed after submission.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, submit it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const ogBtnHtml = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm"></i> Submitting...';
+                    submitBtn.disabled = true;
+
+                    const formData = new FormData(form);
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.submit();
+                        } else {
+                            Swal.fire({ title: 'Error', text: 'Error saving data before submission: ' + (data.message || 'Unknown error'), icon: 'error', confirmButtonColor: '#3b82f6' });
+                            submitBtn.innerHTML = ogBtnHtml;
+                            submitBtn.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({ title: 'Connection Error', text: 'Failed to connect to the server before submission. Please try again.', icon: 'error', confirmButtonColor: '#3b82f6' });
+                        console.error(error);
+                        submitBtn.innerHTML = ogBtnHtml;
+                        submitBtn.disabled = false;
+                    });
+                }
+            });
+        });
+    }
+
 });
 
 // --- Dynamic File Upload & Deletion for Specific Cost Items ---
@@ -128,14 +168,31 @@ function uploadItemFile(itemId) {
     const fileInput = document.getElementById('file_item_' + itemId);
     if (!fileInput || !fileInput.files.length) return;
 
+    const file = fileInput.files[0];
+
+    // Client-side type validation
+    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowed.includes(file.type)) {
+        Swal.fire({ title: 'Invalid File', text: 'Invalid file type. Only PDF, JPG, and PNG files are allowed.', icon: 'error', confirmButtonColor: '#3b82f6' });
+        fileInput.value = '';
+        return;
+    }
+
+    // Max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({ title: 'File Too Large', text: 'File is too large. Maximum allowed size is 5 MB.', icon: 'warning', confirmButtonColor: '#3b82f6' });
+        fileInput.value = '';
+        return;
+    }
+
     const statusEl = document.getElementById('item_ref_status_' + itemId);
     const containerEl = document.getElementById('item_ref_container_' + itemId);
 
     statusEl.style.display = 'block';
-    if (containerEl) containerEl.style.display = 'none';
+    containerEl.style.display = 'none';
 
     const formData = new FormData();
-    formData.append('document', fileInput.files[0]);
+    formData.append('document', file);
     formData.append('_token', document.querySelector('input[name="_token"]').value);
 
     fetch(`/financial-plan/item/${itemId}/upload`, {
@@ -146,72 +203,88 @@ function uploadItemFile(itemId) {
     .then(response => response.json())
     .then(data => {
         statusEl.style.display = 'none';
+        containerEl.style.display = '';
         if (data.success) {
-            const shortName = data.file_name.length > 15 ? data.file_name.substring(0, 15) + '...' : data.file_name;
+            const ext = data.file_name.split('.').pop().toLowerCase();
+            const isImg = ['jpg','jpeg','png','gif','webp'].includes(ext);
+            const icon = isImg
+                ? '<i class="bi bi-file-earmark-image text-success"></i>'
+                : '<i class="bi bi-file-earmark-pdf text-danger"></i>';
+            const shortName = data.file_name.length > 14 ? data.file_name.substring(0, 14) + '\u2026' : data.file_name;
             containerEl.innerHTML = `
-                <input type="file" id="file_item_${itemId}" class="d-none" onchange="uploadItemFile(${itemId})" accept=".pdf,image/*">
-                <a href="${data.file_url}" target="_blank" class="text-primary fw-medium" style="font-size: 0.8rem;">
-                    <i class="bi bi-file-earmark-check"></i> ${shortName}
-                </a>
-                <button type="button" class="btn-icon text-warning p-0 border-0 bg-transparent" onclick="document.getElementById('file_item_${itemId}').click()" title="Edit Reference" style="font-size: 0.85rem;">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button type="button" class="btn-icon text-danger p-0 border-0 bg-transparent" onclick="deleteItemFile(${itemId})" title="Delete Reference" style="font-size: 0.85rem;">
-                    <i class="bi bi-trash"></i>
-                </button>
+                <input type="file" id="file_item_${itemId}" class="d-none" onchange="uploadItemFile(${itemId})" accept=".pdf,.jpg,.jpeg,.png">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <a href="${data.file_url}" target="_blank" class="fp-ref-file-link" title="${data.file_name}">
+                        ${icon}<span>${shortName}</span>
+                    </a>
+                    <button type="button" class="btn-icon text-warning p-0 border-0 bg-transparent" onclick="document.getElementById('file_item_${itemId}').click()" title="Replace file" style="font-size:0.82rem;">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" class="btn-icon text-danger p-0 border-0 bg-transparent" onclick="deleteItemFile(${itemId})" title="Delete file" style="font-size:0.82rem;">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             `;
-            containerEl.style.display = 'flex';
         } else {
-            alert('Failed to upload reference file.');
-            containerEl.style.display = 'flex';
+            Swal.fire({ title: 'Upload Failed', text: 'Failed to upload file. Please try again.', icon: 'error', confirmButtonColor: '#3b82f6' });
         }
     })
     .catch(error => {
         statusEl.style.display = 'none';
-        if (containerEl) containerEl.style.display = 'flex';
+        containerEl.style.display = '';
         console.error('Error:', error);
-        alert('An error occurred during upload.');
+        Swal.fire({ title: 'Error', text: 'An error occurred during upload.', icon: 'error', confirmButtonColor: '#3b82f6' });
     });
 }
 
 function deleteItemFile(itemId) {
-    if (!confirm('Delete this reference file?')) return;
+    Swal.fire({
+        title: 'Delete Reference File?',
+        text: "Are you sure you want to delete this reference file?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#9ca3af',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
-    const statusEl = document.getElementById('item_ref_status_' + itemId);
-    const containerEl = document.getElementById('item_ref_container_' + itemId);
+        const statusEl = document.getElementById('item_ref_status_' + itemId);
+        const containerEl = document.getElementById('item_ref_container_' + itemId);
 
-    statusEl.style.display = 'block';
-    if (containerEl) containerEl.style.display = 'none';
+        statusEl.style.display = 'block';
+        containerEl.style.display = 'none';
 
-    fetch(`/financial-plan/item/${itemId}/delete-file`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        statusEl.style.display = 'none';
-        if (data.success) {
-            containerEl.innerHTML = `
-                <input type="file" id="file_item_${itemId}" class="d-none" onchange="uploadItemFile(${itemId})" accept=".pdf,image/*">
-                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-flex align-items-center gap-1" onclick="document.getElementById('file_item_${itemId}').click()" style="font-size: 0.72rem; border-radius: 4px;">
-                    <i class="bi bi-upload"></i> Upload Source
-                </button>
-            `;
-            containerEl.style.display = 'flex';
-        } else {
-            alert('Failed to delete reference file.');
-            containerEl.style.display = 'flex';
-        }
-    })
-    .catch(error => {
-        statusEl.style.display = 'none';
-        if (containerEl) containerEl.style.display = 'flex';
-        console.error('Error:', error);
-        alert('An error occurred while deleting.');
+        fetch(`/financial-plan/item/${itemId}/delete-file`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            statusEl.style.display = 'none';
+            containerEl.style.display = '';
+            if (data.success) {
+                containerEl.innerHTML = `
+                    <button type="button" class="fp-upload-ref-btn" onclick="document.getElementById('file_item_${itemId}').click()">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <span>Upload</span>
+                        <small>PDF / Image</small>
+                    </button>
+                `;
+            } else {
+                Swal.fire({ title: 'Delete Failed', text: 'Failed to delete the file.', icon: 'error', confirmButtonColor: '#3b82f6' });
+            }
+        })
+        .catch(error => {
+            statusEl.style.display = 'none';
+            containerEl.style.display = '';
+            console.error('Error:', error);
+            Swal.fire({ title: 'Error', text: 'An error occurred while deleting.', icon: 'error', confirmButtonColor: '#3b82f6' });
+        });
     });
 }
 
@@ -228,5 +301,52 @@ function debounce(func, wait) {
 // Format number (en-US locale, 2 fraction digits)
 function formatNumber(num) {
     return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function uploadExcelFile() {
+    const fileInput = document.getElementById('import_excel_file');
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('excel_file', file);
+
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0'; overlay.style.left = '0'; overlay.style.width = '100vw'; overlay.style.height = '100vh';
+    overlay.style.backgroundColor = 'rgba(255,255,255,0.7)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.innerHTML = '<div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-3 fw-bold">Importing Excel...</span>';
+    document.body.appendChild(overlay);
+
+    fetch(`{{ route('financial-plan.import-excel', $plan->id) }}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            'Accept': 'application/json'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({ title: 'Success', text: data.message, icon: 'success', confirmButtonColor: '#3b82f6' }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({ title: 'Import Failed', text: data.message || 'Error importing file.', icon: 'error', confirmButtonColor: '#3b82f6' });
+            document.body.removeChild(overlay);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({ title: 'Error', text: 'An unexpected error occurred.', icon: 'error', confirmButtonColor: '#3b82f6' });
+        document.body.removeChild(overlay);
+    });
+    
+    fileInput.value = ''; // Reset
 }
 </script>

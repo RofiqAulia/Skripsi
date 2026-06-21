@@ -61,13 +61,16 @@
             <div class="sdc-slots">
                 @foreach ($slots as $schedule)
                     @php
-                        $isBooked = $schedule->session !== null;
+                        $isBooked = $schedule->status === 'Booked';
+                        $isExpired = $schedule->status === 'Expired';
+                        $isDisabled = $isBooked || $isExpired;
                     @endphp
                     <button
-                        class="slot-chip {{ $isBooked ? 'booked' : '' }}"
+                        class="slot-chip {{ $isBooked ? 'booked' : '' }} {{ $isExpired ? 'expired' : '' }}"
                         data-id="{{ $schedule->id }}"
-                        {{ $isBooked ? 'disabled' : '' }}>
-                        <i class="bi {{ $isBooked ? 'bi-lock' : 'bi-clock' }}"></i>
+                        {{ $isDisabled ? 'disabled' : '' }}
+                        title="{{ $isExpired ? 'Schedule has expired' : ($isBooked ? 'Already booked' : 'Available') }}">
+                        <i class="bi {{ $isBooked ? 'bi-lock' : ($isExpired ? 'bi-x-circle' : 'bi-clock') }}"></i>
                         {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}
                         @if($schedule->end_time)
                             - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
@@ -341,6 +344,14 @@
     text-decoration: line-through;
 }
 
+.slot-chip.expired {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+}
+
 /* ═══ BOOKING PANEL ═══ */
 .booking-panel {
     background: #fff;
@@ -447,7 +458,7 @@ let selectedSlotId = null;
 
 document.querySelectorAll(".slot-chip").forEach(btn => {
     btn.addEventListener("click", function () {
-        if (this.classList.contains("booked")) return;
+        if (this.classList.contains("booked") || this.classList.contains("expired")) return;
 
         // Remove active from all
         document.querySelectorAll(".slot-chip").forEach(b => b.classList.remove("active"));

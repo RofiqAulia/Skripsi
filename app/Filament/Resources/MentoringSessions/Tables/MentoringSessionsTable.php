@@ -51,6 +51,12 @@ class MentoringSessionsTable
                 // ✅ Status
                 TextColumn::make('status')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'done' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    })
                     ->sortable(),
 
                 // ✅ Link Meet

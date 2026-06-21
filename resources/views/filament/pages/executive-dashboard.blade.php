@@ -36,15 +36,15 @@
 {{-- ══════════════════════════════════════════════════════
      MONITORING NOTIFICATIONS
 ══════════════════════════════════════════════════════ --}}
-@if($pendingPsp > 0 || $pendingDocs > 0 || $pendingMentoring > 0)
+@if($pendingPsp > 0 || $pendingDocs > 0 || $pendingMentoring > 0 || $pendingFinancialPlan > 0 || $pendingProgramStudy > 0)
     <div class="ed-notifications mb-4">
         @if($pendingPsp > 0)
             <div class="ed-alert alert-amber">
                 <div class="ed-alert-icon"><x-heroicon-s-exclamation-triangle style="width:1.25rem;height:1.25rem;"/></div>
                 <div class="ed-alert-body">
-                    <strong>Terdapat PSP yang memerlukan tindak lanjut</strong> ({{ $pendingPsp }} pending)
+                    <strong>There are PSPs requiring follow-up</strong> ({{ $pendingPsp }} pending)
                 </div>
-                <a href="{{ url('/admin/psp-applications') }}" class="ed-alert-action">Tindak Lanjut &rarr;</a>
+                <a href="{{ url('/admin/psp-applications') }}" class="ed-alert-action">Follow Up &rarr;</a>
             </div>
         @endif
         
@@ -52,9 +52,9 @@
             <div class="ed-alert alert-sky">
                 <div class="ed-alert-icon"><x-heroicon-s-document-text style="width:1.25rem;height:1.25rem;"/></div>
                 <div class="ed-alert-body">
-                    <strong>Terdapat dokumen yang memerlukan tindak lanjut</strong> ({{ $pendingDocs }} pending)
+                    <strong>There are documents requiring follow-up</strong> ({{ $pendingDocs }} pending)
                 </div>
-                <a href="{{ url('/admin/documents') }}" class="ed-alert-action">Tindak Lanjut &rarr;</a>
+                <a href="{{ url('/admin/documents') }}" class="ed-alert-action">Follow Up &rarr;</a>
             </div>
         @endif
         
@@ -62,9 +62,29 @@
             <div class="ed-alert alert-fuchsia">
                 <div class="ed-alert-icon"><x-heroicon-s-video-camera style="width:1.25rem;height:1.25rem;"/></div>
                 <div class="ed-alert-body">
-                    <strong>Terdapat mentoring yang memerlukan tindak lanjut</strong> ({{ $pendingMentoring }} pending)
+                    <strong>There are mentoring sessions requiring follow-up</strong> ({{ $pendingMentoring }} pending)
                 </div>
-                <a href="{{ url('/admin/mentoring-sessions') }}" class="ed-alert-action">Tindak Lanjut &rarr;</a>
+                <a href="{{ url('/admin/mentoring-sessions') }}" class="ed-alert-action">Follow Up &rarr;</a>
+            </div>
+        @endif
+
+        @if($pendingFinancialPlan > 0)
+            <div class="ed-alert alert-teal">
+                <div class="ed-alert-icon"><x-heroicon-s-wallet style="width:1.25rem;height:1.25rem;"/></div>
+                <div class="ed-alert-body">
+                    <strong>There are Financial Plans requiring follow-up</strong> ({{ $pendingFinancialPlan }} pending)
+                </div>
+                <a href="{{ url('/admin/financial-plans') }}" class="ed-alert-action">Follow Up &rarr;</a>
+            </div>
+        @endif
+
+        @if($pendingProgramStudy > 0)
+            <div class="ed-alert alert-indigo">
+                <div class="ed-alert-icon"><x-heroicon-s-academic-cap style="width:1.25rem;height:1.25rem;"/></div>
+                <div class="ed-alert-body">
+                    <strong>There are Program Studies requiring follow-up</strong> ({{ $pendingProgramStudy }} pending)
+                </div>
+                <a href="{{ url('/admin/program-studies') }}" class="ed-alert-action">Follow Up &rarr;</a>
             </div>
         @endif
     </div>
@@ -582,6 +602,16 @@
     .alert-fuchsia .ed-alert-icon { background: rgba(217,70,239,0.1); color: #d946ef; }
     .alert-fuchsia .ed-alert-action { color: #c026d3; background: rgba(217,70,239,0.1); }
     .alert-fuchsia .ed-alert-action:hover { background: rgba(217,70,239,0.2); }
+
+    .alert-teal { border-left-color: #14b8a6; }
+    .alert-teal .ed-alert-icon { background: rgba(20,184,166,0.1); color: #14b8a6; }
+    .alert-teal .ed-alert-action { color: #0f766e; background: rgba(20,184,166,0.1); }
+    .alert-teal .ed-alert-action:hover { background: rgba(20,184,166,0.2); }
+
+    .alert-indigo { border-left-color: #6366f1; }
+    .alert-indigo .ed-alert-icon { background: rgba(99,102,241,0.1); color: #6366f1; }
+    .alert-indigo .ed-alert-action { color: #4338ca; background: rgba(99,102,241,0.1); }
+    .alert-indigo .ed-alert-action:hover { background: rgba(99,102,241,0.2); }
 
     /* Filter Bar */
     .ed-filter-bar {

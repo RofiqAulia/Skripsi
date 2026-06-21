@@ -37,6 +37,10 @@ class MentorSchedulePolicy
      */
     public function update(User $user, MentorSchedule $mentorSchedule): bool
     {
+        if ($mentorSchedule->status === 'Expired') {
+            return false;
+        }
+
         return $user->hasRole('mentor');
     }
 

@@ -15,7 +15,7 @@ class PspController extends Controller
 {
     public function index()
     {
-        $programStudies = ProgramStudy::with('scholarships')->get();
+        $programStudies = ProgramStudy::with('scholarships')->approved()->get();
         $user = Auth::user();
 
         $pspApplication = PspApplication::where('user_id', $user->id)
@@ -23,7 +23,9 @@ class PspController extends Controller
             ->latest()
             ->first();
 
-        return view('landing.psp', compact('programStudies', 'pspApplication'));
+        $mySuggestions = ProgramStudy::where('submitted_by', $user->id)->orderBy('created_at', 'desc')->get();
+
+        return view('landing.psp', compact('programStudies', 'pspApplication', 'mySuggestions'));
     }
 
     public function showProgram($id)

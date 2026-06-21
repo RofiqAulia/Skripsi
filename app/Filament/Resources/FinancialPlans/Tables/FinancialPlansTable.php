@@ -26,10 +26,10 @@ class FinancialPlansTable
                 TextColumn::make('scholarshipApplication.programStudy.name')
                     ->label('Program Study')
                     ->searchable(),
-                TextColumn::make('university_name')
+                TextColumn::make('scholarshipApplication.programStudy.university')
                     ->label('University')
                     ->searchable(),
-                TextColumn::make('country_destination')
+                TextColumn::make('scholarshipApplication.programStudy.country')
                     ->label('Country')
                     ->searchable(),
                 TextColumn::make('total_estimated_cost')
@@ -40,18 +40,6 @@ class FinancialPlansTable
                     ->label('Funding Gap')
                     ->money(fn ($record) => $record->currency ?? 'IDR')
                     ->sortable(),
-                TextColumn::make('readiness_percentage')
-                    ->label('Readiness')
-                    ->formatStateUsing(fn ($state) => $state . '%')
-                    ->sortable(),
-                TextColumn::make('risk_level')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'low' => 'success',
-                        'medium' => 'warning',
-                        'high' => 'danger',
-                        default => 'gray',
-                    }),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -71,13 +59,16 @@ class FinancialPlansTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                \Filament\Actions\ViewAction::make(),
+                \Filament\Actions\EditAction::make()
+                    ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
+                \Filament\Actions\DeleteAction::make()
+                    ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make()
+                        ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
                 ]),
             ]);
     }

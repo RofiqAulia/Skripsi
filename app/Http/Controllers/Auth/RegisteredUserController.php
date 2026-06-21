@@ -33,14 +33,30 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'position' => ['nullable', 'string', 'max:255'],
+            'company' => ['nullable', 'string', 'max:255'],
+            'age' => ['nullable', 'integer', 'min:0'],
+            'photo' => ['nullable', 'image', 'max:2048'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'position' => $request->position,
+            'company' => $request->company,
+            'age' => $request->age,
+            'photo' => $photoPath,
             'password' => Hash::make($request->password),
         ]);
+
+        // Secara otomatis assign role 'mentee' ke user yang baru daftar
+        $user->assignRole('mentee');
 
         event(new Registered($user));
 

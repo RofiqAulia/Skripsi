@@ -29,7 +29,7 @@ Route::get('/insights/{slug}', [ScholarshipInsightController::class, 'show'])->n
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'redirect.admin'])->group(function () {
 
     Route::get('/about', function () {
         return view('landing.about');
@@ -109,7 +109,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/item/{item}/upload', [FinancialPlanController::class, 'uploadItemFile'])->name('item.upload');
         Route::post('/item/{item}/delete-file', [FinancialPlanController::class, 'deleteItemFile'])->name('item.delete-file');
         Route::post('/submit', [FinancialPlanController::class, 'submit'])->name('submit');
+        Route::get('/{plan}/export-excel', [FinancialPlanController::class, 'exportExcel'])->name('export-excel');
+        Route::post('/{plan}/import-excel', [FinancialPlanController::class, 'importExcel'])->name('import-excel');
     });
+
+    Route::post('/program-study-request', [\App\Http\Controllers\ProgramStudyRequestController::class, 'store'])->name('program-study-request.store');
+    Route::put('/program-study-request/{id}', [\App\Http\Controllers\ProgramStudyRequestController::class, 'update'])->name('program-study-request.update');
 
 });
 

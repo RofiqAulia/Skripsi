@@ -17,6 +17,8 @@ class ProgramStudy extends Model
         'open_date', 'deadline', 'screening_date', 'written_test_date', 'interview_date', 'shortlist_date',
         // Proses & Persyaratan
         'registration_process', 'requirements', 'intake',
+        // Status Approval
+        'status', 'admin_notes', 'submitted_by',
     ];
 
     protected $casts = [
@@ -33,5 +35,15 @@ class ProgramStudy extends Model
     public function scholarships()
     {
         return $this->hasMany(Scholarship::class);
+    }
+
+    public function submitter()
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
     }
 }

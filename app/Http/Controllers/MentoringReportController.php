@@ -40,10 +40,13 @@ class MentoringReportController extends Controller
             ->latest()
             ->get();
 
+        $nextMeetingNumber = $reports->count() + 1;
+
         return view('landing.report-mentoring', compact(
             'mentors',
             'schedules',
-            'reports'
+            'reports',
+            'nextMeetingNumber'
         ));
     }
 
@@ -83,7 +86,7 @@ class MentoringReportController extends Controller
         ]);
 
         return redirect()
-            ->route('report-mentoring')
+            ->route('mentoring')
             ->with('success', 'Report submitted successfully');
     }
 }

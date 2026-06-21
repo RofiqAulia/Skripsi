@@ -7,10 +7,29 @@
             <h1><i class="bi bi-mortarboard-fill"></i> <span data-lang-key="nav-financial-plan">Financial Plan</span></h1>
             <p>Record and track your scholarship application progress</p>
         </div>
-        <button class="sa-btn-add" data-bs-toggle="modal" data-bs-target="#modalAddScholarship">
-            <i class="bi bi-plus-lg"></i> Add Scholarship
-        </button>
+        @if($pspApp && $pspApp->status === 'approved')
+            <button class="sa-btn-add" data-bs-toggle="modal" data-bs-target="#modalAddScholarship">
+                <i class="bi bi-plus-lg"></i> Add Scholarship
+            </button>
+        @else
+            <button class="sa-btn-add" disabled title="PSP Application must be approved first" style="opacity: 0.6; cursor: not-allowed; background-color: #64748b; border-color: #64748b;">
+                <i class="bi bi-plus-lg"></i> Add Scholarship <i class="bi bi-lock-fill ms-1"></i>
+            </button>
+        @endif
     </div>
+
+    @if(!$pspApp || $pspApp->status !== 'approved')
+        <div class="sa-alert" style="background: #fffbeb; border: 1px solid #fde68a; color: #b45309; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+            <i class="bi bi-shield-lock-fill" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+            <h4 style="margin-bottom: 10px;">Access Restricted</h4>
+            <p style="margin-bottom: 15px; font-size: 1.05rem;">
+                You must complete your <strong>PSP Application</strong> and wait for leadership approval before you can access the Financial Plan menu.
+            </p>
+            <a href="{{ route('psp') }}" class="btn btn-primary" style="border-radius: 8px; padding: 10px 20px; font-weight: 600;">
+                Go to PSP Application <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    @else
 
     {{-- ALERTS --}}
     @if(session('success'))
@@ -18,6 +37,9 @@
     @endif
     @if($errors->has('duplicate'))
         <div class="sa-alert sa-alert-error"><i class="bi bi-exclamation-triangle-fill"></i> {{ $errors->first('duplicate') }}</div>
+    @endif
+    @if($errors->has('error'))
+        <div class="sa-alert sa-alert-error"><i class="bi bi-exclamation-triangle-fill"></i> {{ $errors->first('error') }}</div>
     @endif
 
     {{-- STAT CARDS --}}
@@ -93,6 +115,17 @@
                     </div>
                     <a href="{{ route('financial-plan.index', ['app_id' => $app->id]) }}" class="sa-btn-continue-fp">
                         Continue Financial Plan <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                @elseif($app->status === 'tidak_lolos')
+                <div class="sa-success-cta" style="background: #fef2f2; border: 1px solid #fecaca;">
+                    <div class="sa-success-icon" style="background: #fee2e2; color: #dc2626;">❌</div>
+                    <div class="sa-success-content">
+                        <h5 style="color: #991b1b;">Application Rejected</h5>
+                        <p style="color: #7f1d1d;">Status is "Rejected". You can revise your PSP and start the preparation process again.</p>
+                    </div>
+                    <a href="{{ route('psp') }}" class="sa-btn-continue-fp" style="background: #dc2626; border-color: #dc2626;">
+                        Revise PSP <i class="bi bi-arrow-repeat"></i>
                     </a>
                 </div>
                 @endif
@@ -177,7 +210,7 @@
                         <div class="sa-form-group full">
                             <label>Study Program <span class="req">*</span></label>
                             <div class="sa-search-dropdown-wrapper">
-                                <input type="text" id="inputSearchProdi" class="sa-input" placeholder="🔍 Search Study Program (e.g. MIT, LPDP, Operations...)" autocomplete="off" required value="">
+                                <input type="text" id="inputSearchProdi" class="sa-input" placeholder="🔍 Search Study Program (e.g. MIT, LPDP, Operations...)" autocomplete="off" required value="{{ old('program_study_id') ? '' : ($pspProgram ? $pspProgram->name : '') }}">
                                 <div class="sa-dropdown-results" id="prodiDropdownResults" style="display: none;">
                                     @foreach($programStudies as $p)
                                         <div class="sa-dropdown-item" 
@@ -190,28 +223,46 @@
                                             <span>{{ $p->university }} — {{ $p->scholarship }}</span>
                                         </div>
                                     @endforeach
-                                    <div class="sa-no-results" id="prodiNoResults" style="display: none;">No matching study program found.</div>
+                                    <div class="sa-no-results" id="prodiNoResults" style="display: none;">
+                                        No matching study program found.
+                                        <br>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#psr-modal" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary mt-2" style="border-radius: 20px;">Suggest New Program Study</a>
+                                    </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="program_study_id" id="hiddenProdiId" required value="{{ old('program_study_id') }}">
+                            <input type="hidden" name="program_study_id" id="hiddenProdiId" required value="{{ old('program_study_id', $pspProgram ? $pspProgram->id : '') }}">
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-top: 12px;">
+                                <div style="font-size: 13px; color: #475569; display: flex; align-items: center; gap: 8px;">
+                                    <i class="bi bi-info-circle-fill" style="color: #3b82f6; font-size: 15px;"></i>
+                                    <span>Program Study not found?</span>
+                                </div>
+                                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#psr-modal" data-bs-dismiss="modal" style="font-size: 12.5px; color: #fff; background: #8b0000; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(139,0,0,0.2);">
+                                        <i class="bi bi-plus-circle"></i> Suggest a new one
+                                    </a>
+                                    <a href="#" onclick="mysuggOpen()" style="font-size: 12.5px; color: #475569; background: #fff; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                        <i class="bi bi-clock-history"></i> My Suggestions
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Beasiswa (auto-fill, read-only) --}}
                         <div class="sa-form-group">
                             <label>Scholarship</label>
-                            <input type="text" id="autoScholarship" class="sa-input" readonly placeholder="Auto-fill from Study Program" value="">
+                            <input type="text" id="autoScholarship" class="sa-input" readonly placeholder="Auto-fill from Study Program" value="{{ old('program_study_id') ? '' : ($pspProgram ? $pspProgram->scholarship : '') }}">
                         </div>
 
                         {{-- Negara (auto-fill, read-only) --}}
                         <div class="sa-form-group">
                             <label>Destination Country</label>
-                            <input type="text" id="autoCountry" class="sa-input" readonly placeholder="Auto-fill from Study Program" value="">
+                            <input type="text" id="autoCountry" class="sa-input" readonly placeholder="Auto-fill from Study Program" value="{{ old('program_study_id') ? '' : ($pspProgram ? $pspProgram->country : '') }}">
                         </div>
 
                         {{-- Universitas (auto-filled, tapi bisa diedit) --}}
                         <div class="sa-form-group full">
                             <label>University <span class="req">*</span></label>
-                            <input type="text" name="university" id="autoUniversity" class="sa-input" placeholder="Auto-fill from Study Program" required value="{{ old('university') }}">
+                            <input type="text" name="university" id="autoUniversity" class="sa-input" placeholder="Auto-fill from Study Program" required value="{{ old('university', $pspProgram ? $pspProgram->university : '') }}">
                         </div>
 
                         <input type="hidden" name="stage" value="pendaftaran">
@@ -248,8 +299,11 @@
         </div>
     </div>
 </div>
+    @endif
 
-
+{{-- 🔥 MODAL SUGGEST PROGRAM --}}
+    @include('partials.modal-suggest-program')
+    @include('partials.modal-my-suggestions')
 
 @include('sections.scholarship-application.styles')
 

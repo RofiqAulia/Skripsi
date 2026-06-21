@@ -21,6 +21,11 @@ class PspApplicationResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Study & Scholarship';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    public static function canViewAny(): bool
+    {
+        return !auth()->user()->hasRole('mentor');
+    }
+
 
     public static function form(Schema $schema): Schema
     {

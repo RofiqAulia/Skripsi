@@ -98,8 +98,6 @@ class FinancialPlanForm
                         TextInput::make('total_estimated_cost')->disabled()->numeric(),
                         TextInput::make('total_funding')->disabled()->numeric(),
                         TextInput::make('funding_gap')->disabled()->numeric(),
-                        TextInput::make('readiness_percentage')->disabled()->numeric()->suffix('%'),
-                        Select::make('risk_level')->disabled()->options(['low' => 'Low Risk', 'medium' => 'Moderate Risk', 'high' => 'High Risk']),
                     ])->columns(3),
  
                 Section::make('Financial Categories (Costs & Coverages)')

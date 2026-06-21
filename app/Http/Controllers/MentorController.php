@@ -161,7 +161,7 @@ class MentorController extends Controller
         abort_if($session->user_id !== auth()->id(), 403);
 
         $request->validate([
-            'status' => 'required|in:pending,confirmed,done,cancelled',
+            'status' => 'required|in:pending,done,cancelled',
         ]);
 
         $session->update([

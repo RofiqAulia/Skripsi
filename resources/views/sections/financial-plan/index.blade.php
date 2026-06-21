@@ -3,8 +3,8 @@
     {{-- HEADER --}}
     <div class="fp-header">
         <div>
-            <h1><i class="bi bi-wallet2"></i> Financial Readiness</h1>
-            <p>Plan and evaluate your financial readiness for studying abroad.</p>
+            <h1><i class="bi bi-wallet2"></i> Financial Plan</h1>
+            <p>Plan and evaluate your finances for studying abroad.</p>
         </div>
         <div class="fp-header-status">
             <span class="fp-badge status-{{ $plan->status }}">{{ ucfirst(str_replace('_', ' ', $plan->status)) }}</span>
@@ -40,8 +40,8 @@
             <span>Financial Plan</span>
         </div>
         <div class="journey-line {{ $plan->status == 'approved' ? 'completed' : '' }}"></div>
-        <div class="journey-step {{ $plan->status == 'approved' ? 'active' : '' }}">
-            <div class="j-icon"><i class="bi bi-file-earmark-check"></i></div>
+        <div class="journey-step {{ $plan->status == 'approved' ? 'completed' : '' }}">
+            <div class="j-icon"><i class="bi {{ $plan->status == 'approved' ? 'bi-check' : 'bi-file-earmark-check' }}"></i></div>
             <span>Document Validation</span>
         </div>
     </div>
@@ -56,6 +56,31 @@
                 @csrf
                 <input type="hidden" name="plan_id" value="{{ $plan->id }}">
                 
+                {{-- PROFILE INFORMATION --}}
+                <div class="fp-card mb-4">
+                    <div class="fp-card-header">
+                        <h5><i class="bi bi-person-badge"></i> Profile Information</h5>
+                    </div>
+                    <div class="fp-card-body fp-form-grid">
+                        <div class="fp-form-group">
+                            <label>Name</label>
+                            <input type="text" class="fp-input" readonly value="{{ auth()->user()->name }}" style="background-color: #f3f4f6; cursor: not-allowed;">
+                        </div>
+                        <div class="fp-form-group">
+                            <label>Email</label>
+                            <input type="email" class="fp-input" readonly value="{{ auth()->user()->email }}" style="background-color: #f3f4f6; cursor: not-allowed;">
+                        </div>
+                        <div class="fp-form-group">
+                            <label>Company / Institution</label>
+                            <input type="text" class="fp-input" readonly value="{{ auth()->user()->company ?? '—' }}" style="background-color: #f3f4f6; cursor: not-allowed;">
+                        </div>
+                        <div class="fp-form-group">
+                            <label>Position</label>
+                            <input type="text" class="fp-input" readonly value="{{ auth()->user()->position ?? '—' }}" style="background-color: #f3f4f6; cursor: not-allowed;">
+                        </div>
+                    </div>
+                </div>
+
                 {{-- STUDY DETAILS --}}
                 <div class="fp-card">
                     <div class="fp-card-header">
@@ -114,9 +139,22 @@
 
                 {{-- COST CATEGORIES ACCORDION --}}
                 <div class="fp-card">
-                    <div class="fp-card-header d-flex justify-content-between align-items-center">
-                        <h5><i class="bi bi-list-check"></i> Financial Categories</h5>
-                        <small class="text-muted">Fill in your estimated costs below</small>
+                    <div class="fp-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h5 class="mb-1"><i class="bi bi-list-check"></i> Financial Categories</h5>
+                            <small class="text-muted">Fill in your estimated costs below</small>
+                        </div>
+                        @if(!in_array($plan->status, ['submitted', 'under_review', 'approved']))
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('financial-plan.export-excel', $plan->id) }}" class="btn btn-sm btn-outline-success d-flex align-items-center gap-1" style="font-weight: 500; border-radius: 6px;">
+                                <i class="bi bi-file-earmark-excel"></i> Export Template
+                            </a>
+                            <button type="button" class="btn btn-sm btn-success d-flex align-items-center gap-1" style="font-weight: 500; border-radius: 6px;" onclick="document.getElementById('import_excel_file').click()">
+                                <i class="bi bi-upload"></i> Import Excel
+                            </button>
+                            <input type="file" id="import_excel_file" class="d-none" accept=".xlsx, .xls" onchange="uploadExcelFile()">
+                        </div>
+                        @endif
                     </div>
                     <div class="fp-card-body p-0">
                         <div class="fp-categories-list">
@@ -152,31 +190,47 @@
                                                 @if(isset($groupedItems[$key]))
                                                     @foreach($groupedItems[$key] as $item)
                                                     <tr>
+                                                        @php
+                                                            $isLocked = in_array($plan->status, ['submitted', 'under_review', 'approved']);
+                                                            $costVal = $item->created_at == $item->updated_at && !$isLocked ? '' : ($item->estimated_cost + 0);
+                                                            $scholVal = $item->created_at == $item->updated_at && !$isLocked ? '' : ($item->scholarship_coverage + 0);
+                                                        @endphp
                                                         <td class="fw-medium text-secondary">{{ $item->item_name }}</td>
-                                                        <td><input type="number" step="0.01" name="items[{{ $item->id }}][estimated_cost]" class="fp-input-sm calc-item-cost" value="{{ $item->estimated_cost + 0 }}" data-id="{{ $item->id }}"></td>
-                                                        <td><input type="number" step="0.01" name="items[{{ $item->id }}][scholarship_coverage]" class="fp-input-sm calc-item-schol" value="{{ $item->scholarship_coverage + 0 }}" data-id="{{ $item->id }}"></td>
+                                                        <td><input type="number" step="0.01" name="items[{{ $item->id }}][estimated_cost]" class="fp-input-sm calc-item-cost" value="{{ $costVal }}" data-id="{{ $item->id }}" required placeholder="e.g. 0" {{ $isLocked ? 'readonly' : '' }}></td>
+                                                        <td><input type="number" step="0.01" name="items[{{ $item->id }}][scholarship_coverage]" class="fp-input-sm calc-item-schol" value="{{ $scholVal }}" data-id="{{ $item->id }}" required placeholder="e.g. 0" {{ $isLocked ? 'readonly' : '' }}></td>
                                                         <td><span class="gap-amount fw-bold {{ $item->gap_amount >= 0 ? 'text-success' : 'text-danger' }}" id="gap_{{ $item->id }}">{{ ($item->gap_amount >= 0 ? '+' : '') . number_format($item->gap_amount + 0, 2) }}</span></td>
                                                         <td>
-                                                            <div id="item_ref_container_{{ $item->id }}" class="d-flex align-items-center gap-2">
-                                                                <input type="file" id="file_item_{{ $item->id }}" class="d-none" onchange="uploadItemFile({{ $item->id }})" accept=".pdf,image/*">
+                                                            <input type="file" id="file_item_{{ $item->id }}" class="d-none" onchange="uploadItemFile({{ $item->id }})" accept=".pdf,.jpg,.jpeg,.png">
+                                                            <div id="item_ref_container_{{ $item->id }}">
                                                                 @if($item->reference_file_path)
-                                                                    <a href="{{ Storage::url($item->reference_file_path) }}" target="_blank" class="text-primary fw-medium" style="font-size: 0.8rem;" id="item_ref_link_{{ $item->id }}">
-                                                                        <i class="bi bi-file-earmark-check"></i> {{ Str::limit($item->reference_file_name, 15) }}
-                                                                    </a>
-                                                                    @if(!in_array($plan->status, ['submitted', 'under_review', 'approved']))
-                                                                        <button type="button" class="btn-icon text-warning p-0 border-0 bg-transparent" onclick="document.getElementById('file_item_{{ $item->id }}').click()" title="Edit Reference" style="font-size: 0.85rem;">
-                                                                            <i class="bi bi-pencil-square"></i>
-                                                                        </button>
-                                                                        <button type="button" class="btn-icon text-danger p-0 border-0 bg-transparent" onclick="deleteItemFile({{ $item->id }})" title="Delete Reference" style="font-size: 0.85rem;">
-                                                                            <i class="bi bi-trash"></i>
-                                                                        </button>
-                                                                    @endif
+                                                                    @php
+                                                                        $ext = strtolower(pathinfo($item->reference_file_name, PATHINFO_EXTENSION));
+                                                                        $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
+                                                                    @endphp
+                                                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                                        <a href="{{ Storage::url($item->reference_file_path) }}" target="_blank" class="fp-ref-file-link" title="{{ $item->reference_file_name }}">
+                                                                            @if($isImage)
+                                                                                <i class="bi bi-file-earmark-image text-success"></i>
+                                                                            @else
+                                                                                <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                                                            @endif
+                                                                            <span>{{ Str::limit($item->reference_file_name, 14) }}</span>
+                                                                        </a>
+                                                                        @if(!in_array($plan->status, ['approved']))
+                                                                            <button type="button" class="btn-icon text-warning p-0 border-0 bg-transparent" onclick="document.getElementById('file_item_{{ $item->id }}').click()" title="Replace file" style="font-size: 0.82rem;">
+                                                                                <i class="bi bi-pencil-square"></i>
+                                                                            </button>
+                                                                            <button type="button" class="btn-icon text-danger p-0 border-0 bg-transparent" onclick="deleteItemFile({{ $item->id }})" title="Delete file" style="font-size: 0.82rem;">
+                                                                                <i class="bi bi-trash"></i>
+                                                                            </button>
+                                                                        @endif
+                                                                    </div>
                                                                 @else
-                                                                    @if(!in_array($plan->status, ['submitted', 'under_review', 'approved']))
-                                                                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-flex align-items-center gap-1" onclick="document.getElementById('file_item_{{ $item->id }}').click()" style="font-size: 0.72rem; border-radius: 4px;">
-                                                                            <i class="bi bi-upload"></i> Upload Source
-                                                                        </button>
-                                                                    @endif
+                                                                    <button type="button" class="fp-upload-ref-btn" onclick="document.getElementById('file_item_{{ $item->id }}').click()">
+                                                                        <i class="bi bi-cloud-arrow-up"></i>
+                                                                        <span>Upload</span>
+                                                                        <small>PDF / Image</small>
+                                                                    </button>
                                                                 @endif
                                                             </div>
                                                             <div id="item_ref_status_{{ $item->id }}" class="text-muted mt-1" style="display:none; font-size:0.7rem"><i class="spinner-border spinner-border-sm"></i> Uploading...</div>
@@ -204,10 +258,9 @@
             </form>
 
             
-            {{-- SUBMIT BUTTON --}}
             @if(!in_array($plan->status, ['submitted', 'under_review', 'approved']))
             <div class="fp-submit-area mt-4 mb-4 text-end">
-                <form action="{{ route('financial-plan.submit') }}" method="POST" onsubmit="return confirm('Are you sure you want to submit this Financial Plan? Data cannot be changed after submission.')">
+                <form id="financialPlanSubmitForm" action="{{ route('financial-plan.submit') }}" method="POST">
                     @csrf
                     <input type="hidden" name="plan_id" value="{{ $plan->id }}">
                     <button type="submit" class="fp-btn-submit-main">
@@ -215,43 +268,25 @@
                     </button>
                 </form>
             </div>
+            @elseif(in_array($plan->status, ['submitted', 'under_review']))
+            <div class="fp-alert" style="background: #dbeafe; border: 1px solid #93c5fd; color: #1e40af; display:flex; align-items:center; gap:0.75rem; padding:1rem 1.5rem; border-radius:12px; margin-top:1.5rem;">
+                <i class="bi bi-hourglass-split" style="font-size:1.3rem;"></i>
+                <div>
+                    <strong>Financial Plan Submitted</strong><br>
+                    <span style="font-size:0.9rem;">Your plan is currently under review by the admin. You may still upload reference files above while waiting.</span>
+                </div>
+            </div>
+            @elseif($plan->status === 'approved')
+            <div class="fp-alert" style="background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; display:flex; align-items:center; gap:0.75rem; padding:1rem 1.5rem; border-radius:12px; margin-top:1.5rem;">
+                <i class="bi bi-check-circle-fill" style="font-size:1.3rem;"></i>
+                <div><strong>Financial Plan Approved!</strong><br><span style="font-size:0.9rem;">Your financial plan has been approved by the admin.</span></div>
+            </div>
             @endif
 
         </div>
 
         {{-- RIGHT COLUMN: Summary & Analytics --}}
         <div class="fp-side-col">
-            
-            {{-- READINESS SCORE --}}
-            <div class="fp-card score-card">
-                <div class="fp-card-body text-center">
-                    <h5 class="text-muted mb-3">Financial Readiness</h5>
-                    
-                    <div class="readiness-circle">
-                        <svg viewBox="0 0 36 36" class="circular-chart {{ $plan->risk_level == 'high' ? 'red' : ($plan->risk_level == 'medium' ? 'orange' : 'green') }}" id="readinessSvg">
-                            <path class="circle-bg"
-                                d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                            <path class="circle" id="readinessCirclePath"
-                                stroke-dasharray="{{ $plan->readiness_percentage }}, 100"
-                                d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                            <text x="18" y="20.35" class="percentage" id="displayReadiness">{{ $plan->readiness_percentage }}%</text>
-                        </svg>
-                    </div>
-                    
-                    <div class="risk-badge mt-3" id="displayRisk">
-                        @if($plan->risk_level == 'high') <span class="fp-badge status-rejected"><i class="bi bi-exclamation-triangle"></i> High Risk</span>
-                        @elseif($plan->risk_level == 'medium') <span class="fp-badge status-pending"><i class="bi bi-exclamation-circle"></i> Moderate Risk</span>
-                        @else <span class="fp-badge status-approved"><i class="bi bi-shield-check"></i> Low Risk</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
 
             {{-- SUMMARY --}}
             <div class="fp-card summary-card mt-4">
@@ -270,20 +305,7 @@
                     <hr>
                     <div class="summary-item gap-item">
                         <span>Funding Gap</span>
-                        <strong id="displayFundingGap" class="{{ $plan->funding_gap > 0 ? 'text-danger' : 'text-success' }}">{{ number_format($plan->funding_gap + 0, 2) }}</strong>
-                    </div>
-                </div>
-            </div>
-
-            {{-- RISK DETECTION WARNINGS --}}
-            <div class="fp-card mt-4" id="riskWarnings" style="display: {{ $plan->readiness_percentage < 100 ? 'block' : 'none' }}">
-                <div class="fp-card-header bg-light border-0">
-                    <h6 class="text-danger m-0"><i class="bi bi-shield-exclamation"></i> Risk Warnings</h6>
-                </div>
-                <div class="fp-card-body p-3">
-                    <div class="warning-alert">
-                        <i class="bi bi-info-circle text-danger"></i>
-                        <p class="m-0 text-danger small">Funding gap detected. Make sure you have a plan to cover the shortage of funds before departure.</p>
+                        <strong id="displayFundingGap" class="{{ $plan->funding_gap >= 0 ? 'text-success' : 'text-danger' }}">{{ ($plan->funding_gap >= 0 ? '+' : '') . number_format($plan->funding_gap + 0, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -294,6 +316,7 @@
 </div>
 
 @include('sections.financial-plan.styles')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @include('sections.financial-plan.scripts')
 
 </section>

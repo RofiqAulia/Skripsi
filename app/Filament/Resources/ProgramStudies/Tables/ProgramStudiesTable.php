@@ -14,6 +14,17 @@ class ProgramStudiesTable
     {
         return $table
             ->columns([
+                \Filament\Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'approved' => 'success',
+                        'pending' => 'gray',
+                        'revision' => 'warning',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    })
+                    ->searchable()
+                    ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('competency')
                     ->label('Kompetensi')
                     ->searchable()

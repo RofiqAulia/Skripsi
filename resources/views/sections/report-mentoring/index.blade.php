@@ -15,15 +15,9 @@
 
 <!-- Mentor -->
 <div class="mb-3">
-    <label>Choose Mentor</label>
-    <select name="mentor_id" id="mentorSelect" class="form-control" required>
-        <option value="">-- Select Mentor --</option>
-        @foreach($mentors as $mentor)
-            <option value="{{ $mentor->id }}">
-                {{ $mentor->user->name }}
-            </option>
-        @endforeach
-    </select>
+    <label>Mentor</label>
+    <input type="text" class="form-control" value="{{ $mentors->first()->user->name }}" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
+    <input type="hidden" name="mentor_id" id="mentorSelect" value="{{ $mentors->first()->id }}">
 </div>
 
 <!-- Schedule -->
@@ -37,7 +31,7 @@
 <!-- Meeting -->
 <div class="mb-3">
     <label>Meeting Number</label>
-    <input type="number" name="meeting_number" class="form-control" required>
+    <input type="number" name="meeting_number" class="form-control" value="{{ $nextMeetingNumber ?? 1 }}" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
 </div>
 
 <!-- Summary -->
@@ -251,34 +245,14 @@ select:focus {
 document.addEventListener("DOMContentLoaded", function () {
 
     const schedules = @json($schedules);
-
-    const mentorSelect = document.getElementById('mentorSelect');
     const scheduleSelect = document.getElementById('scheduleSelect');
 
-    mentorSelect.addEventListener('change', function () {
-
-        let mentorId = parseInt(this.value);
-
-        scheduleSelect.innerHTML = '<option value="">-- Select Schedule --</option>';
-
-        schedules.forEach(s => {
-
-            if (parseInt(s.mentor_id) === mentorId) {
-
-                let option = document.createElement('option');
-
-                option.value = s.id;
-
-                option.text =
-                    s.date + ' | ' +
-                    s.start_time + ' - ' +
-                    s.end_time;
-
-                scheduleSelect.appendChild(option);
-            }
-
-        });
-
+    // Karena schedules sudah difilter sesuai mentor yang aktif dari controller, kita bisa langsung meloopingnya
+    schedules.forEach(s => {
+        let option = document.createElement('option');
+        option.value = s.id;
+        option.text = s.date + ' | ' + s.start_time + ' - ' + s.end_time;
+        scheduleSelect.appendChild(option);
     });
 
 });

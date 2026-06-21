@@ -22,6 +22,26 @@ class ScholarshipApplicationResource extends Resource
     protected static ?string $navigationLabel = 'Applications';
     protected static ?int $navigationSort = 1;
 
+    public static function canCreate(): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
+    public static function canViewAny(): bool
+    {
+        return !auth()->user()->hasRole('mentor');
+    }
+
+
     public static function form(Schema $schema): Schema
     {
         return ScholarshipApplicationForm::configure($schema);

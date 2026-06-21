@@ -129,6 +129,15 @@
         <button type="submit" class="btn-submit" style="background: #8b0000;">
             SIGN IN
         </button>
+
+        <div class="forgot-password" style="margin-top: 20px; margin-bottom: 0;">
+            @if (Route::has('register'))
+                <span style="color: #6b7280; font-size: 15px;">Don't have an account? </span>
+                <a href="{{ route('register') }}" style="color: #8b0000; font-weight: 600;">
+                    Register
+                </a>
+            @endif
+        </div>
     </form>
 
     <script>

@@ -53,7 +53,7 @@ class MentorScheduleResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->with('session');
 
         if (auth()->user()->hasRole('mentor')) {
             $query->where('mentor_id', auth()->user()->mentor->id);

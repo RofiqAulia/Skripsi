@@ -33,6 +33,16 @@ class MentorSchedulesTable
                     ->time()
                     ->sortable(),
 
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Available' => 'success',
+                        'Booked' => 'warning',
+                        'Expired' => 'danger',
+                        default => 'gray',
+                    }),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

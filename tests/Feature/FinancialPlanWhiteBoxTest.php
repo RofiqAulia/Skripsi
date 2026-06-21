@@ -84,9 +84,9 @@ class FinancialPlanWhiteBoxTest extends TestCase
     }
 
     /**
-     * PATH 2: Durasi 'Bulan' & Readiness < 50% menghasilkan Risk "High"
+     * PATH 2: Durasi 'Bulan' & kalkulasi finansial
      */
-    public function test_path_2_month_duration_and_high_risk()
+    public function test_path_2_month_duration_and_financial_calculation()
     {
         // Kondisikan duration menggunakan kata "month"
         $this->programStudy->update(['study_duration' => '6 Months']);
@@ -110,15 +110,13 @@ class FinancialPlanWhiteBoxTest extends TestCase
             'total_estimated_cost' => 10000000,
             'total_funding' => 4000000,
             'funding_gap' => -6000000,
-            'readiness_percentage' => 40,
-            'risk_level' => 'high' // < 50% = High Risk
         ]);
     }
 
     /**
-     * PATH 3: Durasi 'Tahun' (<=6) & Readiness 50-79% menghasilkan Risk "Medium"
+     * PATH 3: Durasi 'Tahun' (<=6) & kalkulasi durasi
      */
-    public function test_path_3_year_duration_and_medium_risk()
+    public function test_path_3_year_duration_and_calculation()
     {
         // Kondisikan duration angka murni (Sistem menganggap Tahun dan akan dikali 12)
         $this->programStudy->update(['study_duration' => '2']); 
@@ -139,15 +137,13 @@ class FinancialPlanWhiteBoxTest extends TestCase
         $this->assertDatabaseHas('financial_plans', [
             'id' => $this->financialPlan->id,
             'study_duration_month' => 24, // Sistem otomatis mengalikan 2 * 12 = 24 Bulan
-            'readiness_percentage' => 60,
-            'risk_level' => 'medium' // 50-79% = Medium Risk
         ]);
     }
 
     /**
-     * PATH 4: Durasi Lama (>6) & Readiness >= 80% menghasilkan Risk "Low"
+     * PATH 4: Durasi Lama (>6) & kalkulasi durasi
      */
-    public function test_path_4_long_duration_and_low_risk()
+    public function test_path_4_long_duration_and_calculation()
     {
         // Angka tahun lebih dari 6 tidak akan dikalikan 12 oleh sistem (bypassed protection)
         $this->programStudy->update(['study_duration' => '10']); 
@@ -168,8 +164,6 @@ class FinancialPlanWhiteBoxTest extends TestCase
         $this->assertDatabaseHas('financial_plans', [
             'id' => $this->financialPlan->id,
             'study_duration_month' => 10, // Sistem membiarkannya tetap 10 karena > 6
-            'readiness_percentage' => 90,
-            'risk_level' => 'low' // >= 80% = Low Risk
         ]);
     }
 
@@ -190,12 +184,10 @@ class FinancialPlanWhiteBoxTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Sistem berhasil mengatasi error "Division By Zero" dan memberikan nilai Readiness 0 secara default
+        // Sistem berhasil mengatasi error "Division By Zero"
         $this->assertDatabaseHas('financial_plans', [
             'id' => $this->financialPlan->id,
             'total_estimated_cost' => 0,
-            'readiness_percentage' => 0,
-            'risk_level' => 'high'
         ]);
     }
 }

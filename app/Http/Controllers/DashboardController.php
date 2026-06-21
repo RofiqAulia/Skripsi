@@ -50,10 +50,10 @@ class DashboardController extends Controller
         $upcomingEvents = Event::upcoming()->limit(5)->get();
 
         // ── Overall Progress ──
-        $docProgress  = $docsTotal > 0 ? ($docsUploaded / $docsTotal) * 100 : 0;
+        $docProgress  = $docsTotal > 0 ? ($docsApproved / $docsTotal) * 100 : 0;
         $pspProgress  = $pspApplication ? ($pspApplication->status === 'approved' ? 100 : 50) : 0;
         $mentProgress = $sessionsTotal > 0 ? ($sessionsDone / $sessionsTotal) * 100 : 0;
-        $overallProgress = round(($docProgress * 0.4) + ($pspProgress * 0.2) + ($mentProgress * 0.4));
+        $overallProgress = round(($docProgress + $pspProgress + $mentProgress) / 3);
 
         // ── Scholarship Applications (preview) ──
         $scholarshipApps = $user->scholarshipApplications()

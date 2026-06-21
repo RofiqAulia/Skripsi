@@ -108,6 +108,7 @@ class FinancialPlanController extends Controller
 
             $totalCost = 0;
             $totalScholarshipCoverage = 0;
+            $totalPersonalCoverage = 0;
 
             foreach ($request->items as $itemId => $data) {
                 $item = \App\Models\FinancialPlanItem::find($itemId);
@@ -129,11 +130,6 @@ class FinancialPlanController extends Controller
 
             $totalFunding = $totalScholarshipCoverage;
             $fundingGap = $totalFunding - $totalCost;
-            $readiness = $totalCost > 0 ? min(100, round(($totalFunding / $totalCost) * 100)) : 0;
-            
-            $riskLevel = 'low';
-            if ($readiness < 50) $riskLevel = 'high';
-            else if ($readiness < 80) $riskLevel = 'medium';
 
             $plan->update([
                 'country_destination'  => $plan->scholarshipApplication->programStudy->country,
@@ -146,9 +142,7 @@ class FinancialPlanController extends Controller
                 'emergency_fund'       => 0,
                 'total_estimated_cost' => $totalCost,
                 'total_funding'        => $totalFunding,
-                'funding_gap'          => $fundingGap,
-                'readiness_percentage' => $readiness,
-                'risk_level'           => $riskLevel
+                'funding_gap'          => $fundingGap
             ]);
 
             \Illuminate\Support\Facades\DB::commit();
@@ -273,7 +267,7 @@ class FinancialPlanController extends Controller
          $plan->load(['user', 'scholarshipApplication.programStudy', 'items']);
 
          $plan->update([
-             'status' => 'submitted',
+             'status' => 'under_review',
              'submitted_at' => now(),
          ]);
 
@@ -289,5 +283,36 @@ class FinancialPlanController extends Controller
             ->send(new \App\Mail\FinancialPlanMail($plan, $pdfContent, $filename));
 
          return redirect()->back()->with('success', 'Financial Plan successfully submitted and sent to your email!');
+    }
+    public function exportExcel(\App\Models\FinancialPlan $plan)
+    {
+        if ($plan->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403);
+        }
+
+        $filename = 'Financial-Plan-Budget-' . now()->format('Y-m-d') . '.xlsx';
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\FinancialPlanItemsExport($plan->id), $filename);
+    }
+
+    public function importExcel(Request $request, \App\Models\FinancialPlan $plan)
+    {
+        if ($plan->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403);
+        }
+
+        if (in_array($plan->status, ['submitted', 'under_review', 'approved'])) {
+            return response()->json(['success' => false, 'message' => 'Cannot import when plan is already submitted.'], 400);
+        }
+
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        try {
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\FinancialPlanItemsImport($plan->id), $request->file('excel_file'));
+            return response()->json(['success' => true, 'message' => 'Budget items successfully imported!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error importing file: ' . $e->getMessage()], 500);
+        }
     }
 }

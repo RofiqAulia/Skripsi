@@ -41,6 +41,20 @@ class ProgramStudyForm
 
                 Section::make('General Information')
                     ->components([
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'pending' => 'Pending',
+                                'approved' => 'Approved',
+                                'revision' => 'Revision',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->default('approved')
+                            ->required()
+                            ->columnSpanFull(),
+                        Textarea::make('admin_notes')
+                            ->label('Admin Notes (for Revision/Rejection)')
+                            ->columnSpanFull(),
                         Select::make('competency')
                             ->label('Competency')
                             ->options($competencyOptions)
@@ -104,8 +118,8 @@ class ProgramStudyForm
                         Repeater::make('english_test')
                             ->label('English Test')
                             ->schema([
-                                TextInput::make('test_name')->label('Test Name')->required(),
-                                TextInput::make('minimum_score')->label('Minimum Score')->required(),
+                                TextInput::make('test_name')->label('Test Name'),
+                                TextInput::make('minimum_score')->label('Minimum Score'),
                             ])
                             ->maxItems(5)
                             ->columnSpanFull(),

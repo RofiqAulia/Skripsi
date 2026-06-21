@@ -10,6 +10,7 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,6 +18,21 @@ use Maatwebsite\Excel\Facades\Excel;
 class ListProgramStudies extends ListRecords
 {
     protected static string $resource = ProgramStudyResource::class;
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make('All'),
+            'approved' => Tab::make('Approved')
+                ->modifyQueryUsing(fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'approved')),
+            'pending' => Tab::make('Pending')
+                ->modifyQueryUsing(fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'pending')),
+            'revision' => Tab::make('Revision')
+                ->modifyQueryUsing(fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'revision')),
+            'rejected' => Tab::make('Rejected')
+                ->modifyQueryUsing(fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'rejected')),
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

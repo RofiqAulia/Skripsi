@@ -42,4 +42,27 @@ class FinancialPlan extends Model
     {
         return $this->hasMany(FinancialRiskAssessment::class);
     }
+
+    public function recalculateTotals()
+    {
+        $totalCost = $this->items()->sum('estimated_cost');
+        $totalScholarshipCoverage = $this->items()->sum('scholarship_coverage');
+        
+        $totalFunding = $totalScholarshipCoverage;
+        $fundingGap = $totalFunding - $totalCost;
+
+        // Also update gap for each item just in case
+        foreach ($this->items as $item) {
+            $item->updateQuietly([
+                'gap_amount' => $item->scholarship_coverage - $item->estimated_cost
+            ]);
+        }
+
+        $this->update([
+            'scholarship_amount'   => $totalScholarshipCoverage,
+            'total_estimated_cost' => $totalCost,
+            'total_funding'        => $totalFunding,
+            'funding_gap'          => $fundingGap
+        ]);
+    }
 }

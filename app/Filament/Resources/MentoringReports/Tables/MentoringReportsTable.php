@@ -40,27 +40,16 @@ class MentoringReportsTable
                     ->tooltip(fn ($record) => $record->summary),
 
                 // ✅ File
-                TextColumn::make('file')
-                    ->label('File')
-                    ->url(fn ($record) => asset('storage/' . $record->file))
-                    ->openUrlInNewTab(),
+                // TextColumn::make('file')
+                //     ->label('File')
+                //     ->url(fn ($record) => asset('storage/' . $record->file))
+                //     ->openUrlInNewTab(),
 
-                // ✅ Status (badge biar keren 🔥)
-                TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state) => match ($state) {
-                        'draft' => 'gray',
-                        'submitted' => 'warning',
-                        'revision' => 'info',
-                        'rejected' => 'danger',
-                        'approved' => 'success',
-                    }),
-
-                // ✅ Catatan mentor
+                // ✅ Mentor Notes
                 TextColumn::make('mentor_notes')
                     ->label('Mentor Notes')
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->mentor_notes),
+                    ->toggleable(),
 
                 TextColumn::make('created_at')
                     ->dateTime()

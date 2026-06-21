@@ -15,7 +15,7 @@
         }
 
         .header {
-            border-bottom: 3px solid #8b0000;
+            border-bottom: 3px solid #1a1a1a;
             padding-bottom: 15px;
             margin-bottom: 20px;
             text-align: center;
@@ -23,7 +23,7 @@
         .header h1 {
             font-size: 20px;
             font-weight: 700;
-            color: #8b0000;
+            color: #1a1a1a;
             margin-bottom: 5px;
         }
         .header p {
@@ -34,8 +34,8 @@
         .section-title {
             font-size: 14px;
             font-weight: 700;
-            color: #8b0000;
-            border-bottom: 1px solid #8b0000;
+            color: #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 5px;
             margin-bottom: 15px;
             margin-top: 25px;
@@ -61,8 +61,8 @@
         }
 
         .summary-box {
-            background: #fdf2f2;
-            border: 1px solid #fecaca;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 15px;
             margin-top: 20px;
@@ -147,7 +147,7 @@
                         <td>{{ $item->item_name }}</td>
                         <td class="amount">{{ number_format($item->estimated_cost, 2) }}</td>
                         <td class="amount">{{ number_format($item->scholarship_coverage, 2) }}</td>
-                        <td class="amount">{{ number_format($item->gap_amount, 2) }}</td>
+                        <td class="amount" style="color: {{ $item->gap_amount >= 0 ? '#16a34a' : '#dc2626' }};">{{ ($item->gap_amount >= 0 ? '+' : '') . number_format($item->gap_amount, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -156,7 +156,7 @@
                     <td>Subtotal</td>
                     <td class="amount">{{ number_format($catTotalEst, 2) }}</td>
                     <td class="amount">{{ number_format($catTotalSchol, 2) }}</td>
-                    <td class="amount">{{ number_format($catTotalGap, 2) }}</td>
+                    <td class="amount" style="color: {{ $catTotalGap >= 0 ? '#16a34a' : '#dc2626' }};">{{ ($catTotalGap >= 0 ? '+' : '') . number_format($catTotalGap, 2) }}</td>
                 </tr>
             </tfoot>
         </table>
@@ -174,22 +174,10 @@
                 <td style="text-align: right; color: #16a34a;">{{ $plan->currency }} {{ number_format($plan->total_funding, 2) }}</td>
             </tr>
             <tr style="font-weight: bold; font-size: 14px;">
-                <td style="padding: 8px 0; border-top: 1px solid #fca5a5;">Funding Gap</td>
-                <td style="text-align: right; color: #dc2626; border-top: 1px solid #fca5a5;">{{ $plan->currency }} {{ number_format($plan->funding_gap, 2) }}</td>
+                <td style="padding: 8px 0; border-top: 1px solid #e5e7eb;">Funding Gap</td>
+                <td style="text-align: right; color: {{ $plan->funding_gap >= 0 ? '#16a34a' : '#dc2626' }}; border-top: 1px solid #e5e7eb;">{{ ($plan->funding_gap >= 0 ? '+' : '') . $plan->currency }} {{ number_format($plan->funding_gap, 2) }}</td>
             </tr>
         </table>
-        
-        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #fca5a5;">
-            <strong>Financial Readiness:</strong> 
-            <span style="color: {{ $plan->readiness_percentage >= 80 ? '#16a34a' : ($plan->readiness_percentage >= 50 ? '#d97706' : '#dc2626') }}">
-                {{ $plan->readiness_percentage }}%
-            </span>
-            <br>
-            <strong>Risk Level:</strong> 
-            <span style="text-transform: uppercase; color: {{ $plan->risk_level === 'low' ? '#16a34a' : ($plan->risk_level === 'medium' ? '#d97706' : '#dc2626') }}">
-                {{ $plan->risk_level }}
-            </span>
-        </div>
     </div>
 
     <div class="footer">

@@ -564,12 +564,26 @@
     <div class="feature-main">
 
         <!-- STICKY TOPBAR: Search + Filter -->
-        <div class="feature-topbar">
-            <div class="feature-search-box">
+        <div class="feature-topbar" style="flex-wrap: wrap;">
+            <div class="feature-search-box" style="flex: 1 1 100%;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
                 <input type="text" id="featureSearch" placeholder="Search scholarship or program name..." oninput="applyFilters()">
+            </div>
+            <div style="flex: 1 1 100%; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-top: -10px; margin-bottom: 5px;">
+                <div style="font-size: 13px; color: #475569; display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-info-circle-fill" style="color: #3b82f6; font-size: 15px;"></i>
+                    <span>Program Study not found?</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#psr-modal" style="font-size: 12.5px; color: #fff; background: #8b0000; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(139,0,0,0.2);">
+                        <i class="bi bi-plus-circle"></i> Suggest a new one
+                    </a>
+                    <a href="#" onclick="mysuggOpen()" style="font-size: 12.5px; color: #475569; background: #fff; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <i class="bi bi-clock-history"></i> My Suggestions
+                    </a>
+                </div>
             </div>
             <div class="deadline-selects">
                 <select id="deadlineSort" onchange="applyFilters()">

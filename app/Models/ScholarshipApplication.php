@@ -13,13 +13,13 @@ class ScholarshipApplication extends Model
     // ──────────────────────────────────────────────
 
     public const STAGES = [
-        'pendaftaran' => 'Pendaftaran',
+        'pendaftaran' => 'Registration',
     ];
 
     public const STATUSES = [
         'pending'     => 'Pending',
-        'tidak_lolos' => 'Tidak Lolos',
-        'lolos'       => 'Lolos',
+        'tidak_lolos' => 'Rejected',
+        'lolos'       => 'Accepted',
     ];
 
     // ──────────────────────────────────────────────
@@ -64,6 +64,11 @@ class ScholarshipApplication extends Model
     public function pspApplication(): BelongsTo
     {
         return $this->belongsTo(PspApplication::class, 'psp_application_id');
+    }
+
+    public function financialPlan()
+    {
+        return $this->hasOne(FinancialPlan::class);
     }
 
     public function logs(): HasMany

@@ -20,15 +20,20 @@ class ScholarshipApplicationsTable
                     ->searchable()
                     ->sortable(),
 
-                \Filament\Tables\Columns\TextColumn::make('scholarship.title')
+                \Filament\Tables\Columns\TextColumn::make('programStudy.scholarship')
                     ->label('Beasiswa')
                     ->searchable()
                     ->limit(30),
 
-                \Filament\Tables\Columns\TextColumn::make('scholarship.country')
+                \Filament\Tables\Columns\TextColumn::make('programStudy.country')
                     ->label('Negara')
                     ->searchable()
                     ->sortable(),
+
+                \Filament\Tables\Columns\TextColumn::make('programStudy.university')
+                    ->label('Universitas')
+                    ->searchable()
+                    ->limit(25),
 
                 \Filament\Tables\Columns\TextColumn::make('programStudy.name')
                     ->label('Program Studi')
@@ -48,9 +53,9 @@ class ScholarshipApplicationsTable
                     })
                     ->formatStateUsing(fn ($state) => ScholarshipApplication::STATUSES[$state] ?? $state),
 
-                \Filament\Tables\Columns\TextColumn::make('psp_application_id')
-                    ->label('PSP Link')
-                    ->formatStateUsing(fn ($state) => $state ? '✅ Linked' : '—'),
+                // \Filament\Tables\Columns\TextColumn::make('psp_application_id')
+                //     ->label('PSP Link')
+                //     ->formatStateUsing(fn ($state) => $state ? '✅ Linked' : '—'),
 
                 \Filament\Tables\Columns\TextColumn::make('updated_date')
                     ->label('Tgl Update')
@@ -67,12 +72,16 @@ class ScholarshipApplicationsTable
                     ->label('Tahapan'),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                \Filament\Actions\ViewAction::make(),
+                \Filament\Actions\EditAction::make()
+                    ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
+                \Filament\Actions\DeleteAction::make()
+                    ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make()
+                        ->hidden(fn () => auth()->user()->hasRole('pimpinan')),
                 ]),
             ])
             ->defaultSort('updated_date', 'desc');

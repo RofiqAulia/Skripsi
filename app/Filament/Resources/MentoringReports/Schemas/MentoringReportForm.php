@@ -57,18 +57,6 @@ class MentoringReportForm
                     ->downloadable()
                     ->openable(),
 
-                // ✅ Status
-                Select::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'submitted' => 'Submitted',
-                        'revision' => 'Need Revision',
-                        'rejected' => 'Rejected',
-                        'approved' => 'Approved',
-                    ])
-                    ->default('draft')
-                    ->required(),
-
                 // ✅ Catatan mentor
                 Textarea::make('mentor_notes')
                     ->label('Mentor Notes')

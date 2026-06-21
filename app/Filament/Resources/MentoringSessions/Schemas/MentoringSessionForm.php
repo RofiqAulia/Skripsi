@@ -53,7 +53,6 @@ class MentoringSessionForm
                 Select::make('status')
                     ->options([
                         'pending' => 'Pending',
-                        'confirmed' => 'Confirmed',
                         'done' => 'Done',
                         'cancelled' => 'Cancelled',
                     ])

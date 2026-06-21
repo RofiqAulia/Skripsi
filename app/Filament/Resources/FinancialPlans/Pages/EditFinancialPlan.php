@@ -28,4 +28,22 @@ class EditFinancialPlan extends EditRecord
     {
         return 'Financial plan saved successfully';
     }
+
+    protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    {
+        $oldStatus = $record->status;
+        $record->update($data);
+        $newStatus = $record->status;
+
+        if ($oldStatus !== $newStatus && in_array($newStatus, ['approved', 'revision_needed'])) {
+            // Send email to mentee
+            if ($record->user && $record->user->email) {
+                \Illuminate\Support\Facades\Mail::to($record->user->email)->send(
+                    new \App\Mail\FinancialPlanStatusMail($record, $newStatus, $record->admin_notes)
+                );
+            }
+        }
+
+        return $record;
+    }
 }

@@ -39,10 +39,6 @@
                     <a class="nav-link {{ request()->routeIs('document*') ? 'active' : '' }}" href="{{ route('document') }}" data-lang-key="nav-document">Document</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('scholarship-application*') || request()->routeIs('financial-plan*') ? 'active' : '' }}" href="{{ route('scholarship-application.index') }}" data-lang-key="nav-financial-plan">Financial Plan</a>
-                </li>
-
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->routeIs('mentoring*') || request()->routeIs('report*') ? 'active' : '' }}" href="{{ route('mentoring') }}"
                     id="mentoringDropdown"
@@ -60,6 +56,10 @@
                             <a class="dropdown-item" href="{{ route('mentoring') }}" data-lang-key="nav-mentor">Mentor</a>
                         </li>
                     </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('scholarship-application*') || request()->routeIs('financial-plan*') ? 'active' : '' }}" href="{{ route('scholarship-application.index') }}" data-lang-key="nav-financial-plan">Financial Plan</a>
                 </li>
 
                 <li class="nav-item">

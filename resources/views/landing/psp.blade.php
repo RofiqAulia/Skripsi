@@ -17,5 +17,10 @@
     {{-- 🔥 PROGRESS TRACKER --}}
     @include('sections.psp.progress')
 
+    {{-- 🔥 MODAL SUGGEST PROGRAM --}}
+    @include('partials.modal-suggest-program')
+
+    {{-- 🔥 MODAL MY SUGGESTIONS --}}
+    @include('partials.modal-my-suggestions')
 
 @endsection

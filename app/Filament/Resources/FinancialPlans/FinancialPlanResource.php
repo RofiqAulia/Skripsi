@@ -24,9 +24,28 @@ class FinancialPlanResource extends Resource
     protected static ?int $navigationSort = 4;
     protected static string | UnitEnum | null $navigationGroup = 'Study & Scholarship';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
-    
+
+    public static function canCreate(): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return ! auth()->user()->hasRole('pimpinan');
+    }
 
     protected static ?string $recordTitleAttribute = 'id';
+    public static function canViewAny(): bool
+    {
+        return !auth()->user()->hasRole('mentor');
+    }
+
 
     public static function form(Schema $schema): Schema
     {

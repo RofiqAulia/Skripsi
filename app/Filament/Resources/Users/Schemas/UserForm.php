@@ -24,14 +24,6 @@ class UserForm
                     ->columnSpanFull(),
                 TextInput::make('position'),
                 TextInput::make('company'),
-                TextInput::make('toefl_score')
-                    ->label('TOEFL Score')
-                    ->numeric()
-                    ->step(0.01),
-                TextInput::make('ielts_score')
-                    ->label('IELTS Score')
-                    ->numeric()
-                    ->step(0.01),
                 TextInput::make('name'),
                 TextInput::make('email')
                     ->label('Email address')

@@ -18,12 +18,15 @@ class ScholarshipApplicationForm
                 ->preload()
                 ->label('Mentee'),
 
-            \Filament\Forms\Components\Select::make('scholarship_id')
-                ->relationship('scholarship', 'title')
-                ->required()
-                ->searchable()
-                ->preload()
-                ->label('Beasiswa'),
+            \Filament\Forms\Components\TextInput::make('program_study_scholarship')
+                ->label('Beasiswa')
+                ->disabled()
+                ->formatStateUsing(fn ($record) => $record?->programStudy?->scholarship),
+
+            \Filament\Forms\Components\TextInput::make('program_study_country')
+                ->label('Negara')
+                ->disabled()
+                ->formatStateUsing(fn ($record) => $record?->programStudy?->country),
 
             \Filament\Forms\Components\Select::make('program_study_id')
                 ->relationship('programStudy', 'name')

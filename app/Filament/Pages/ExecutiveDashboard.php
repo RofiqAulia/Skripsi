@@ -112,7 +112,6 @@ class ExecutiveDashboard extends Page
         $fpBase = \App\Models\FinancialPlan::whereBetween('created_at', [$from, $to]);
         $fpTotal = (clone $fpBase)->count();
         $fpApproved = (clone $fpBase)->where('status', 'approved')->count();
-        $fpAvgReadiness = $fpTotal > 0 ? round((clone $fpBase)->avg('readiness_percentage'), 1) : 0;
         $fpTotalGap = (clone $fpBase)->sum('funding_gap');
 
         // PSP+Lolos cross-insight
@@ -218,14 +217,36 @@ class ExecutiveDashboard extends Page
         $years = range(date('Y'), date('Y') - 3);
 
         // ── Monitoring Notifications (Always active, regardless of date filter) ──
-        $pendingPsp = PspApplication::where('status', 'submission')->count();
-        $pendingDocs = Document::where('status', 'uploaded')->count();
-        $pendingMentoring = MentoringSession::where('status', 'pending')->count();
+        $user = auth()->user();
+        $pendingPsp = 0;
+        $pendingDocs = 0;
+        $pendingMentoring = 0;
+        $pendingFinancialPlan = 0;
+        $pendingProgramStudy = 0;
+
+        if ($user->hasRole('super_admin')) {
+            $pendingPsp = PspApplication::where('status', 'submission')->count();
+            $pendingDocs = Document::where('status', 'uploaded')->count();
+            $pendingMentoring = MentoringSession::where('status', 'pending')->count();
+            $pendingFinancialPlan = \App\Models\FinancialPlan::where('status', 'under_review')->count();
+            $pendingProgramStudy = \App\Models\ProgramStudy::where('status', 'pending')->count();
+        } elseif ($user->hasRole('pimpinan')) {
+            $pendingPsp = PspApplication::where('status', 'submission')->count();
+            $pendingFinancialPlan = \App\Models\FinancialPlan::where('status', 'under_review')->count();
+            $pendingProgramStudy = \App\Models\ProgramStudy::where('status', 'pending')->count();
+        } elseif ($user->hasRole('mentor')) {
+            $mentor = \App\Models\Mentor::where('user_id', $user->id)->first();
+            if ($mentor) {
+                $pendingMentoring = MentoringSession::where('status', 'pending')
+                    ->where('mentor_id', $mentor->id)
+                    ->count();
+            }
+        }
 
         return compact(
             'totalMentees', 'saLolos', 'saTotal', 'successRate',
             'pspApproved', 'mentoringDone', 'docsApproved', 'pspAndLolos',
-            'fpTotal', 'fpApproved', 'fpAvgReadiness', 'fpTotalGap',
+            'fpTotal', 'fpApproved', 'fpTotalGap',
             'lineLabels', 'lineTotal', 'lineLolos', 'lineTidakLolos',
             'doughnut',
             'byCountry',
@@ -233,7 +254,8 @@ class ExecutiveDashboard extends Page
             'mentLabels', 'mentDone', 'mentPending', 'mentCancelled',
             'topScholarships', 'byProgram', 'menteeProgress',
             'years', 'toeflLolos', 'docsTotal',
-            'pendingPsp', 'pendingDocs', 'pendingMentoring'
+            'pendingPsp', 'pendingDocs', 'pendingMentoring',
+            'pendingFinancialPlan', 'pendingProgramStudy'
         );
     }
 }

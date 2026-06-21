@@ -13,7 +13,7 @@
     <ul>
         <li>Applied Study Plan Details</li>
         <li>Financial Breakdown by Category</li>
-        <li>Financial Summary & Readiness</li>
+        <li>Financial Summary</li>
     </ul>
 
     <p>Please review the attached PDF document for your records.</p>

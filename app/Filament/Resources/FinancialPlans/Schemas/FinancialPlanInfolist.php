@@ -32,15 +32,6 @@ class FinancialPlanInfolist
                         TextEntry::make('total_estimated_cost')->money('IDR'),
                         TextEntry::make('total_funding')->money('IDR'),
                         TextEntry::make('funding_gap')->money('IDR'),
-                        TextEntry::make('readiness_percentage')->suffix('%'),
-                        TextEntry::make('risk_level')
-                            ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'low' => 'success',
-                                'medium' => 'warning',
-                                'high' => 'danger',
-                                default => 'gray',
-                            }),
                         TextEntry::make('status')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
@@ -52,6 +43,39 @@ class FinancialPlanInfolist
                                 default => 'gray',
                             }),
                     ])->columns(3),
+ 
+                Section::make('Budget Items Breakdown')
+                    ->description('Detail of estimated costs, scholarship coverage, and reference files per item.')
+                    ->components([
+                        \Filament\Infolists\Components\RepeatableEntry::make('items')
+                            ->label('')
+                            ->schema([
+                                TextEntry::make('category')
+                                    ->label('Category')
+                                    ->badge()
+                                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+                                TextEntry::make('item_name')->label('Item'),
+                                TextEntry::make('estimated_cost')
+                                    ->label('Estimated Cost')
+                                    ->numeric(decimalPlaces: 2),
+                                TextEntry::make('scholarship_coverage')
+                                    ->label('Scholarship Coverage')
+                                    ->numeric(decimalPlaces: 2),
+                                TextEntry::make('gap_amount')
+                                    ->label('Gap')
+                                    ->numeric(decimalPlaces: 2)
+                                    ->color(fn ($state) => $state >= 0 ? 'success' : 'danger'),
+                                TextEntry::make('reference_file_path')
+                                    ->label('Reference File')
+                                    ->getStateUsing(fn ($record) => $record->reference_file_name ? '📄 ' . $record->reference_file_name : null)
+                                    ->placeholder('No file')
+                                    ->url(fn ($record) => $record->reference_file_path
+                                        ? \Illuminate\Support\Facades\Storage::url($record->reference_file_path)
+                                        : null)
+                                    ->openUrlInNewTab()
+                                    ->color('primary'),
+                            ])->columns(6)
+                    ])->collapsible(),
  
                 Section::make('Supporting Documents')
                     ->components([

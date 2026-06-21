@@ -160,7 +160,7 @@
                                     </td>
                                     <td>
                                         @if($s->report)
-                                            <span class="badge-base badge-{{ $s->report->status }}">{{ ucfirst($s->report->status) }}</span>
+                                            <span class="badge-base badge-approved">Submitted</span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif

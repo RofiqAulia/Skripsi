@@ -306,29 +306,7 @@
     box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
 }
 
-/* Right Sidebar: Readiness & Summary */
-.readiness-circle {
-    width: 140px; margin: 0 auto;
-}
-.circular-chart {
-    display: block; margin: 0 auto; max-width: 80%; max-height: 250px;
-}
-.circle-bg {
-    fill: none; stroke: #f1f5f9; stroke-width: 3.8;
-}
-.circle {
-    fill: none; stroke-width: 2.8; stroke-linecap: round;
-    animation: progress 1s ease-out forwards;
-}
-@keyframes progress {
-    0% { stroke-dasharray: 0 100; }
-}
-.circular-chart.green .circle { stroke: #10b981; }
-.circular-chart.orange .circle { stroke: #f59e0b; }
-.circular-chart.red .circle { stroke: #ef4444; }
-.percentage {
-    fill: #1e293b; font-family: sans-serif; font-size: 0.5em; text-anchor: middle; font-weight: 700;
-}
+/* Right Sidebar: Summary */
 
 .summary-item {
     display: flex; justify-content: space-between; align-items: center;
@@ -339,4 +317,53 @@
 .summary-item hr { margin: 1rem 0; border-color: #e2e8f0; }
 .gap-item { margin-top: 1rem; font-size: 1.05rem; }
 .gap-item strong { font-size: 1.2rem; }
+
+/* Upload Reference Button */
+.fp-upload-ref-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    background: #f0f9ff;
+    border: 1.5px dashed #38bdf8;
+    color: #0284c7;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.3;
+    min-width: 64px;
+}
+.fp-upload-ref-btn:hover {
+    background: #e0f2fe;
+    border-color: #0284c7;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(2,132,199,0.15);
+}
+.fp-upload-ref-btn i { font-size: 1rem; }
+.fp-upload-ref-btn small { font-size: 0.62rem; color: #64748b; font-weight: 400; }
+
+/* File reference link */
+.fp-ref-file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #334155;
+    text-decoration: none;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 3px 8px;
+    max-width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: background 0.15s;
+}
+.fp-ref-file-link:hover { background: #e2e8f0; color: #0f172a; }
 </style>

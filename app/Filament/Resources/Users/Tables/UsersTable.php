@@ -26,19 +26,14 @@ class UsersTable
                     ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('roles.name')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'super_admin' => 'danger',
+                        'mentor'      => 'info',
+                        'mentee'      => 'success',
+                        'pimpinan'    => 'warning',
+                        default       => 'gray',
+                    })
                     ->searchable(),
-                TextColumn::make('toefl_score')
-                    ->label('TOEFL')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('ielts_score')
-                    ->label('IELTS')
-                    ->sortable()
-                    ->searchable(),
-                // TextColumn::make('position')
-                //     ->searchable(),
-                // TextColumn::make('company')
-                //     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

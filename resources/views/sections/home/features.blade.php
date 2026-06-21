@@ -21,7 +21,7 @@
                         'desc_key'  => 'step-1-desc',
                         'btn_key'   => 'step-1-btn',
                         'title' => 'Build Your Study Plan',
-                        'desc'  => 'Start with a personalized study plan tailored to your target university and readiness level.',
+                        'desc'  => 'Start with a personalized study plan tailored to your target university and goals.',
                         'btn'   => 'Create PSP',
                         'link'  => route('psp'),
                         'image' => 'study-planning.jpg',

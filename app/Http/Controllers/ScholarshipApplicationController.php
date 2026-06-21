@@ -29,13 +29,18 @@ class ScholarshipApplicationController extends Controller
             ->get();
 
         // Data untuk form dropdown
-        $programStudies = ProgramStudy::orderBy('name')->get();
+        $programStudies = ProgramStudy::approved()->orderBy('name')->get();
 
         // Stats
         $statsTotal     = $applications->count();
         $statsLolos     = $applications->filter(fn($app) => $app->display_status === 'lolos')->count();
         $statsPending   = $applications->filter(fn($app) => $app->display_status === 'pending')->count();
         $statsTidakLolos = $applications->filter(fn($app) => $app->display_status === 'tidak_lolos')->count();
+        // Current PSP Application program study
+        $pspApp = $user->pspApplication;
+        $pspProgram = $pspApp?->studyPlan?->program;
+
+        $mySuggestions = ProgramStudy::where('submitted_by', $user->id)->orderBy('created_at', 'desc')->get();
 
         return view('landing.scholarship-application', compact(
             'applications',
@@ -44,6 +49,9 @@ class ScholarshipApplicationController extends Controller
             'statsLolos',
             'statsPending',
             'statsTidakLolos',
+            'pspApp',
+            'pspProgram',
+            'mySuggestions'
         ));
     }
 
@@ -61,6 +69,11 @@ class ScholarshipApplicationController extends Controller
             'updated_date'     => 'required|date',
             'notes'            => 'nullable|string|max:1000',
         ]);
+
+        $userPsp = Auth::user()->pspApplication;
+        if (!$userPsp || $userPsp->status !== 'approved') {
+            return back()->withErrors(['error' => 'Your PSP Application must be approved before you can add a scholarship application.'])->withInput();
+        }
 
         // Cek duplikasi
         $exists = ScholarshipApplication::where([

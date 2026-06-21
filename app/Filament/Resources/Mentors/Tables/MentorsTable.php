@@ -16,9 +16,9 @@ class MentorsTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\ImageColumn::make('photo')
-                    ->circular()
-                    ->defaultImageUrl(url('/images/mentorship.webp')),
+                // \Filament\Tables\Columns\ImageColumn::make('photo')
+                //     ->circular()
+                //     ->defaultImageUrl(url('/images/mentorship.webp')),
                 TextColumn::make('user_id')
                     ->numeric()
                     ->sortable()

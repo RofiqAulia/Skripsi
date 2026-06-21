@@ -37,8 +37,8 @@
             <span class="hs-label">Pending</span>
         </div>
         <div class="hs-item">
-            <span class="hs-num hs-blue">{{ $mySessions->where('status', 'confirmed')->count() }}</span>
-            <span class="hs-label">Confirmed</span>
+            <span class="hs-num hs-red">{{ $mySessions->where('status', 'cancelled')->count() }}</span>
+            <span class="hs-label">Cancelled</span>
         </div>
     </div>
 
@@ -64,7 +64,6 @@
                             @csrf
                             <select name="status" onchange="this.form.submit()" class="hc-badge-select hc-{{ $session->status }}">
                                 <option value="pending" {{ $session->status === 'pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                <option value="confirmed" {{ $session->status === 'confirmed' ? 'selected' : '' }}>✅ Confirmed</option>
                                 <option value="done" {{ $session->status === 'done' ? 'selected' : '' }}>🎉 Done</option>
                                 <option value="cancelled" {{ $session->status === 'cancelled' ? 'selected' : '' }}>❌ Cancelled</option>
                             </select>
@@ -100,9 +99,9 @@
 
                 @if($session->report)
                 <div class="hc-report">
-                    <span class="hc-report-badge hc-report-{{ $session->report->status }}">
+                    <span class="hc-report-badge hc-report-approved">
                         <i class="bi bi-file-earmark-text"></i>
-                        Report: {{ ucfirst($session->report->status) }}
+                        Report Submitted
                     </span>
                 </div>
                 @endif
@@ -362,7 +361,6 @@
 }
 
 .hc-pending { background-color: #fef3c7; color: #d97706; }
-.hc-confirmed { background-color: #dbeafe; color: #2563eb; }
 .hc-done { background-color: #dcfce7; color: #16a34a; }
 .hc-cancelled { background-color: #fee2e2; color: #dc2626; }
 

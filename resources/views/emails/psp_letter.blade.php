@@ -7,7 +7,7 @@
 
     <p>Hello <strong>{{ $application->user->name }}</strong>,</p>
 
-    <p>Thank you for applying to the Scholarship Preparation Program (PSP). Along with this email, we have attached the Decision Letter regarding your application.</p>
+    <p>Thank you for applying to the Personalized Study Plan (PSP). Along with this email, we have attached the Decision Letter regarding your application.</p>
 
     <p>Your application status is currently: <strong>{{ $application->status === 'review' ? 'Revisi' : ucfirst($application->status) }}</strong>.</p>
 
