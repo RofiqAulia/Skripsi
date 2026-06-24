@@ -53,6 +53,7 @@ class MentoringReportForm
 
                 // ✅ File Upload
                 FileUpload::make('file')
+                    ->disk('public')
                     ->directory('mentoring-reports')
                     ->downloadable()
                     ->openable(),

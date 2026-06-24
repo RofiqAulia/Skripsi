@@ -208,7 +208,7 @@
                                                                         $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
                                                                     @endphp
                                                                     <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                                        <a href="{{ Storage::url($item->reference_file_path) }}" target="_blank" class="fp-ref-file-link" title="{{ $item->reference_file_name }}">
+                                                                        <a href="{{ asset($item->reference_file_path) }}" target="_blank" class="fp-ref-file-link" title="{{ $item->reference_file_name }}">
                                                                             @if($isImage)
                                                                                 <i class="bi bi-file-earmark-image text-success"></i>
                                                                             @else
