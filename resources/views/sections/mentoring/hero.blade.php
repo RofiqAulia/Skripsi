@@ -16,12 +16,12 @@
 
                 <!-- 📝 HEADLINE -->
                 <h1 class="hero-title">
-                    Learn from Those Who Have Walked the Path
+                    Learn from Experienced International Study Mentors
                 </h1>
 
                 <!-- 📄 SUBTEXT -->
                 <p class="hero-subtext mt-3">
-                    Connect with elite mentors who have secured top global scholarships. Get 1-on-1 insights, ace your interviews, and perfect your application.
+                    Connect with mentors who have firsthand experience studying abroad. Gain personalized guidance, practical interview tips, and support in preparing your scholarship documents and applications.
                 </p>
 
             </div>
@@ -34,7 +34,7 @@
                      class="hero-image">
                 
                 <!-- 🔥 FLOATING STATS -->
-                <div class="hero-stats">
+                <!-- <div class="hero-stats">
                     <div class="stat-item">
                         <h4>Elite</h4>
                         <span>Mentors</span>
@@ -47,7 +47,7 @@
                         <h4>Insider</h4>
                         <span>Tips</span>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

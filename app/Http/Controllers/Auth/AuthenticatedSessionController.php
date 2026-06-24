@@ -9,8 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+use App\Traits\GeneratesMathCaptchaImage;
+
 class AuthenticatedSessionController extends Controller
 {
+    use GeneratesMathCaptchaImage;
+
     /**
      * Display the login view.
      */
@@ -18,9 +22,10 @@ class AuthenticatedSessionController extends Controller
     {
         $num1 = rand(1, 10);
         $num2 = rand(1, 10);
+        $captchaImage = $this->generateCaptchaImage($num1, $num2);
         session(['captcha_result' => $num1 + $num2]);
 
-        return view('auth.login', compact('num1', 'num2'));
+        return view('auth.login', compact('captchaImage'));
     }
 
     /**

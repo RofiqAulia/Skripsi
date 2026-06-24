@@ -16,12 +16,12 @@
 
                 <!-- 📝 HEADLINE -->
                 <h1 class="hero-title">
-                    Design Your Blueprint for Success
+                    Design Your Path to Success
                 </h1>
 
                 <!-- 📄 SUBTEXT -->
                 <p class="hero-subtext mt-3">
-                    Stop guessing, start planning. Craft a highly tailored, step-by-step roadmap designed specifically for your academic goals and scholarship timelines.
+                    Stop guessing and start planning. Create a personalized, step-by-step roadmap tailored to help you achieve your scholarship and academic goals.
                 </p>
 
             </div>
@@ -34,7 +34,7 @@
                      class="hero-image">
                 
                 <!-- 🔥 FLOATING STATS -->
-                <div class="hero-stats">
+                <!-- <div class="hero-stats">
                     <div class="stat-item">
                         <h4>Tailored</h4>
                         <span>Strategy</span>
@@ -47,7 +47,7 @@
                         <h4>Actionable</h4>
                         <span>Steps</span>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

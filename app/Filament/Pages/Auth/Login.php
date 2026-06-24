@@ -9,8 +9,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Illuminate\Validation\ValidationException;
 
+use App\Traits\GeneratesMathCaptchaImage;
+
 class Login extends BaseLogin
 {
+    use GeneratesMathCaptchaImage;
+
     // Use instance property for view path
     protected string $view = 'filament.pages.auth.login_custom';
 
@@ -19,6 +23,7 @@ class Login extends BaseLogin
 
     public int $num1;
     public int $num2;
+    public string $captchaImage;
 
     public function mount(): void
     {
@@ -40,6 +45,7 @@ class Login extends BaseLogin
     {
         $this->num1 = rand(1, 10);
         $this->num2 = rand(1, 10);
+        $this->captchaImage = $this->generateCaptchaImage($this->num1, $this->num2);
         session(['admin_captcha_result' => $this->num1 + $this->num2]);
     }
 

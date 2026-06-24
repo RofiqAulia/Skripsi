@@ -16,12 +16,12 @@
 
                 <!-- 📝 HEADLINE -->
                 <h1 class="hero-title">
-                    Secure & Streamlined Document Vault
+                    Manage Your Documents with Ease and Security
                 </h1>
 
                 <!-- 📄 SUBTEXT -->
                 <p class="hero-subtext mt-3">
-                    Your journey starts with the right paperwork. Upload, organize, and track all your essential documents securely in one centralized hub.
+                    Keep all your scholarship preparation documents in one place. Upload, organize, and track your documents easily, securely, and efficiently through a centralized platform.
                 </p>
 
             </div>
@@ -29,12 +29,12 @@
             <!-- RIGHT: IMAGE + STATS -->
             <div class="col-lg-6 d-flex justify-content-center align-items-center position-relative mt-4 mt-lg-2">
 
-                <img src="{{ asset('images/hero-doc-revisi.png') }}"
+                <img src="{{ asset('images/hero-document.png') }}"
                      alt="Upload Documents"
                      class="hero-image">
                 
                 <!-- 🔥 FLOATING STATS -->
-                <div class="hero-stats">
+                <!-- <div class="hero-stats">
                     <div class="stat-item">
                         <h4>100%</h4>
                         <span>Secure</span>
@@ -47,7 +47,7 @@
                         <h4>Seamless</h4>
                         <span>Process</span>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

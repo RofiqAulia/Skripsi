@@ -5,7 +5,7 @@
     <div class="dash-header">
         <div class="dash-header-title">
             <h1>Welcome back, {{ $user->name }}</h1>
-            <p>Your preparation journey at a glance</p>
+            <p>Your Preparation Journey At a Glance</p>
         </div>
         <span class="dash-date"><i class="bi bi-calendar3"></i> {{ now()->format('l, d F Y') }}</span>
     </div>
@@ -34,7 +34,7 @@
             <div class="stat-info">
                 <span class="stat-label">Documents</span>
                 <span class="stat-value">{{ $docsUploaded }}/{{ $docsTotal }}</span>
-                <span class="stat-sub">{{ $docsApproved }} approved</span>
+                <span class="stat-sub">{{ $docsApproved }} Approved</span>
             </div>
         </div>
 
@@ -44,7 +44,7 @@
             <div class="stat-info">
                 <span class="stat-label">Mentoring</span>
                 <span class="stat-value">{{ $sessionsDone }}/{{ $sessionsTotal }}</span>
-                <span class="stat-sub">sessions completed</span>
+                <span class="stat-sub">Sessions Completed</span>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
             <div class="stat-info">
                 <span class="stat-label">Scholarship</span>
                 <span class="stat-value">{{ $scholarshipLolos }}/{{ $scholarshipTotal }}</span>
-                <span class="stat-sub">applications passed</span>
+                <span class="stat-sub">Applications Passed</span>
             </div>
         </div>
 

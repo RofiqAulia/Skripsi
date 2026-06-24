@@ -17,7 +17,7 @@
 
             <div class="cta-buttons">
                 <a href="{{ auth()->check() ? route('psp') : route('login') }}" class="btn-primary" data-lang-key="cta-btn-primary">Get Started Now</a>
-                <a href="{{ route('mentoring') }}" class="btn-consult" data-lang-key="cta-btn-consult">Talk to a Mentor</a>
+                <a href="{{ route('mentoring') }}" class="btn-consult" data-lang-key="cta-btn-consult">Choose Your Mentor</a>
             </div>
         </div>
 

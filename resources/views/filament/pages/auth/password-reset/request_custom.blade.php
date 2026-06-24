@@ -61,7 +61,10 @@
 
                 <!-- Anti Robot Captcha -->
                 <div class="input-group">
-                    <label class="captcha-label">Anti-robot: What is the result of {{ $num1 }} + {{ $num2 }}?</label>
+                    <label class="captcha-label">Anti-robot: Solve the math problem</label>
+                    <div style="margin-bottom: 10px;">
+                        <img src="{{ $captchaImage }}" alt="Math Captcha" style="border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
                     <input type="number" wire:model="data.captcha" required placeholder="Answer" autocomplete="off">
                 </div>
 

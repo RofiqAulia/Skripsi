@@ -8,9 +8,12 @@ use Filament\Notifications\Notification;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\Traits\GeneratesMathCaptchaImage;
 
 class RequestPasswordReset extends BaseRequestPasswordReset
 {
+    use GeneratesMathCaptchaImage;
+
     protected string $view = 'filament.pages.auth.password-reset.request_custom';
 
     // Override layout to base layout to prevent standard SimplePage layout wrapper
@@ -18,6 +21,7 @@ class RequestPasswordReset extends BaseRequestPasswordReset
 
     public int $num1;
     public int $num2;
+    public string $captchaImage;
 
     public function mount(): void
     {
@@ -39,6 +43,7 @@ class RequestPasswordReset extends BaseRequestPasswordReset
     {
         $this->num1 = rand(1, 10);
         $this->num2 = rand(1, 10);
+        $this->captchaImage = $this->generateCaptchaImage($this->num1, $this->num2);
         session(['admin_reset_captcha_result' => $this->num1 + $this->num2]);
     }
 

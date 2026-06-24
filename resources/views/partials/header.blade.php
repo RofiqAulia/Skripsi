@@ -30,6 +30,10 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}" data-lang-key="nav-about">About</a>
                 </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}" href="{{ route('dashboard') }}" data-lang-key="nav-dashboard">Dashboard</a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('psp*') ? 'active' : '' }}" href="{{ route('psp') }}" data-lang-key="nav-psp">PSP</a>
@@ -62,9 +66,9 @@
                     <a class="nav-link {{ request()->routeIs('scholarship-application*') || request()->routeIs('financial-plan*') ? 'active' : '' }}" href="{{ route('scholarship-application.index') }}" data-lang-key="nav-financial-plan">Financial Plan</a>
                 </li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}" href="{{ route('dashboard') }}" data-lang-key="nav-dashboard">Dashboard</a>
-                </li>
+                </li> -->
 
             </ul>
         </div>

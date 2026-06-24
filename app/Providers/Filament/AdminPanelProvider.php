@@ -76,6 +76,28 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Master Data'),
                 NavigationGroup::make()
                     ->label('User Management'),
+                NavigationGroup::make()
+                    ->label('Bantuan'),
+            ])
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Buku Panduan Admin')
+                    ->url(fn (): string => asset('docs/Buku_Panduan_Admin_SOVIA.pdf'), shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-book-open')
+                    ->group('Bantuan')
+                    ->sort(99)
+                    ->visible(fn () => auth()->user()?->hasRole('super_admin')),
+                \Filament\Navigation\NavigationItem::make('Buku Panduan Pimpinan')
+                    ->url(fn (): string => asset('docs/Buku_Panduan_Pimpinan_SOVIA.pdf'), shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-book-open')
+                    ->group('Bantuan')
+                    ->sort(99)
+                    ->visible(fn () => auth()->user()?->hasRole('pimpinan')),
+                \Filament\Navigation\NavigationItem::make('Buku Panduan Mentor')
+                    ->url(fn (): string => asset('docs/Buku_Panduan_Mentor_SOVIA.pdf'), shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-book-open')
+                    ->group('Bantuan')
+                    ->sort(99)
+                    ->visible(fn () => auth()->user()?->hasRole('mentor')),
             ]);
     }
 }

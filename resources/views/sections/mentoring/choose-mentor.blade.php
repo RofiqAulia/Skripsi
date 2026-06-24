@@ -105,7 +105,7 @@
 
         </div>
 
-        @if($mentors->count() > 5)
+        @if($mentors->count() > 3)
             <div class="scroll-hint">
                 <i class="bi bi-mouse"></i> Scroll to see more mentors
             </div>
@@ -181,7 +181,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-height: 620px;
+    max-height: 370px;
     overflow-y: auto;
     padding-right: 8px;
     scroll-behavior: smooth;

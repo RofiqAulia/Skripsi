@@ -23,18 +23,18 @@ const TRANSLATIONS = {
     /* ──────────── HERO ──────────── */
     'hero-breadcrumb': { en: 'Home', id: 'Beranda' },
     'hero-title': {
-        en: 'Empower Your Global Journey with World-Class Mentorship',
+        en: 'Empower Your Global Study Journey with Quality Mentorship',
         id: 'Wujudkan Perjalanan Global Anda dengan Mentorship Berkelas Dunia',
     },
     'hero-subtext': {
-        en: 'Discover the right mentors, collaborate, and take confident steps toward your future. Go Beyond Next.',
+        en: 'Connect with the right mentors, build meaningful collaborations, and prepare your best steps toward achieving your academic and career goals in the future.',
         id: 'Temukan mentor yang tepat, berkolaborasi, dan melangkah yakin menuju masa depanmu. Lampaui Batas Selanjutnya.',
     },
     'hero-btn-primary':   { en: 'Start Your Journey', id: 'Mulai Perjalananmu' },
     'hero-btn-secondary': { en: 'Explore Program',    id: 'Jelajahi Program' },
     'hero-microcopy': {
-        en: 'Built to support employees in achieving international postgraduate success',
-        id: 'Dibangun untuk mendukung karyawan dalam meraih kesuksesan pascasarjana internasional',
+        // en: 'Built to support employees in achieving international postgraduate success',
+        // id: 'Dibangun untuk mendukung karyawan dalam meraih kesuksesan pascasarjana internasional',
     },
     'stat-scholarships': { en: 'Scholarships', id: 'Beasiswa' },
     'stat-mentors':      { en: 'Best Mentors', id: 'Mentor Terbaik' },
@@ -144,7 +144,7 @@ const TRANSLATIONS = {
         id: 'Buat rencana persiapan terstruktur, dapatkan mentorship, dan konsultasikan langsung dengan tim CLD untuk meraih tujuan akademis Anda.',
     },
     'cta-btn-primary': { en: 'Get Started Now',  id: 'Mulai Sekarang' },
-    'cta-btn-consult': { en: 'Talk to a Mentor', id: 'Bicara dengan Mentor' },
+    'cta-btn-consult': { en: 'Choose Your Mentor', id: 'Pilih Mentor Mu' },
 
     /* ──────────── FOOTER ──────────── */
     'footer-tagline': {

@@ -16,13 +16,14 @@
 
                 <!-- 📝 HEADLINE -->
                 <h1 class="hero-title" data-lang-key="hero-title">
-                    Your Gateway to Global Excellence
+                    Empower Your Global Study Journey with Quality Mentorship
                 </h1>
 
                 <!-- 📄 SUBTEXT -->
                 <p class="hero-subtext mt-3" data-lang-key="hero-subtext">
-                    Turn your study abroad dreams into reality with personalized roadmaps, elite mentorship, and a clear path to the world's top universities.
+                    Connect with the right mentors, build meaningful collaborations, and prepare your best steps toward achieving your academic and career goals in the future.
                 </p>
+                
 
                 <!-- 🔘 CTA -->
                 <div class="hero-cta mt-4 d-flex gap-3 flex-wrap">
@@ -39,9 +40,9 @@
 
                 </div>
 
-                <small class="hero-microcopy" data-lang-key="hero-microcopy">
+                <!-- <small class="hero-microcopy" data-lang-key="hero-microcopy">
                     Built to support employees in achieving international postgraduate success
-                </small>
+                </small> -->
 
             </div>
 
@@ -51,26 +52,6 @@
                 <img src="{{ asset('images/header-web-sigid-01c.jpg') }}"
                      alt="Mentoring"
                      class="hero-image">
-
-                <!-- 🔥 FLOATING STATS -->
-                <div class="hero-stats">
-
-                    <div class="stat-item">
-                        <h4>20+</h4>
-                        <span data-lang-key="stat-scholarships">Scholarships</span>
-                    </div>
-
-                    <div class="stat-item">
-                        <h4>20+</h4>
-                        <span data-lang-key="stat-mentors">Best Mentors</span>
-                    </div>
-
-                    <div class="stat-item">
-                        <h4>100+</h4>
-                        <span data-lang-key="stat-applicants">Success Stories</span>
-                    </div>
-
-                </div>
 
             </div>
 
@@ -197,41 +178,6 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
         }
 
-        /* 🔥 DESKTOP FLOATING */
-        .hero-stats {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-
-            display: flex;
-            gap: 20px;
-
-            background: rgba(255,255,255,0.95);
-            padding: 18px 28px;
-            border-radius: 16px;
-
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-item {
-            text-align: center;
-            min-width: 90px;
-        }
-
-        .stat-item h4 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 700;
-            color: #8b0000;
-        }
-
-        .stat-item span {
-            font-size: 13px;
-            color: #666;
-        }
-
         @media (max-width: 768px) {
 
             .hero-image-wrapper {
@@ -240,33 +186,7 @@
                 align-items: center;
             }
 
-            /* ❗ UBAH TOTAL BEHAVIOR */
-            .hero-stats {
-                position: static;
-                transform: none;
 
-                margin-top: 20px;
-                width: 100%;
-
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 12px;
-
-                padding: 16px;
-            }
-
-            .stat-item {
-                flex: 1 1 30%;
-                min-width: 80px;
-            }
-
-            .stat-item h4 {
-                font-size: 18px;
-            }
-
-            .stat-item span {
-                font-size: 12px;
-            }
         }
     </style>
 

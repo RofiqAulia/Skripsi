@@ -34,7 +34,7 @@
                      class="hero-image">
                 
                 <!-- 🔥 FLOATING STATS -->
-                <div class="hero-stats">
+                <!-- <div class="hero-stats">
                     <div class="stat-item">
                         <h4>100%</h4>
                         <span>Support</span>
@@ -47,7 +47,7 @@
                         <h4>Proven</h4>
                         <span>Excellence</span>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

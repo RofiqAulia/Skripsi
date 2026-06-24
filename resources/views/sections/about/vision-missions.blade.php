@@ -26,7 +26,7 @@
 
                     <p>
                         To create a future where every employee has clear access 
-                        to international education pathways and can grow beyond boundaries.
+                        to international education pathways and grow beyond boundaries.
                     </p>
 
                 </div>

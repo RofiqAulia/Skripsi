@@ -111,7 +111,12 @@
 
         <!-- Anti Robot Captcha -->
         <div class="input-group">
-            <label class="captcha-label">Anti-robot: What is the result of {{ $num1 ?? rand(1,10) }} + {{ $num2 ?? rand(1,10) }}?</label>
+            <label class="captcha-label">Anti-robot: Solve the math problem</label>
+            @if(isset($captchaImage))
+                <div style="margin-bottom: 10px;">
+                    <img src="{{ $captchaImage }}" alt="Math Captcha" style="border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+            @endif
             <input type="number" name="captcha" required placeholder="Answer" autocomplete="off">
             @error('captcha')
                 <span class="text-error">{{ $message }}</span>
