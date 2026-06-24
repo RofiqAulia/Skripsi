@@ -9,6 +9,10 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use App\Models\User;
 
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 class PasswordResetLinkController extends Controller
 {
     /**
@@ -28,16 +32,28 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
-            'password' => ['required', 'confirmed', 'min:8'],
         ], [
             'email.exists' => 'Email tidak terdaftar di sistem.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.'
         ]);
 
-        $user = User::where('email', $request->email)->first();
-        $user->password = $request->password;
-        $user->save();
+        // Generate OTP
+        $otp = sprintf("%06d", mt_rand(1, 999999));
 
-        return redirect()->route('login')->with('status', 'Password Anda telah berhasil direset! Silakan login dengan password baru.');
+        // Save OTP
+        DB::table('password_reset_otps')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'otp' => $otp,
+                'created_at' => now()
+            ]
+        );
+
+        // Send Email
+        Mail::to($request->email)->send(new OtpMail($otp));
+
+        return redirect()->route('password.reset')->with([
+            'email' => $request->email,
+            'status' => 'Kode OTP telah dikirim ke email Anda. Silakan cek Inbox atau Spam.'
+        ]);
     }
 }
