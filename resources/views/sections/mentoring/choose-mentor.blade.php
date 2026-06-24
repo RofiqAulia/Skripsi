@@ -60,7 +60,13 @@
                     </div>
 
                     <div class="mentor-detail">
-                        <span>🎓 {{ $education[0] ?? '-' }}</span>
+                        @php
+                            $firstEdu = $education[0] ?? '-';
+                            if (is_array($firstEdu)) {
+                                $firstEdu = $firstEdu['value'] ?? '-';
+                            }
+                        @endphp
+                        <span>🎓 {{ $firstEdu }}</span>
                         <span>🌍 {{ count($career) }} Career Steps</span>
                     </div>
                 </div>
@@ -503,7 +509,10 @@ function renderList(data) {
     try {
         const arr = JSON.parse(data);
         if (!Array.isArray(arr) || arr.length === 0) return "<li>-</li>";
-        return arr.map(item => `<li>${item}</li>`).join("");
+        return arr.map(item => {
+            const text = (typeof item === 'object' && item !== null && item.value) ? item.value : item;
+            return `<li>${text}</li>`;
+        }).join("");
     } catch {
         return "<li>-</li>";
     }

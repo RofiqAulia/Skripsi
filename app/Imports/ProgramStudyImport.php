@@ -103,13 +103,13 @@ class ProgramStudyImport implements ToCollection, WithHeadingRow, WithChunkReadi
     }
 
     /**
-     * Parse "IELTS:6.5, TOEFL:80" → [["test_name":"IELTS","minimum_score":"6.5"],...]
+     * Parse "IELTS:6.5; TOEFL:80" → [["test_name":"IELTS","minimum_score":"6.5"],...]
      */
     protected function parseEnglishTest(mixed $value): ?array
     {
         if (empty($value) || $value === '-') return null;
 
-        $tests  = array_map('trim', explode(',', (string) $value));
+        $tests  = array_map('trim', explode(';', (string) $value));
         $result = [];
         foreach ($tests as $test) {
             if (empty($test)) continue;

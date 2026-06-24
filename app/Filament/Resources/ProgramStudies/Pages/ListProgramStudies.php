@@ -39,10 +39,21 @@ class ListProgramStudies extends ListRecords
         return [
             CreateAction::make(),
 
+            Action::make('exportExcel')
+                ->label('Export Excel')
+                ->icon(Heroicon::ArrowDownTray)
+                ->color('success')
+                ->action(function () {
+                    return Excel::download(
+                        new \App\Exports\ProgramStudyExport(),
+                        'program_study_export.xlsx'
+                    );
+                }),
+
             Action::make('importExcel')
                 ->label('Import Excel')
                 ->icon(Heroicon::ArrowUpTray)
-                ->color('success')
+                ->color('warning')
                 ->modalHeading('Import Program Study from Excel')
                 ->modalDescription('Upload an Excel file (.xlsx) containing Program Study data. Download the template first for the correct format.')
                 ->modalSubmitActionLabel('Import Data')
