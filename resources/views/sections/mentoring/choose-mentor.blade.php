@@ -47,7 +47,7 @@
 
             <div class="mentor-main">
                 @php
-                    $photoUrl = $mentor->photo ? asset('storage/' . $mentor->photo) : asset('images/mentorship.webp');
+                    $photoUrl = $mentor->photo ? asset($mentor->photo) : asset('images/mentorship.webp');
                 @endphp
                 <img src="{{ $photoUrl }}" class="mentor-img" alt="{{ $user->name ?? 'Mentor' }}">
 

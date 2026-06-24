@@ -140,7 +140,7 @@ class DocumentsTable
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->visible(fn ($record) => !empty($record->file))
-                    ->url(fn ($record) => asset('storage/' . $record->file))
+                    ->url(fn ($record) => asset($record->file))
                     ->openUrlInNewTab(),
 
                 EditAction::make(),

@@ -138,7 +138,7 @@
 
                             {{-- View File --}}
                             @if($item->file)
-                                <a href="{{ asset('storage/' . $item->file) }}"
+                                <a href="{{ asset($item->file) }}"
                                    target="_blank"
                                    class="btn btn-sm btn-view"
                                    title="View Document">
@@ -275,7 +275,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-1">
-                                    <a href="{{ asset('storage/' . $otherDoc->file) }}" target="_blank" class="btn btn-sm btn-view" title="View">
+                                    <a href="{{ asset($otherDoc->file) }}" target="_blank" class="btn btn-sm btn-view" title="View">
                                         <i class="bi bi-file-earmark-text-fill"></i>
                                     </a>
                                     @if($otherDoc->status !== 'approved')

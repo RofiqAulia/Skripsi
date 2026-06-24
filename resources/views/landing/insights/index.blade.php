@@ -47,7 +47,7 @@
                             {{-- COVER --}}
                             <div class="insight-cover">
                                 @if($article->cover_image)
-                                    <img src="{{ asset('storage/' . $article->cover_image) }}"
+                                    <img src="{{ asset($article->cover_image) }}"
                                          alt="{{ $article->title }}">
                                 @else
                                     <img src="{{ asset('images/scholarships-.jpeg') }}"

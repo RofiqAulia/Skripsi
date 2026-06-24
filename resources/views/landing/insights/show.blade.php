@@ -5,7 +5,7 @@
 <div class="insight-detail-page">
 
     {{-- ═══ HERO ─── --}}
-    <div class="detail-hero" style="background-image: url('{{ $insight->cover_image ? asset('storage/' . $insight->cover_image) : asset('images/scholarships-.jpeg') }}')">
+    <div class="detail-hero" style="background-image: url('{{ $insight->cover_image ? asset($insight->cover_image) : asset('images/scholarships-.jpeg') }}')">
         <div class="detail-hero-overlay"></div>
         <div class="container-lg detail-hero-content">
             <a href="{{ route('insights.index') }}" class="back-link">
@@ -82,7 +82,7 @@
                     @foreach($related as $rel)
                         <a href="{{ route('insights.show', $rel->slug) }}" class="related-item">
                             <div class="related-img">
-                                <img src="{{ $rel->cover_image ? asset('storage/' . $rel->cover_image) : asset('images/scholarships-.jpeg') }}"
+                                <img src="{{ $rel->cover_image ? asset($rel->cover_image) : asset('images/scholarships-.jpeg') }}"
                                      alt="{{ $rel->title }}">
                             </div>
                             <div class="related-info">

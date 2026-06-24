@@ -31,7 +31,7 @@
     <div class="schedule-mentor-card">
         <div class="smc-left">
             @if($mentor->photo)
-                <img src="{{ asset('storage/' . $mentor->photo) }}" class="smc-avatar" alt="{{ $mentor->user->name }}">
+                <img src="{{ asset($mentor->photo) }}" class="smc-avatar" alt="{{ $mentor->user->name }}">
             @else
                 <div class="smc-avatar-placeholder">{{ strtoupper(substr($mentor->user->name, 0, 1)) }}</div>
             @endif

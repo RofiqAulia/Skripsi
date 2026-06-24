@@ -42,7 +42,7 @@ class MentoringReportsTable
                 // ✅ File
                 // TextColumn::make('file')
                 //     ->label('File')
-                //     ->url(fn ($record) => asset('storage/' . $record->file))
+                //     ->url(fn ($record) => asset($record->file))
                 //     ->openUrlInNewTab(),
 
                 // ✅ Mentor Notes

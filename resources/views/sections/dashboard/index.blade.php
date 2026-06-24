@@ -119,7 +119,7 @@
                     <div class="mentor-card">
                         <div class="mentor-avatar">
                             @if($myMentor->photo)
-                                <img src="{{ asset('storage/' . $myMentor->photo) }}" alt="{{ $myMentor->user->name }}">
+                                <img src="{{ asset($myMentor->photo) }}" alt="{{ $myMentor->user->name }}">
                             @else
                                 <div class="avatar-placeholder"><i class="bi bi-person-fill"></i></div>
                             @endif
@@ -239,8 +239,8 @@
                         @foreach($upcomingEvents as $ev)
                             <div class="upcoming-item {{ $ev->poster ? 'has-poster' : '' }}">
                                 @if($ev->poster)
-                                    <div class="upcoming-poster-thumb" onclick="openPosterLightbox('{{ asset('storage/' . $ev->poster) }}', '{{ addslashes($ev->title) }}')">
-                                        <img src="{{ asset('storage/' . $ev->poster) }}" alt="{{ $ev->title }}">
+                                    <div class="upcoming-poster-thumb" onclick="openPosterLightbox('{{ asset($ev->poster) }}', '{{ addslashes($ev->title) }}')">
+                                        <img src="{{ asset($ev->poster) }}" alt="{{ $ev->title }}">
                                         <div class="poster-zoom-icon"><i class="bi bi-arrows-fullscreen"></i></div>
                                     </div>
                                 @else
