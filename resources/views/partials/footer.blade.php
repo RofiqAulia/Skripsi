@@ -77,7 +77,7 @@
                     </div>
                     <div>
                         <span class="fcc-label">Email Us</span>
-                        <a href="mailto:cld@sig.id" class="fcc-link">cld@sig.id</a>
+                        <a href="mailto:cld@sig.co.id" class="fcc-link">cld@sig.id</a>
                     </div>
                 </div>
 
