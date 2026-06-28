@@ -1,6 +1,42 @@
 <x-filament-panels::page>
 
 {{-- ══════════════════════════════════════════════════════
+     WELCOME BANNER
+══════════════════════════════════════════════════════ --}}
+@php
+    $authUser = auth()->user();
+    $roleLabel = match(true) {
+        $authUser->hasRole('super_admin') => 'Administrator',
+        $authUser->hasRole('pimpinan')    => 'Executive',
+        $authUser->hasRole('mentor')      => 'Mentor',
+        default                           => 'User',
+    };
+    $greetingHour = now()->hour;
+    $greeting = match(true) {
+        $greetingHour < 12 => 'Good Morning',
+        $greetingHour < 17 => 'Good Afternoon',
+        default            => 'Good Evening',
+    };
+@endphp
+<div class="ed-welcome-banner">
+    <div class="ed-welcome-left">
+        <div class="ed-welcome-icon">
+            <x-heroicon-o-user-circle style="width:2.5rem;height:2.5rem;"/>
+        </div>
+        <div class="ed-welcome-text">
+            <span class="ed-welcome-greeting">{{ $greeting }}, <strong>{{ $authUser->name }}</strong> 👋</span>
+            <span class="ed-welcome-role">
+                <span class="ed-role-badge">{{ $roleLabel }}</span>
+                SOVIA — Scholarship & Mentoring Platform
+            </span>
+        </div>
+    </div>
+    <div class="ed-welcome-right">
+        <span class="ed-welcome-date">{{ now()->translatedFormat('l, d F Y') }}</span>
+    </div>
+</div>
+
+{{-- ══════════════════════════════════════════════════════
      FILTER BAR
 ══════════════════════════════════════════════════════ --}}
 <div class="ed-filter-bar">
@@ -612,6 +648,33 @@
     .alert-indigo .ed-alert-icon { background: rgba(99,102,241,0.1); color: #6366f1; }
     .alert-indigo .ed-alert-action { color: #4338ca; background: rgba(99,102,241,0.1); }
     .alert-indigo .ed-alert-action:hover { background: rgba(99,102,241,0.2); }
+
+    /* Welcome Banner */
+    .ed-welcome-banner {
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+        background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1d4ed8 100%);
+        border-radius: 0.75rem; padding: 1.25rem 1.75rem;
+        box-shadow: 0 4px 15px rgba(37,99,235,0.3); margin-bottom: 1.5rem;
+        color: #fff;
+    }
+    .ed-welcome-left { display: flex; align-items: center; gap: 1rem; }
+    .ed-welcome-icon { 
+        display: flex; align-items: center; justify-content: center;
+        width: 3.5rem; height: 3.5rem; border-radius: 50%;
+        background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);
+        flex-shrink: 0; color: #fff;
+    }
+    .ed-welcome-text { display: flex; flex-direction: column; gap: 0.25rem; }
+    .ed-welcome-greeting { font-size: 1.25rem; font-weight: 600; color: #fff; }
+    .ed-welcome-greeting strong { font-weight: 700; }
+    .ed-welcome-role { font-size: 0.8rem; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 0.5rem; }
+    .ed-role-badge {
+        background: rgba(255,255,255,0.2); color: #fff; font-weight: 600;
+        padding: 0.15rem 0.6rem; border-radius: 9999px; font-size: 0.7rem;
+        letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.3);
+    }
+    .ed-welcome-right { }
+    .ed-welcome-date { font-size: 0.85rem; color: rgba(255,255,255,0.8); font-weight: 500; }
 
     /* Filter Bar */
     .ed-filter-bar {
