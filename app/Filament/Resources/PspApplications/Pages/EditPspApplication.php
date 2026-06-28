@@ -26,7 +26,7 @@ class EditPspApplication extends EditRecord
             $application->load([
                 'user',
                 'scholarship.programStudy',
-                'studyPlan.programStudy',
+                'studyPlan',
                 'approver',
             ]);
 
@@ -37,6 +37,7 @@ class EditPspApplication extends EditRecord
             $filename = 'PSP-Letter-' . $application->user->name . '-' . now()->format('Ymd') . '.pdf';
 
             \Illuminate\Support\Facades\Mail::to($application->user->email)
+                ->cc(config('mail.from.address'))
                 ->send(new \App\Mail\PspLetterMail($application, $pdfContent, $filename));
         }
     }
