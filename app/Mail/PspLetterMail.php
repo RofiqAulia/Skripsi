@@ -49,16 +49,27 @@ class PspLetterMail extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
-        return [
+        $attachments = [
             Attachment::fromData(fn () => $this->pdfContent, $this->filename)
                     ->withMime('application/pdf'),
         ];
+
+        if ($this->application->studyPlan && !empty($this->application->studyPlan->files)) {
+            foreach ($this->application->studyPlan->files as $file) {
+                $pathStr = is_array($file) ? ($file['path'] ?? '') : $file;
+                $originalName = is_array($file) ? ($file['original_name'] ?? basename($pathStr)) : basename($pathStr);
+                
+                if ($pathStr) {
+                    $fullPath = \Illuminate\Support\Facades\Storage::disk('public')->path($pathStr);
+                    if (file_exists($fullPath)) {
+                        $attachments[] = Attachment::fromPath($fullPath)->as($originalName);
+                    }
+                }
+            }
+        }
+
+        return $attachments;
     }
 }
