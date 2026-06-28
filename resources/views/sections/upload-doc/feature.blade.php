@@ -799,18 +799,8 @@ function setupAllDropzones() {
         
         if (!fileInput) return;
         
-        // Click anywhere in dropzone to select file
-        dropzone.addEventListener('click', function(e) {
-            // Don't trigger if clicking on existing preview buttons
-            if (!e.target.closest('.dropzone-preview, button')) {
-                fileInput.click();
-            }
-        });
-        
-        // File input change
-        fileInput.addEventListener('change', function() {
-            onFileSelected(docType);
-        });
+        // Note: The file input natively handles clicks since it covers the dropzone.
+        // The 'change' event listener is already attached in setupAllForms().
         
         // Drag and drop
         setupDragAndDrop(dropzone, fileInput, docType);
