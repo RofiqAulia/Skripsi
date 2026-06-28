@@ -62,6 +62,17 @@ class MentoringReportForm
                 Textarea::make('mentor_notes')
                     ->label('Mentor Notes')
                     ->columnSpanFull(),
+
+                // ✅ Status
+                Select::make('status')
+                    ->options([
+                        'draft'     => 'Draft',
+                        'submitted' => 'Submitted',
+                        'revision'  => 'Revision',
+                        'rejected'  => 'Rejected',
+                        'approved'  => 'Approved',
+                    ])
+                    ->required(),
             ]);
     }
 }

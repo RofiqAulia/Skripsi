@@ -75,7 +75,7 @@ class MentoringReportController extends Controller
         }
 
         // simpan report
-        MentoringReport::create([
+        $report = MentoringReport::create([
             'mentoring_session_id' => $session->id,
             'meeting_number' => $request->meeting_number,
             'summary' => $request->summary,
@@ -84,6 +84,16 @@ class MentoringReportController extends Controller
             'status' => MentoringReport::STATUS_SUBMITTED,
             'mentor_notes' => null,
         ]);
+
+        $report->load('session.user', 'session.mentor.user');
+        
+        if ($report->session->user && $report->session->user->email) {
+            $mail = \Illuminate\Support\Facades\Mail::to($report->session->user->email);
+            if ($report->session->mentor && $report->session->mentor->user && $report->session->mentor->user->email) {
+                $mail->cc($report->session->mentor->user->email);
+            }
+            $mail->send(new \App\Mail\MentoringReportMail($report));
+        }
 
         return redirect()
             ->route('mentoring')

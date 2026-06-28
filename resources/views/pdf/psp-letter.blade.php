@@ -64,6 +64,21 @@
             display: block; 
             margin: 10px auto; 
         }
+        .sig-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 2px solid #000;
+            padding-top: 6px;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10px;
+            color: #000;
+        }
+        .sig-footer .company-name {
+            font-weight: bold;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
@@ -170,6 +185,12 @@
             <br>
             {{ $approver->name ?? '....................................' }}
         </div>
+    </div>
+
+    <!-- SIG Footer -->
+    <div class="sig-footer">
+        <div class="company-name">PT Semen Indonesia (Persero) Tbk.</div>
+        <div>South Quarter Tower A Lt. 19-20 Jl. RA Kartini Kav. 8, Jakarta Selatan 12430, Indonesia &nbsp; <strong>p.</strong> +62 21 5261174-5 &nbsp; <strong>f.</strong> +62 21 5261176 &nbsp; <strong>www.sig.id</strong></div>
     </div>
 </body>
 </html>
