@@ -32,7 +32,7 @@ class MentoringCancelledMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notifikasi Pembatalan Sesi Mentoring',
+            subject: 'Mentoring Session Cancelled',
         );
     }
 
