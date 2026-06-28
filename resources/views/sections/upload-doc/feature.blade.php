@@ -103,7 +103,7 @@
                                 @break
                             @case('revisi')
                                 <span class="badge badge-status badge-rejected">
-                                    <i class="bi bi-x-circle-fill me-1"></i>Revisi
+                                    <i class="bi bi-x-circle-fill me-1"></i>Revision
                                 </span>
                                 @break
                         @endswitch
