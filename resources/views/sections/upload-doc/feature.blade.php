@@ -205,23 +205,27 @@
                                         <input type="file" name="file" id="file-{{ $item->type }}"
                                                class="upload-input" required
                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                        <div class="dropzone-content" id="dropzone-content-{{ $item->type }}">
-                                            <i class="bi bi-cloud-arrow-up-fill dropzone-icon"></i>
-                                            <p class="mb-1 fw-semibold">Drag & drop your file here</p>
-                                            <p class="text-muted" style="font-size:13px">or click to browse</p>
-                                        </div>
-                                        <div class="dropzone-preview d-none" id="dropzone-preview-{{ $item->type }}">
-                                            <i class="bi bi-file-earmark-check-fill text-success" style="font-size:32px"></i>
-                                            <p class="mb-0 fw-semibold file-name-display" id="fileName-{{ $item->type }}"></p>
-                                            <small class="text-muted">Click to change file</small>
+                                        <div class="dropzone-content text-center" id="dropzone-content-{{ $item->type }}">
+                                            <i class="bi bi-cloud-arrow-up dropzone-icon mb-2" style="font-size: 32px; color: #4b5563;"></i>
+                                            <p class="mb-1 fw-semibold text-dark" style="font-size: 15px;">Choose a file or drag & drop it here</p>
+                                            <p class="text-muted mb-3" style="font-size: 13px;">JPEG, PNG, PDF, and DOCX formats, up to 10MB</p>
+                                            <span class="btn btn-outline-secondary btn-sm px-4 rounded-3" style="pointer-events: none; z-index: 1; position: relative;">Browse File</span>
                                         </div>
                                     </div>
 
-                                    {{-- File Size Info --}}
-                                    <small class="text-muted d-block mt-2">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Selected file size: <span class="file-size-display" id="file-size-{{ $item->type }}">—</span>
-                                    </small>
+                                    {{-- Selected File Card --}}
+                                    <div class="selected-file-card d-none mt-3" id="file-card-{{ $item->type }}">
+                                        <div class="d-flex align-items-center p-3 border rounded-3" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+                                            <div class="file-icon-box me-3">
+                                                <i class="bi bi-file-earmark-text-fill fs-3" id="file-icon-{{ $item->type }}" style="color: #64748b;"></i>
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <h6 class="mb-0 text-truncate fw-semibold" id="fileName-{{ $item->type }}" style="font-size: 14px; color: #334155;"></h6>
+                                                <small class="text-muted" id="file-size-{{ $item->type }}" style="font-size: 12px;"></small>
+                                            </div>
+                                            <button type="button" class="btn-close ms-2" aria-label="Remove" onclick="removeSelectedFile('{{ $item->type }}')" style="font-size: 12px; z-index: 10;"></button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="modal-footer">
@@ -338,23 +342,27 @@
                                 <input type="file" name="file" id="file-other"
                                        class="upload-input" required
                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                <div class="dropzone-content" id="dropzone-content-other">
-                                    <i class="bi bi-cloud-arrow-up-fill dropzone-icon"></i>
-                                    <p class="mb-1 fw-semibold">Drag & drop your file here</p>
-                                    <p class="text-muted" style="font-size:13px">or click to browse</p>
-                                </div>
-                                <div class="dropzone-preview d-none" id="dropzone-preview-other">
-                                    <i class="bi bi-file-earmark-check-fill text-success" style="font-size:32px"></i>
-                                    <p class="mb-0 fw-semibold file-name-display" id="fileName-other"></p>
-                                    <small class="text-muted">Click to change file</small>
+                                <div class="dropzone-content text-center" id="dropzone-content-other">
+                                    <i class="bi bi-cloud-arrow-up dropzone-icon mb-2" style="font-size: 32px; color: #4b5563;"></i>
+                                    <p class="mb-1 fw-semibold text-dark" style="font-size: 15px;">Choose a file or drag & drop it here</p>
+                                    <p class="text-muted mb-3" style="font-size: 13px;">JPEG, PNG, PDF, and DOCX formats, up to 10MB</p>
+                                    <span class="btn btn-outline-secondary btn-sm px-4 rounded-3" style="pointer-events: none; z-index: 1; position: relative;">Browse File</span>
                                 </div>
                             </div>
 
-                            {{-- File Size Info --}}
-                            <small class="text-muted d-block mt-2">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Selected file size: <span class="file-size-display" id="file-size-other">—</span>
-                            </small>
+                            {{-- Selected File Card --}}
+                            <div class="selected-file-card d-none mt-3" id="file-card-other">
+                                <div class="d-flex align-items-center p-3 border rounded-3" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+                                    <div class="file-icon-box me-3">
+                                        <i class="bi bi-file-earmark-text-fill fs-3" id="file-icon-other" style="color: #64748b;"></i>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h6 class="mb-0 text-truncate fw-semibold" id="fileName-other" style="font-size: 14px; color: #334155;"></h6>
+                                        <small class="text-muted" id="file-size-other" style="font-size: 12px;"></small>
+                                    </div>
+                                    <button type="button" class="btn-close ms-2" aria-label="Remove" onclick="removeSelectedFile('other')" style="font-size: 12px; z-index: 10;"></button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="modal-footer">
@@ -625,23 +633,18 @@
 
 .upload-dropzone {
     position: relative;
-    border: 2px dashed #d1d5db;
+    border: 2px dashed #cbd5e1;
     border-radius: 12px;
-    padding: 40px 20px;
+    padding: 32px 20px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
-    background: #fafafa;
+    transition: all 0.3s ease;
+    background: #ffffff;
 }
 
-.upload-dropzone:hover {
-    border-color: #8b0000;
-    background: rgba(139,0,0,0.02);
-}
-
-.upload-dropzone.dragover {
-    border-color: #8b0000;
-    background: rgba(139,0,0,0.05);
+.upload-dropzone:hover, .upload-dropzone.dragover {
+    border-color: #94a3b8;
+    background: #f8fafc;
 }
 
 .upload-input {
@@ -944,23 +947,51 @@ function validateFile(file) {
 // ============================================
 
 function showFilePreview(docType, file) {
-    const contentEl = document.getElementById(`dropzone-content-${docType}`);
-    const previewEl = document.getElementById(`dropzone-preview-${docType}`);
+    const cardEl = document.getElementById(`file-card-${docType}`);
     const nameEl = document.getElementById(`fileName-${docType}`);
     const sizeEl = document.getElementById(`file-size-${docType}`);
+    const iconEl = document.getElementById(`file-icon-${docType}`);
 
     if (nameEl) nameEl.textContent = file.name;
     if (sizeEl) sizeEl.textContent = formatFileSize(file.size);
-    if (contentEl) contentEl.classList.add('d-none');
-    if (previewEl) previewEl.classList.remove('d-none');
+    
+    // Set appropriate icon based on extension
+    if (iconEl) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        let iconClass = 'bi-file-earmark-text-fill';
+        let iconColor = '#64748b';
+        
+        if (ext === 'pdf') {
+            iconClass = 'bi-file-earmark-pdf-fill';
+            iconColor = '#ef4444';
+        } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
+            iconClass = 'bi-file-earmark-image-fill';
+            iconColor = '#10b981';
+        } else if (['doc', 'docx'].includes(ext)) {
+            iconClass = 'bi-file-earmark-word-fill';
+            iconColor = '#3b82f6';
+        }
+        
+        iconEl.className = `bi ${iconClass} fs-3`;
+        iconEl.style.color = iconColor;
+    }
+    
+    if (cardEl) cardEl.classList.remove('d-none');
 }
 
 function clearFilePreview(docType) {
-    const contentEl = document.getElementById(`dropzone-content-${docType}`);
-    const previewEl = document.getElementById(`dropzone-preview-${docType}`);
+    const cardEl = document.getElementById(`file-card-${docType}`);
+    if (cardEl) cardEl.classList.add('d-none');
+}
 
-    if (contentEl) contentEl.classList.remove('d-none');
-    if (previewEl) previewEl.classList.add('d-none');
+function removeSelectedFile(docType) {
+    const fileInput = document.getElementById(`file-${docType}`);
+    if (fileInput) {
+        fileInput.value = '';
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    clearError(docType);
+    clearFilePreview(docType);
 }
 
 function showError(docType, message) {
