@@ -243,6 +243,14 @@ class ExecutiveDashboard extends Page
             }
         }
 
+        $pspPct = $totalMentees > 0 ? round(($pspApproved / $totalMentees) * 100, 1) : 0;
+        $toeflPct = $totalMentees > 0 ? round(($toeflLolos / $totalMentees) * 100, 1) : 0;
+        $docsPct = $totalMentees > 0 ? round(($docsApproved / $totalMentees) * 100, 1) : 0;
+        $saPct = $totalMentees > 0 ? round(($saLolos / $totalMentees) * 100, 1) : 0;
+        $fpPct = $saLolos > 0 ? round(($fpApproved / $saLolos) * 100, 1) : 0;
+
+        $overallProgress = round(($pspPct + $toeflPct + $docsPct + $saPct + $fpPct) / 5, 1);
+
         return compact(
             'totalMentees', 'saLolos', 'saTotal', 'successRate',
             'pspApproved', 'mentoringDone', 'docsApproved', 'pspAndLolos',
@@ -255,7 +263,8 @@ class ExecutiveDashboard extends Page
             'topScholarships', 'byProgram', 'menteeProgress',
             'years', 'toeflLolos', 'docsTotal',
             'pendingPsp', 'pendingDocs', 'pendingMentoring',
-            'pendingFinancialPlan', 'pendingProgramStudy'
+            'pendingFinancialPlan', 'pendingProgramStudy',
+            'pspPct', 'toeflPct', 'docsPct', 'saPct', 'fpPct', 'overallProgress'
         );
     }
 }

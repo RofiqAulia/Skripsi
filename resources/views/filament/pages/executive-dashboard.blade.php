@@ -109,8 +109,8 @@
         <div class="ed-kpi-icon"><x-heroicon-o-document-check style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
             <span>APPROVED PSP</span>
-            <h2>{{ $pspApproved }}</h2>
-            <small>Personal Study Plans approved</small>
+            <h2>{{ $pspApproved }} / {{ $totalMentees }}</h2>
+            <small>{{ $pspPct }}% dari mentee registered</small>
         </div>
     </div>
 
@@ -120,7 +120,7 @@
         <div class="ed-kpi-body">
             <span>PASSED TOEFL / IELTS</span>
             <h2>{{ $toeflLolos }} / {{ $totalMentees }}</h2>
-            <small>Approved vs Registered Mentees</small>
+            <small>{{ $toeflPct }}% dari mentee registered</small>
         </div>
     </div>
 
@@ -129,22 +129,12 @@
         <div class="ed-kpi-icon"><x-heroicon-o-document-text style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
             <span>DOCUMENT PROGRESS</span>
-            <h2>{{ $docsApproved }} / {{ $docsTotal }}</h2>
-            <small>Users with 100% submissions</small>
+            <h2>{{ $docsApproved }} / {{ $totalMentees }}</h2>
+            <small>{{ $docsPct }}% dari mentee registered - individuals users with 100% submissions approve</small>
         </div>
     </div>
 
-    <!-- 5. SCHOLARSHIP ACCEPTED -->
-    <div class="ed-kpi accent-emerald">
-        <div class="ed-kpi-icon"><x-heroicon-o-trophy style="width:2rem;height:2rem;"/></div>
-        <div class="ed-kpi-body">
-            <span>SCHOLARSHIP ACCEPTED</span>
-            <h2>{{ $saLolos }}</h2>
-            <small>of {{ $saTotal }} applications</small>
-        </div>
-    </div>
-
-    <!-- 6. MENTORING SESSIONS -->
+    <!-- 5. MENTORING SESSIONS -->
     <div class="ed-kpi accent-fuchsia">
         <div class="ed-kpi-icon"><x-heroicon-o-video-camera style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
@@ -154,13 +144,23 @@
         </div>
     </div>
 
+    <!-- 6. SCHOLARSHIP ACCEPTED -->
+    <div class="ed-kpi accent-emerald">
+        <div class="ed-kpi-icon"><x-heroicon-o-trophy style="width:2rem;height:2rem;"/></div>
+        <div class="ed-kpi-body">
+            <span>SCHOLARSHIP ACCEPTED</span>
+            <h2>{{ $saLolos }} / {{ $totalMentees }}</h2>
+            <small>{{ $saPct }}% dari mentee registered</small>
+        </div>
+    </div>
+
     <!-- 7. FINANCIAL PLAN -->
     <div class="ed-kpi accent-teal">
         <div class="ed-kpi-icon"><x-heroicon-o-wallet style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
             <span>FINANCIAL PLAN</span>
-            <h2>{{ $fpApproved }}</h2>
-            <small>of {{ $fpTotal }} plans approved</small>
+            <h2>{{ $fpApproved }} / {{ $saLolos }}</h2>
+            <small>{{ $fpPct }}% dari scholarship accepted</small>
         </div>
     </div>
 
@@ -168,9 +168,9 @@
     <div class="ed-kpi accent-rose">
         <div class="ed-kpi-icon"><x-heroicon-o-chart-pie style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
-            <span>SUCCESS RATE</span>
-            <h2>{{ $successRate }}%</h2>
-            <small>scholarship acceptance</small>
+            <span>OVERALL PROGRESS</span>
+            <h2>{{ $overallProgress }}%</h2>
+            <small>Average across milestones</small>
         </div>
     </div>
 </div>
