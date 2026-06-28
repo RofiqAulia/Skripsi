@@ -13,7 +13,7 @@ class ProgramStudyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('mentor');
     }
 
     /**
@@ -21,7 +21,7 @@ class ProgramStudyPolicy
      */
     public function view(User $user, ProgramStudy $programStudy): bool
     {
-        return false;
+        return $user->hasRole('mentor');
     }
 
     /**

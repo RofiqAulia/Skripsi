@@ -13,7 +13,7 @@ class StudyPlanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('pimpinan');
+        return $user->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     /**
@@ -21,7 +21,7 @@ class StudyPlanPolicy
      */
     public function view(User $user, StudyPlan $studyPlan): bool
     {
-        return $user->hasRole('pimpinan');
+        return $user->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     /**

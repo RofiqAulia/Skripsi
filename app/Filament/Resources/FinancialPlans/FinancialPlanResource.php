@@ -27,23 +27,38 @@ class FinancialPlanResource extends Resource
 
     public static function canCreate(): bool
     {
-        return ! auth()->user()->hasRole('pimpinan');
+        return ! auth()->user()->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return ! auth()->user()->hasRole('pimpinan');
+        return ! auth()->user()->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return ! auth()->user()->hasRole('pimpinan');
+        return ! auth()->user()->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     protected static ?string $recordTitleAttribute = 'id';
     public static function canViewAny(): bool
     {
-        return !auth()->user()->hasRole('mentor');
+        return true;
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+        if (auth()->check() && auth()->user()->hasRole('mentor')) {
+            $mentor = auth()->user()->mentor;
+            if ($mentor) {
+                $studentIds = $mentor->sessions()->pluck('user_id');
+                $query->whereIn('user_id', $studentIds);
+            } else {
+                $query->where('id', 0);
+            }
+        }
+        return $query;
     }
 
 

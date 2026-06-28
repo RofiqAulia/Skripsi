@@ -23,7 +23,7 @@ class ProgramStudyResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
     public static function canViewAny(): bool
     {
-        return !auth()->user()->hasRole('mentor');
+        return true;
     }
 
 

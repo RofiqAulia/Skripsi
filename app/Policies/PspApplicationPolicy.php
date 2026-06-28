@@ -13,7 +13,7 @@ class PspApplicationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('pimpinan');
+        return $user->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     /**
@@ -21,7 +21,7 @@ class PspApplicationPolicy
      */
     public function view(User $user, PspApplication $pspApplication): bool
     {
-        return $user->hasRole('pimpinan');
+        return $user->hasAnyRole(['pimpinan', 'mentor']);
     }
 
     /**
