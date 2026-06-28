@@ -23,8 +23,8 @@ class MentorsTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('name')
-                    ->getStateUsing(fn ($record) => $record->user->name)
+                TextColumn::make('user.name')
+                    ->label('Name')
                     ->searchable(),
                 TextColumn::make('current_position')
                     ->searchable(),

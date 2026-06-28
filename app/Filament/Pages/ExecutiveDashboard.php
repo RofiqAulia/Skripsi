@@ -232,14 +232,14 @@ class ExecutiveDashboard extends Page
             $pendingProgramStudy = \App\Models\ProgramStudy::where('status', 'pending')->count();
         } elseif ($user->hasRole('pimpinan')) {
             $pendingPsp = PspApplication::where('status', 'submission')->count();
-            $pendingFinancialPlan = \App\Models\FinancialPlan::where('status', 'under_review')->count();
-            $pendingProgramStudy = \App\Models\ProgramStudy::where('status', 'pending')->count();
         } elseif ($user->hasRole('mentor')) {
             $mentor = \App\Models\Mentor::where('user_id', $user->id)->first();
             if ($mentor) {
+                $studentIds = $mentor->sessions()->pluck('user_id');
+                $pendingDocs = Document::where('status', 'uploaded')
+                    ->whereIn('user_id', $studentIds)->count();
                 $pendingMentoring = MentoringSession::where('status', 'pending')
-                    ->where('mentor_id', $mentor->id)
-                    ->count();
+                    ->where('mentor_id', $mentor->id)->count();
             }
         }
 
