@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mentoring Schedule Cancelled</title>
+    <title>Mentoring Session Completed</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
 
     <p>Dear <strong>{{ $session->mentor->user->name }}</strong> and <strong>{{ $session->user->name }}</strong>,</p>
 
-    <p>We regret to inform you that your scheduled mentoring session has been cancelled:</p>
+    <p>Congratulations! Your scheduled mentoring session has been marked as completed:</p>
 
     <table style="margin-bottom: 20px;">
         <tr>
@@ -24,7 +24,7 @@
         </tr>
     </table>
 
-    <p>If you have any issues, questions, or would like to reschedule, please contact our team.</p>
+    <p>Thank you for participating in the mentoring program. We hope it was a productive and insightful session.</p>
 
     <p>Thank you for your attention and cooperation.</p>
 
