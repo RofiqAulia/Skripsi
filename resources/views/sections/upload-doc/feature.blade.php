@@ -76,8 +76,8 @@
                                 @endif
                                 @if($item->reviewed_at)
                                     <br><small class="text-muted">Reviewed {{ $item->reviewed_at->diffForHumans() }}</small>
-                                @elseif($item->document)
-                                    <br><small class="text-muted">Uploaded {{ $item->document->updated_at->diffForHumans() }}</small>
+                                @elseif($item->documents->count() > 0)
+                                    <br><small class="text-muted">Uploaded {{ $item->documents->first()->updated_at->diffForHumans() }}</small>
                                 @endif
                             </div>
                         </div>
@@ -137,25 +137,29 @@
                             @endif
 
                             {{-- View File --}}
-                            @if($item->file)
-                                <a href="{{ asset($item->file) }}"
-                                   target="_blank"
-                                   class="btn btn-sm btn-view"
-                                   title="View Document">
-                                    <i class="bi bi-file-earmark-text-fill"></i>
-                                </a>
+                            @if($item->documents->count() > 0)
+                                @foreach($item->documents as $doc)
+                                    <a href="{{ asset($doc->file) }}"
+                                       target="_blank"
+                                       class="btn btn-sm btn-view"
+                                       title="View Document">
+                                        <i class="bi bi-file-earmark-text-fill"></i>
+                                    </a>
+                                @endforeach
                             @endif
 
                             {{-- Delete (only if not approved) --}}
-                            @if($item->document && $item->status !== 'approved')
-                                <form action="{{ route('document.destroy', $item->document->id) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this document?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-delete" title="Delete">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
-                                </form>
+                            @if($item->documents->count() > 0 && $item->status !== 'approved')
+                                @foreach($item->documents as $doc)
+                                    <form action="{{ route('document.destroy', $doc->id) }}" method="POST" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this document?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-delete" title="Delete">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </form>
+                                @endforeach
                             @endif
                         </div>
                     </td>
