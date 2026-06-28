@@ -20,20 +20,20 @@ class DocumentController extends Controller
         $userDocuments = Document::where('user_id', $user->id)
             ->orderBy('updated_at', 'desc')
             ->get()
-            ->keyBy('type');
+            ->groupBy('type');
 
         // Build the view data for each required type
         $documentTypes = collect(Document::REQUIRED_TYPES)->map(function ($label, $type) use ($userDocuments) {
-            $doc = $userDocuments->get($type);
+            $docs = $userDocuments->get($type, collect());
+            $firstDoc = $docs->first();
 
             return (object) [
                 'type'        => $type,
                 'label'       => $label,
-                'document'    => $doc,
-                'status'      => $doc ? $doc->status : 'not_uploaded',
-                'notes'       => $doc?->notes,
-                'reviewed_at' => $doc?->reviewed_at,
-                'file'        => $doc?->file,
+                'documents'   => $docs, // Collection of all documents for this type
+                'status'      => $firstDoc ? $firstDoc->status : 'not_uploaded',
+                'notes'       => $firstDoc?->notes,
+                'reviewed_at' => $firstDoc?->reviewed_at,
             ];
         });
 

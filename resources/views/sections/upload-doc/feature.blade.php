@@ -202,8 +202,8 @@
                                     @endif
 
                                     <div class="upload-dropzone" id="dropzone-{{ $item->type }}" data-document-type="{{ $item->type }}">
-                                        <input type="file" name="file" id="file-{{ $item->type }}"
-                                               class="upload-input" required
+                                        <input type="file" name="file[]" id="file-{{ $item->type }}"
+                                               class="upload-input" required multiple
                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                         <div class="dropzone-content text-center" id="dropzone-content-{{ $item->type }}">
                                             <i class="bi bi-cloud-arrow-up dropzone-icon mb-2" style="font-size: 32px; color: #4b5563;"></i>
@@ -262,38 +262,50 @@
             <div class="row g-3">
                 @foreach($otherDocuments as $otherDoc)
                     <div class="col-md-4">
-                        <div class="other-doc-card">
-                            <div class="d-flex align-items-start justify-content-between">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-file-earmark-text-fill text-primary" style="font-size:24px"></i>
-                                    <div>
-                                        <strong style="font-size:13px">{{ basename($otherDoc->file) }}</strong>
-                                        <br>
-                                        <span class="badge badge-status
-                                            @if($otherDoc->status === 'approved') badge-approved
-                                            @elseif($otherDoc->status === 'revisi') badge-rejected
-                                            @else badge-pending @endif"
-                                            style="font-size:10px">
-                                            {{ ucfirst($otherDoc->status) }}
-                                        </span>
-                                    </div>
+                        <div class="other-doc-card p-3 border rounded-4 bg-white h-100 d-flex flex-column" style="box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="file-icon-box bg-light rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    @php
+                                        $ext = strtolower(pathinfo($otherDoc->file, PATHINFO_EXTENSION));
+                                        $iconClass = 'bi-file-earmark-text-fill text-secondary';
+                                        if($ext === 'pdf') $iconClass = 'bi-file-earmark-pdf-fill text-danger';
+                                        elseif(in_array($ext, ['jpg', 'jpeg', 'png'])) $iconClass = 'bi-file-earmark-image-fill text-success';
+                                        elseif(in_array($ext, ['doc', 'docx'])) $iconClass = 'bi-file-earmark-word-fill text-primary';
+                                    @endphp
+                                    <i class="bi {{ $iconClass }}" style="font-size:24px"></i>
                                 </div>
-                                <div class="d-flex gap-1">
-                                    <a href="{{ asset($otherDoc->file) }}" target="_blank" class="btn btn-sm btn-view" title="View">
-                                        <i class="bi bi-file-earmark-text-fill"></i>
-                                    </a>
-                                    @if($otherDoc->status !== 'approved')
-                                        <form action="{{ route('document.destroy', $otherDoc->id) }}" method="POST"
-                                              onsubmit="return confirm('Delete this document?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-delete"><i class="bi bi-trash3-fill"></i></button>
-                                        </form>
-                                    @endif
+                                <div class="flex-grow-1 overflow-hidden" style="min-width: 0;">
+                                    <h6 class="mb-1 text-truncate fw-semibold text-dark" style="font-size: 14px;" title="{{ basename($otherDoc->file) }}">
+                                        {{ basename($otherDoc->file) }}
+                                    </h6>
+                                    <span class="badge badge-status
+                                        @if($otherDoc->status === 'approved') badge-approved
+                                        @elseif($otherDoc->status === 'revisi') badge-rejected
+                                        @else badge-pending @endif"
+                                        style="font-size:11px;">
+                                        {{ ucfirst($otherDoc->status) }}
+                                    </span>
                                 </div>
                             </div>
+                            
+                            <div class="d-flex justify-content-end gap-2 mt-auto pt-3 border-top">
+                                <a href="{{ asset($otherDoc->file) }}" target="_blank" class="btn btn-sm btn-light text-primary fw-medium rounded-pill px-3" style="font-size: 12px;">
+                                    <i class="bi bi-eye-fill me-1"></i> View
+                                </a>
+                                @if($otherDoc->status !== 'approved')
+                                    <form action="{{ route('document.destroy', $otherDoc->id) }}" method="POST"
+                                          onsubmit="return confirm('Delete this document?')" class="m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-light text-danger fw-medium rounded-pill px-3" style="font-size: 12px;">
+                                            <i class="bi bi-trash3-fill me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+
                             @if($otherDoc->notes)
-                                <div class="admin-notes mt-2 @if($otherDoc->status === 'revisi') notes-rejected @else notes-approved @endif" style="font-size:12px">
+                                <div class="admin-notes mt-3 @if($otherDoc->status === 'revisi') notes-rejected @else notes-approved @endif" style="font-size:12px">
                                     <i class="bi bi-chat-left-text me-1"></i>{{ $otherDoc->notes }}
                                 </div>
                             @endif
