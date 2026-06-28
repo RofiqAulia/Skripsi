@@ -10,7 +10,7 @@
     @if($application->status === 'approved')
         <p>Congratulations! We are pleased to inform you that your <strong>Scholarship Preparation Program (PSP)</strong> application has been <strong style="color: #16a34a;">Approved</strong>.</p>
     @elseif($application->status === 'review')
-        <p>We have reviewed your <strong>Scholarship Preparation Program (PSP)</strong> application and found that it requires <strong style="color: #d97706;">Revision</strong>. Please review the notes below and resubmit your application.</p>
+        <p>We have reviewed your <strong>Scholarship Preparation Program (PSP)</strong> application and it requires <strong style="color: #d97706;">Revision</strong>. Please review the notes below and resubmit your application.</p>
     @elseif($application->status === 'rejected')
         <p>We regret to inform you that your <strong>Scholarship Preparation Program (PSP)</strong> application has been <strong style="color: #dc2626;">Rejected</strong>. Please review the notes below for further details.</p>
     @else
@@ -28,11 +28,11 @@
             <td><strong>Application Status</strong></td>
             <td>:
                 @if($application->status === 'approved')
-                    <span style="color: #16a34a; font-weight: bold;">Approved</span>
+                    <span style="color: #16a34a; font-weight: bold;">Approved ✅</span>
                 @elseif($application->status === 'review')
-                    <span style="color: #d97706; font-weight: bold;">Revision Required</span>
+                    <span style="color: #d97706; font-weight: bold;">Revision Required ⚠️</span>
                 @elseif($application->status === 'rejected')
-                    <span style="color: #dc2626; font-weight: bold;">Rejected</span>
+                    <span style="color: #dc2626; font-weight: bold;">Rejected ❌</span>
                 @else
                     <span>{{ ucfirst($application->status) }}</span>
                 @endif
