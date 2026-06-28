@@ -29,4 +29,23 @@ class MentoringSession extends Model
     {
         return $this->hasOne(MentoringReport::class);
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($session) {
+            if ($session->isDirty('status') && $session->status === 'cancelled') {
+                // Send email to mentor
+                if ($session->mentor && $session->mentor->user) {
+                    \Illuminate\Support\Facades\Mail::to($session->mentor->user->email)
+                        ->send(new \App\Mail\MentoringCancelledMail($session, 'mentor'));
+                }
+                
+                // Send email to mentee
+                if ($session->user) {
+                    \Illuminate\Support\Facades\Mail::to($session->user->email)
+                        ->send(new \App\Mail\MentoringCancelledMail($session, 'mentee'));
+                }
+            }
+        });
+    }
 }
