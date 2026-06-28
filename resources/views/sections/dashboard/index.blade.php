@@ -5,7 +5,6 @@
     <div class="dash-header">
         <div class="dash-header-title">
             <h1>Welcome back, {{ $user->name }}</h1>
-            <p>Your Preparation Journey At a Glance</p>
         </div>
         <span class="dash-date"><i class="bi bi-calendar3"></i> {{ now()->format('l, d F Y') }}</span>
     </div>
@@ -65,6 +64,7 @@
                 <span class="stat-label" style="color: rgba(255,255,255,0.9);">Overall Progress</span>
                 <span class="stat-value">{{ $overallProgress }}%</span>
                 <div class="progress-thin"><div style="width:{{ $overallProgress }}%"></div></div>
+                <span class="stat-sub" style="color: rgba(255,255,255,0.8); margin-top: 4px; font-size: 11px;">Calculated from Avg. Docs, PSP & Mentoring</span>
             </div>
         </div>
     </div>
@@ -74,6 +74,23 @@
 
         <!-- ──── LEFT COLUMN ──── -->
         <div class="dash-left">
+
+            <!-- DASHBOARD CHART -->
+            <div class="dash-card glass-card">
+                <div class="card-head">
+                    <h4><i class="bi bi-graph-up"></i> Progress Chart</h4>
+                </div>
+                @if(isset($chartData) && !empty($chartData))
+                    <div style="height: 250px;">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                @else
+                    <div class="empty-hint" style="padding: 2rem 0;">
+                        <i class="bi bi-bar-chart-line" style="font-size: 2rem; color: #a1a1aa; margin-bottom: 0.5rem; display: block;"></i>
+                        <p style="margin: 0; color: #71717a;">Monitoring data is not available yet.</p>
+                    </div>
+                @endif
+            </div>
 
             <!-- DOCUMENT PROGRESS -->
             <div class="dash-card glass-card">
