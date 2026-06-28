@@ -1,31 +1,66 @@
 <section class="sa-section">
-<div class="container-lg sa-container">
 
-    {{-- HEADER --}}
-    <div class="sa-header">
-        <div>
-            <h1><i class="bi bi-mortarboard-fill"></i> <span data-lang-key="nav-financial-plan">Financial Plan</span></h1>
-            <p>Record and track your scholarship application progress</p>
+    {{-- ══════ HERO BANNER ══════ --}}
+    <div class="sa-hero">
+        <div class="sa-hero-orb sa-hero-orb-1"></div>
+        <div class="sa-hero-orb sa-hero-orb-2"></div>
+        <div class="sa-hero-inner">
+            <div class="sa-hero-text">
+                <span class="sa-hero-eyebrow">
+                    <i class="bi bi-mortarboard-fill"></i> Scholarship Tracker
+                </span>
+                <h1>Scholarship Application</h1>
+                <p>Record, track, and manage your scholarship applications in one place.</p>
+            </div>
+
+            <div class="sa-hero-right">
+                {{-- Stats in hero --}}
+                <div class="sa-hero-stats">
+                    <div class="sa-hero-stat">
+                        <span class="sa-stat-val">{{ $statsTotal }}</span>
+                        <span class="sa-stat-lbl">Total</span>
+                    </div>
+                    <div class="sa-hero-divider"></div>
+                    <div class="sa-hero-stat">
+                        <span class="sa-stat-val" style="color:#6ee7b7">{{ $statsLolos }}</span>
+                        <span class="sa-stat-lbl">Accepted</span>
+                    </div>
+                    <div class="sa-hero-divider"></div>
+                    <div class="sa-hero-stat">
+                        <span class="sa-stat-val" style="color:#fde68a">{{ $statsPending }}</span>
+                        <span class="sa-stat-lbl">Pending</span>
+                    </div>
+                    <div class="sa-hero-divider"></div>
+                    <div class="sa-hero-stat">
+                        <span class="sa-stat-val" style="color:#fca5a5">{{ $statsTidakLolos }}</span>
+                        <span class="sa-stat-lbl">Rejected</span>
+                    </div>
+                </div>
+
+                {{-- Add Scholarship Button --}}
+                @if($pspApp && $pspApp->status === 'approved')
+                    <button class="sa-btn-add" data-bs-toggle="modal" data-bs-target="#modalAddScholarship">
+                        <i class="bi bi-plus-lg"></i> Add Scholarship
+                    </button>
+                @else
+                    <button class="sa-btn-add sa-btn-add--locked" disabled title="PSP must be approved first">
+                        <i class="bi bi-lock-fill"></i> Add Scholarship
+                    </button>
+                @endif
+            </div>
         </div>
-        @if($pspApp && $pspApp->status === 'approved')
-            <button class="sa-btn-add" data-bs-toggle="modal" data-bs-target="#modalAddScholarship">
-                <i class="bi bi-plus-lg"></i> Add Scholarship
-            </button>
-        @else
-            <button class="sa-btn-add" disabled title="PSP Application must be approved first" style="opacity: 0.6; cursor: not-allowed; background-color: #64748b; border-color: #64748b;">
-                <i class="bi bi-plus-lg"></i> Add Scholarship <i class="bi bi-lock-fill ms-1"></i>
-            </button>
-        @endif
     </div>
 
+<div class="container-lg sa-container">
+
     @if(!$pspApp || $pspApp->status !== 'approved')
-        <div class="sa-alert" style="background: #fffbeb; border: 1px solid #fde68a; color: #b45309; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
-            <i class="bi bi-shield-lock-fill" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
-            <h4 style="margin-bottom: 10px;">Access Restricted</h4>
-            <p style="margin-bottom: 15px; font-size: 1.05rem;">
-                You must complete your <strong>PSP Application</strong> and wait for leadership approval before you can access the Financial Plan menu.
+        <div style="background:#fffbeb; border:1px solid #fde68a; color:#b45309; padding:1.75rem 2rem; border-radius:16px; margin:2rem 0; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+            <i class="bi bi-shield-lock-fill" style="font-size:2.5rem; display:block; margin-bottom:0.75rem;"></i>
+            <h4 style="margin-bottom:0.6rem; font-weight:700;">Access Restricted</h4>
+            <p style="margin-bottom:1.25rem; font-size:1rem; max-width:460px; margin-left:auto; margin-right:auto;">
+                You must complete your <strong>PSP Application</strong> and wait for leadership approval before you can add scholarship entries.
             </p>
-            <a href="{{ route('psp') }}" class="btn btn-primary" style="border-radius: 8px; padding: 10px 20px; font-weight: 600;">
+            <a href="{{ route('psp') }}" style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,#c0392b,#e74c3c); color:#fff; padding:0.65rem 1.5rem; border-radius:10px; font-weight:600; text-decoration:none; box-shadow:0 4px 14px rgba(192,57,43,0.3);">
                 Go to PSP Application <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -41,26 +76,6 @@
     @if($errors->has('error'))
         <div class="sa-alert sa-alert-error"><i class="bi bi-exclamation-triangle-fill"></i> {{ $errors->first('error') }}</div>
     @endif
-
-    {{-- STAT CARDS --}}
-    <div class="sa-stats">
-        <div class="sa-stat-card">
-            <div class="sa-stat-icon bg-blue"><i class="bi bi-collection-fill"></i></div>
-            <div><span>Total</span><h3>{{ $statsTotal }}</h3></div>
-        </div>
-        <div class="sa-stat-card">
-            <div class="sa-stat-icon bg-green"><i class="bi bi-trophy-fill"></i></div>
-            <div><span>Accepted</span><h3>{{ $statsLolos }}</h3></div>
-        </div>
-        <div class="sa-stat-card">
-            <div class="sa-stat-icon bg-amber"><i class="bi bi-hourglass-split"></i></div>
-            <div><span>Pending</span><h3>{{ $statsPending }}</h3></div>
-        </div>
-        <div class="sa-stat-card">
-            <div class="sa-stat-icon bg-red"><i class="bi bi-x-circle-fill"></i></div>
-            <div><span>Rejected</span><h3>{{ $statsTidakLolos }}</h3></div>
-        </div>
-    </div>
 
     {{-- APPLICATION LIST --}}
     @if($applications->isEmpty())
@@ -184,7 +199,7 @@
         </div>
     @endif
 
-</div>
+    @endif {{-- /PSP approved check --}}
 
 {{-- ═══════════════════════════════════════ --}}
 {{-- MODAL: Tambah Beasiswa Baru --}}
@@ -413,4 +428,5 @@ function toggleEditLog(id) {
 @endif
 </script>
 
+</div>{{-- /sa-container --}}
 </section>
