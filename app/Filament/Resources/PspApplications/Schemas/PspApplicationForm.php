@@ -54,7 +54,8 @@ class PspApplicationForm
                 \Filament\Forms\Components\Select::make('approved_by')
                     ->relationship('approver', 'name')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->default(fn () => auth()->id()),
                 \Filament\Forms\Components\Textarea::make('notes')
                     ->columnSpanFull(),
 
