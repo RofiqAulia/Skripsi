@@ -30,7 +30,7 @@ class AdminFinancialPlanRevisionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.admin_financial_plan_revision',
+            view: 'emails.admin_financial_plan_revision',
         );
     }
 }

@@ -38,7 +38,7 @@ class FinancialPlanStatusMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.financial_plan_status',
+            view: 'emails.financial_plan_status',
         );
     }
 
