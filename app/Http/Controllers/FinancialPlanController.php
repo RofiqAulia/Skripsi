@@ -266,6 +266,8 @@ class FinancialPlanController extends Controller
          // Load relations for PDF
          $plan->load(['user', 'scholarshipApplication.programStudy', 'items']);
 
+         $oldStatus = $plan->status;
+
          $plan->update([
              'status' => 'under_review',
              'submitted_at' => now(),
@@ -278,9 +280,18 @@ class FinancialPlanController extends Controller
 
          $filename = 'Financial-Plan-' . $plan->user->name . '-' . now()->format('Ymd') . '.pdf';
 
-         // Send Email
+         // Send Email to User
          \Illuminate\Support\Facades\Mail::to($plan->user->email)
             ->send(new \App\Mail\FinancialPlanMail($plan, $pdfContent, $filename));
+
+         // If resubmitting after revision, notify admin
+         if ($oldStatus === 'revision_needed') {
+             $admins = \App\Models\User::role('super_admin')->get();
+             foreach ($admins as $admin) {
+                 \Illuminate\Support\Facades\Mail::to($admin->email)
+                    ->send(new \App\Mail\AdminFinancialPlanRevisionMail($plan));
+             }
+         }
 
          return redirect()->back()->with('success', 'Financial Plan successfully submitted and sent to your email!');
     }
