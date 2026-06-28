@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate Gaps per item
         let totalCost = 0;
         let totalFunding = 0;
+        const catTotals = {};
         
         itemCostInputs.forEach(costInput => {
             const id = costInput.getAttribute('data-id');
@@ -34,23 +35,63 @@ document.addEventListener('DOMContentLoaded', function() {
             
             totalCost += cost;
             totalFunding += schol;
+
+            // Track per-category
+            const row = costInput.closest('tr');
+            if (row) {
+                const panel = row.closest('.fp-cat-panel');
+                if (panel) {
+                    const cat = panel.id.replace('panel-', '');
+                    if (!catTotals[cat]) catTotals[cat] = { cost: 0, schol: 0 };
+                    catTotals[cat].cost  += cost;
+                    catTotals[cat].schol += schol;
+                }
+            }
         });
 
         const fundingGap = totalFunding - totalCost;
         
-        // Update DOM
-        document.getElementById('displayTotalCost').textContent = formatNumber(totalCost);
-        document.getElementById('displayTotalFunding').textContent = formatNumber(totalFunding);
-        
-        const gapEl = document.getElementById('displayFundingGap');
+        // Update sidebar summary
+        const dispCost = document.getElementById('displayTotalCost');
+        const dispFund = document.getElementById('displayTotalFunding');
+        const gapEl    = document.getElementById('displayFundingGap');
+        if (dispCost) dispCost.textContent = formatNumber(totalCost);
+        if (dispFund) dispFund.textContent = formatNumber(totalFunding);
         if (gapEl) {
             gapEl.textContent = (fundingGap >= 0 ? '+' : '') + formatNumber(fundingGap);
             gapEl.className = fundingGap >= 0 ? 'text-success' : 'text-danger';
         }
 
+        // Update hero stats
+        const heroFmt = (n) => new Intl.NumberFormat().format(Math.abs(Math.round(n)));
+        const heroCostEl = document.getElementById('heroTotalCost');
+        const heroFundEl = document.getElementById('heroTotalFund');
+        const heroGapEl  = document.getElementById('heroGap');
+        if (heroCostEl) heroCostEl.textContent = heroFmt(totalCost);
+        if (heroFundEl) heroFundEl.textContent = heroFmt(totalFunding);
+        if (heroGapEl) {
+            heroGapEl.textContent = (fundingGap >= 0 ? '+' : '-') + heroFmt(Math.abs(fundingGap));
+            heroGapEl.style.color = fundingGap >= 0 ? '#6ee7b7' : '#fca5a5';
+        }
+
+        // Update category footer totals
+        Object.entries(catTotals).forEach(([cat, t]) => {
+            const gap = t.schol - t.cost;
+            const catCostEl  = document.getElementById(`catCost-${cat}`);
+            const catScholEl = document.getElementById(`catSchol-${cat}`);
+            const catGapEl   = document.getElementById(`catGap-${cat}`);
+            if (catCostEl)  catCostEl.textContent  = formatNumber(t.cost);
+            if (catScholEl) catScholEl.textContent = formatNumber(t.schol);
+            if (catGapEl) {
+                catGapEl.textContent = (gap >= 0 ? '+' : '') + formatNumber(gap);
+                catGapEl.closest('span') && (catGapEl.closest('span').className = gap >= 0 ? 'text-success' : 'text-danger');
+            }
+        });
+
         // Auto-save
         saveDraft();
     }
+
 
     function saveDraft() {
         const formData = new FormData(form);
