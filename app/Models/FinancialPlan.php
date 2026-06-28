@@ -65,4 +65,19 @@ class FinancialPlan extends Model
             'funding_gap'          => $fundingGap
         ]);
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($plan) {
+            if ($plan->isDirty('status')) {
+                if (in_array($plan->status, ['approved', 'revision_needed'])) {
+                    if ($plan->user && $plan->user->email) {
+                        \Illuminate\Support\Facades\Mail::to($plan->user->email)->send(
+                            new \App\Mail\FinancialPlanStatusMail($plan, $plan->status, $plan->admin_notes)
+                        );
+                    }
+                }
+            }
+        });
+    }
 }
