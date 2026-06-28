@@ -48,12 +48,28 @@
         </div>
 
         <!-- 4. SCHOLARSHIP -->
-        <div class="stat-card glass-card">
-            <div class="stat-icon" style="background: var(--primary-grad);"><i class="bi bi-trophy-fill"></i></div>
-            <div class="stat-info">
-                <span class="stat-label">Scholarship</span>
-                <span class="stat-value">{{ $scholarshipLolos }}/{{ $scholarshipTotal }}</span>
-                <span class="stat-sub">Applications Passed</span>
+        <div class="stat-card glass-card h-100 d-flex flex-column">
+            <div class="d-flex align-items-start gap-3 flex-grow-1">
+                <div class="stat-icon" style="background: var(--primary-grad);"><i class="bi bi-trophy-fill"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Scholarship</span>
+                    <span class="stat-value">{{ $scholarshipLolos }}/{{ $scholarshipTotal }}</span>
+                    <span class="stat-sub">Applications Passed</span>
+                </div>
+            </div>
+            <div class="mt-2 border-top pt-2 w-100" style="border-color: rgba(0,0,0,0.05) !important;">
+                @if($pspApplication && $pspApplication->status === 'approved')
+                    <a href="{{ route('scholarship-application.index') }}#apply" class="btn btn-sm btn-outline-primary w-100 rounded-pill" style="font-size: 11px; font-weight: 500; border-color: rgba(37, 99, 235, 0.2); background: rgba(37, 99, 235, 0.05);">
+                        <i class="bi bi-plus-circle me-1"></i> Apply Now
+                    </a>
+                @else
+                    <button class="btn btn-sm btn-light w-100 rounded-pill text-muted" style="font-size: 11px; font-weight: 500; background: rgba(243, 244, 246, 0.8);" disabled title="Please complete your PSP process first">
+                        <i class="bi bi-lock-fill me-1"></i> Apply Now
+                    </button>
+                    <div class="text-center mt-1">
+                        <small class="text-muted" style="font-size: 9px; line-height: 1;">Please complete your PSP process first</small>
+                    </div>
+                @endif
             </div>
         </div>
 
