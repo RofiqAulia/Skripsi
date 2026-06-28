@@ -55,7 +55,11 @@ class PspApplicationForm
                     ->relationship('approver', 'name')
                     ->searchable()
                     ->preload()
-                    ->default(fn () => auth()->id()),
+                    ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
+                        if (empty($state)) {
+                            $component->state(auth()->id());
+                        }
+                    }),
                 \Filament\Forms\Components\Textarea::make('notes')
                     ->columnSpanFull(),
 
