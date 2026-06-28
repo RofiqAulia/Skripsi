@@ -75,23 +75,6 @@
         <!-- ──── LEFT COLUMN ──── -->
         <div class="dash-left">
 
-            <!-- DASHBOARD CHART -->
-            <div class="dash-card glass-card">
-                <div class="card-head">
-                    <h4><i class="bi bi-graph-up"></i> Progress Chart</h4>
-                </div>
-                @if(isset($chartData) && !empty($chartData))
-                    <div style="height: 250px;">
-                        <canvas id="progressChart"></canvas>
-                    </div>
-                @else
-                    <div class="empty-hint" style="padding: 2rem 0;">
-                        <i class="bi bi-bar-chart-line" style="font-size: 2rem; color: #a1a1aa; margin-bottom: 0.5rem; display: block;"></i>
-                        <p style="margin: 0; color: #71717a;">Monitoring data is not available yet.</p>
-                    </div>
-                @endif
-            </div>
-
             <!-- DOCUMENT PROGRESS -->
             <div class="dash-card glass-card">
                 <div class="card-head">
