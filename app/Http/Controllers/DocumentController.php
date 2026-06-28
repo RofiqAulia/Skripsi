@@ -45,7 +45,7 @@ class DocumentController extends Controller
 
         // Stats
         $totalRequired = count(Document::REQUIRED_TYPES) + $otherDocuments->count();
-        $approvedCount = $userDocuments->where('status', 'approved')->count();
+        $approvedCount = $documentTypes->where('status', 'approved')->count() + $otherDocuments->where('status', 'approved')->count();
 
         return view('landing.upload-doc', compact(
             'documentTypes',
