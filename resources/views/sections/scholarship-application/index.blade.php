@@ -314,7 +314,6 @@
         </div>
     </div>
 </div>
-    @endif
 
 {{-- 🔥 MODAL SUGGEST PROGRAM --}}
     @include('partials.modal-suggest-program')
