@@ -115,12 +115,12 @@
                                     <a href="{{ route('psp.letter', $pspApplication->id) }}" class="btn-download" target="_blank">
                                         ⬇ Download Rejection Letter
                                     </a>
-                                    <form action="{{ route('psp.letter.send', $pspApplication->id) }}" method="POST" class="d-inline">
+                                    {{-- <form action="{{ route('psp.letter.send', $pspApplication->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn-download" style="background:#f0f9ff; border-color:#0284c7; color:#0284c7;">
                                             <i class="bi bi-envelope"></i> Send to Email
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 </div>
                             @elseif($status === 'approved')
                                 <div class="icon done-icon">✓</div>
