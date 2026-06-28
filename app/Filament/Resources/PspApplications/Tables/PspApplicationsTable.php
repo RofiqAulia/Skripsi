@@ -20,11 +20,19 @@ class PspApplicationsTable
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'submission' => 'Submission',
+                        'review'     => 'Revision',
+                        'approved'   => 'Approved',
+                        'rejected'   => 'Rejected',
+                        default      => ucfirst($state),
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'submission' => 'gray',
-                        'review' => 'warning',
-                        'approved' => 'success',
-                        'rejected' => 'danger',
+                        'review'     => 'warning',
+                        'approved'   => 'success',
+                        'rejected'   => 'danger',
+                        default      => 'gray',
                     })
                     ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('approver.name')
