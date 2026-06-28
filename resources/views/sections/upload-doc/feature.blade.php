@@ -21,7 +21,7 @@
                     </div>
                     <div class="progress" style="height: 10px; border-radius: 99px;">
                         <div class="progress-bar progress-bar-animated
-                            @if($pct === 100) bg-success @elseif($pct >= 50) bg-warning @else bg-danger @endif"
+                            @if($pct === 100) bg-danger @else bg-warning @endif"
                              role="progressbar"
                              style="width: {{ $pct }}%"
                              aria-valuenow="{{ $pct }}" aria-valuemin="0" aria-valuemax="100"></div>
