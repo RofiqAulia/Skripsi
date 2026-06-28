@@ -14,14 +14,19 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // ── Documents ──
-        $documents = $user->documents()->get();
+        $allDocuments = $user->documents()->get();
         $requiredTypes = Document::REQUIRED_TYPES;
         
-        $docsUploaded = $documents->count();
-        $docsApproved = $documents->where('status', 'approved')->count();
-        $otherDocsCount = $documents->where('category', 'other')->count();
+        $reqDocs = $allDocuments->whereIn('type', array_keys($requiredTypes))->groupBy('type');
+        $otherDocs = $allDocuments->where('category', 'other');
         
-        $docsTotal = count($requiredTypes) + $otherDocsCount;
+        $docsUploaded = $reqDocs->count() + $otherDocs->count();
+        $docsApproved = $reqDocs->filter(fn($docs) => $docs->first()->status === 'approved')->count() + $otherDocs->where('status', 'approved')->count();
+        
+        $docsTotal = count($requiredTypes) + $otherDocs->count();
+
+        // Key by type for the view to access easily
+        $documents = $allDocuments->keyBy('type');
 
         // ── Mentoring Sessions ──
         $sessions = $user->sessions()
