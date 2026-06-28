@@ -339,8 +339,8 @@
                             </div>
 
                             <div class="upload-dropzone" id="dropzone-other" data-document-type="other">
-                                <input type="file" name="file" id="file-other"
-                                       class="upload-input" required
+                                <input type="file" name="file[]" id="file-other"
+                                       class="upload-input" required multiple
                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                 <div class="dropzone-content text-center" id="dropzone-content-other">
                                     <i class="bi bi-cloud-arrow-up dropzone-icon mb-2" style="font-size: 32px; color: #4b5563;"></i>
@@ -900,20 +900,20 @@ function onFileSelected(docType) {
         return;
     }
 
-    const file = fileInput.files[0];
-    
-    // Validate file
-    const validation = validateFile(file);
-    if (!validation.valid) {
-        showError(docType, validation.error);
-        fileInput.value = '';
-        clearFilePreview(docType);
-        return;
+    // Validate ALL files
+    for (let i = 0; i < fileInput.files.length; i++) {
+        const validation = validateFile(fileInput.files[i]);
+        if (!validation.valid) {
+            showError(docType, `File ${i+1}: ` + validation.error);
+            fileInput.value = '';
+            clearFilePreview(docType);
+            return;
+        }
     }
     
-    // File is valid - show preview
+    // Files are valid - show preview
     clearError(docType);
-    showFilePreview(docType, file);
+    showFilePreview(docType, fileInput.files);
 }
 
 // ============================================
@@ -946,34 +946,49 @@ function validateFile(file) {
 // UI UPDATES
 // ============================================
 
-function showFilePreview(docType, file) {
+function showFilePreview(docType, files) {
     const cardEl = document.getElementById(`file-card-${docType}`);
     const nameEl = document.getElementById(`fileName-${docType}`);
     const sizeEl = document.getElementById(`file-size-${docType}`);
     const iconEl = document.getElementById(`file-icon-${docType}`);
 
-    if (nameEl) nameEl.textContent = file.name;
-    if (sizeEl) sizeEl.textContent = formatFileSize(file.size);
-    
-    // Set appropriate icon based on extension
-    if (iconEl) {
-        const ext = file.name.split('.').pop().toLowerCase();
-        let iconClass = 'bi-file-earmark-text-fill';
-        let iconColor = '#64748b';
+    if (files.length === 1) {
+        const file = files[0];
+        if (nameEl) nameEl.textContent = file.name;
+        if (sizeEl) sizeEl.textContent = formatFileSize(file.size);
         
-        if (ext === 'pdf') {
-            iconClass = 'bi-file-earmark-pdf-fill';
-            iconColor = '#ef4444';
-        } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
-            iconClass = 'bi-file-earmark-image-fill';
-            iconColor = '#10b981';
-        } else if (['doc', 'docx'].includes(ext)) {
-            iconClass = 'bi-file-earmark-word-fill';
-            iconColor = '#3b82f6';
+        // Set appropriate icon based on extension
+        if (iconEl) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            let iconClass = 'bi-file-earmark-text-fill';
+            let iconColor = '#64748b';
+            
+            if (ext === 'pdf') {
+                iconClass = 'bi-file-earmark-pdf-fill';
+                iconColor = '#ef4444';
+            } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
+                iconClass = 'bi-file-earmark-image-fill';
+                iconColor = '#10b981';
+            } else if (['doc', 'docx'].includes(ext)) {
+                iconClass = 'bi-file-earmark-word-fill';
+                iconColor = '#3b82f6';
+            }
+            
+            iconEl.className = `bi ${iconClass} fs-3`;
+            iconEl.style.color = iconColor;
         }
+    } else {
+        if (nameEl) nameEl.textContent = `${files.length} files selected`;
+        let totalSize = 0;
+        for (let i = 0; i < files.length; i++) {
+            totalSize += files[i].size;
+        }
+        if (sizeEl) sizeEl.textContent = formatFileSize(totalSize);
         
-        iconEl.className = `bi ${iconClass} fs-3`;
-        iconEl.style.color = iconColor;
+        if (iconEl) {
+            iconEl.className = 'bi bi-files fs-3';
+            iconEl.style.color = '#3b82f6';
+        }
     }
     
     if (cardEl) cardEl.classList.remove('d-none');
@@ -997,20 +1012,27 @@ function removeSelectedFile(docType) {
 function showError(docType, message) {
     console.error(`[${docType}] Error: ${message}`);
     const container = document.getElementById(`error-${docType}`);
-    const msgEl = document.getElementById(`error-message-${docType}`);
 
-    if (msgEl) msgEl.innerHTML = `<strong>Error:</strong> ${message}`;
-    if (container) container.classList.remove('d-none');
-    
-    // Scroll to error
     if (container) {
+        container.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <strong>Upload Error</strong>
+                <div class="mt-1" style="font-size: 13px;">${message}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        container.classList.remove('d-none');
         container.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
 function clearError(docType) {
     const container = document.getElementById(`error-${docType}`);
-    if (container) container.classList.add('d-none');
+    if (container) {
+        container.innerHTML = '';
+        container.classList.add('d-none');
+    }
 }
 
 // ============================================
@@ -1026,11 +1048,13 @@ function uploadFile(form, docType) {
         return;
     }
 
-    // Validate file before upload
-    const validation = validateFile(fileInput.files[0]);
-    if (!validation.valid) {
-        showError(docType, validation.error);
-        return;
+    // Validate all files before upload
+    for (let i = 0; i < fileInput.files.length; i++) {
+        const validation = validateFile(fileInput.files[i]);
+        if (!validation.valid) {
+            showError(docType, `File ${i+1}: ` + validation.error);
+            return;
+        }
     }
 
     // Show loading
@@ -1096,10 +1120,18 @@ function uploadFile(form, docType) {
 
 function showSuccess(docType, message) {
     const container = document.getElementById(`error-${docType}`);
-    const msgEl = document.getElementById(`error-message-${docType}`);
 
-    if (msgEl) msgEl.innerHTML = `<div class="alert alert-success mb-0">${message}</div>`;
-    if (container) container.classList.remove('d-none');
+    if (container) {
+        container.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong>Success!</strong>
+                <div class="mt-1" style="font-size: 13px;">${message}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        container.classList.remove('d-none');
+    }
 }
 
 // ============================================

@@ -65,96 +65,111 @@ class DocumentController extends Controller
             $validated = $request->validate([
                 'type'     => 'required|string|max:50',
                 'category' => 'nullable|string|max:50',
-                'file'     => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+                'file'     => 'required',
             ], [
                 'file.required' => 'Please select a file to upload.',
+                'type.required' => 'Document type is required.',
+            ]);
+
+            // Validate the file(s)
+            $request->validate([
+                'file' => $request->hasFile('file') && is_array($request->file('file')) ? 'array' : 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+                'file.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            ], [
                 'file.file'     => 'The file must be a valid file.',
                 'file.mimes'    => 'File type is not allowed. Please use: PDF, DOC, DOCX, JPG, or PNG.',
                 'file.max'      => 'File size exceeds the 10 MB limit.',
-                'type.required' => 'Document type is required.',
+                'file.*.file'   => 'One of the files is not valid.',
+                'file.*.mimes'  => 'File type is not allowed. Please use: PDF, DOC, DOCX, JPG, or PNG.',
+                'file.*.max'    => 'File size exceeds the 10 MB limit.',
             ]);
 
             $user = Auth::user();
             $type = $validated['type'];
             $category = $validated['category'] ?? 'required';
 
-            // Verify the file exists in the request
             if (!$request->hasFile('file')) {
                 return $this->errorResponse('No file was uploaded.', 422);
             }
 
-            $file = $request->file('file');
+            $files = is_array($request->file('file')) ? $request->file('file') : [$request->file('file')];
+            $uploadedDocuments = [];
 
-            // Double-check file validity
-            if (!$file->isValid()) {
-                return $this->errorResponse('The uploaded file is not valid.', 422);
-            }
-
-            // Store file
-            try {
-                $path = $file->store('documents/' . $user->id, 'public');
-
-                if (!$path) {
-                    return $this->errorResponse('Failed to store the file. Please try again.', 500);
+            foreach ($files as $file) {
+                if (!$file->isValid()) {
+                    continue; // Skip invalid files
                 }
-            } catch (\Exception $e) {
-                return $this->errorResponse('Failed to store the file: ' . $e->getMessage(), 500);
-            }
 
-            // Delete old file if re-uploading
-            $existing = Document::where('user_id', $user->id)
-                ->where('type', $type)
-                ->where('category', $category)
-                ->first();
-
-            if ($existing && $existing->file) {
+                // Store file
                 try {
-                    Storage::disk('public')->delete($existing->file);
+                    $path = $file->store('documents/' . $user->id, 'public');
                 } catch (\Exception $e) {
-                    // Log but don't fail - the new file is already stored
-                    \Log::warning('Failed to delete old document file: ' . $e->getMessage());
+                    \Log::error('Failed to store the file: ' . $e->getMessage());
+                    continue;
                 }
-            }
 
-            // Create or update
-            try {
-                $document = Document::updateOrCreate(
-                    [
+                if ($type !== 'other') {
+                    // Delete old file if re-uploading a REQUIRED doc
+                    $existing = Document::where('user_id', $user->id)
+                        ->where('type', $type)
+                        ->where('category', $category)
+                        ->first();
+
+                    if ($existing && $existing->file) {
+                        try {
+                            Storage::disk('public')->delete($existing->file);
+                        } catch (\Exception $e) {
+                            \Log::warning('Failed to delete old document file: ' . $e->getMessage());
+                        }
+                    }
+
+                    // Update or Create
+                    $document = Document::updateOrCreate(
+                        [
+                            'user_id'  => $user->id,
+                            'type'     => $type,
+                            'category' => $category,
+                        ],
+                        [
+                            'file'        => $path,
+                            'status'      => 'uploaded',
+                            'notes'       => null,
+                            'reviewed_by' => null,
+                            'reviewed_at' => null,
+                        ]
+                    );
+                } else {
+                    // For 'other' documents, ALWAYS CREATE a new record to support multiple files
+                    $document = Document::create([
                         'user_id'  => $user->id,
-                        'type'     => $type,
-                        'category' => $category,
-                    ],
-                    [
-                        'file'        => $path,
-                        'status'      => 'uploaded',   // Reset to uploaded on re-upload
-                        'notes'       => null,          // Clear previous notes
+                        'type'     => $type, // 'other'
+                        'category' => $category, // 'other'
+                        'file'     => $path,
+                        'status'      => 'uploaded',
+                        'notes'       => null,
                         'reviewed_by' => null,
                         'reviewed_at' => null,
-                    ]
-                );
-
-                // Check if this is an AJAX request
-                if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Document uploaded successfully! It is now awaiting review.',
-                        'document' => $document,
-                    ], 200);
+                    ]);
                 }
 
-                return redirect()->route('document')->with('success', 'Document uploaded successfully! It is now awaiting review.');
-            } catch (\Exception $e) {
-                // Clean up the stored file if document creation fails
-                if (isset($path)) {
-                    try {
-                        Storage::disk('public')->delete($path);
-                    } catch (\Exception $deleteError) {
-                        \Log::error('Failed to clean up uploaded file: ' . $deleteError->getMessage());
-                    }
-                }
-
-                return $this->errorResponse('Failed to save document record: ' . $e->getMessage(), 500);
+                $uploadedDocuments[] = $document;
             }
+
+            if (empty($uploadedDocuments)) {
+                return $this->errorResponse('Failed to save document records.', 500);
+            }
+
+            if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => true,
+                    'message' => count($uploadedDocuments) > 1 
+                                 ? count($uploadedDocuments) . ' documents uploaded successfully!'
+                                 : 'Document uploaded successfully! It is now awaiting review.',
+                    'documents' => $uploadedDocuments,
+                ], 200);
+            }
+
+            return redirect()->route('document')->with('success', 'Document(s) uploaded successfully!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
                 return response()->json([
