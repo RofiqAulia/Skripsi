@@ -753,6 +753,13 @@ const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[Upload System] Initializing...');
     
+    // Check for success message from previous upload
+    const successMsg = localStorage.getItem('uploadSuccessMessage');
+    if (successMsg) {
+        showGlobalSuccessAlert(successMsg);
+        localStorage.removeItem('uploadSuccessMessage');
+    }
+    
     // Wait a bit for all DOM elements to be fully loaded
     setTimeout(() => {
         setupAllForms();
@@ -762,6 +769,37 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('[Upload System] Found', document.querySelectorAll('.upload-dropzone').length, 'dropzones');
     }, 100);
 });
+
+function showGlobalSuccessAlert(message) {
+    let container = document.querySelector('.custom-alerts-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'custom-alerts-container';
+        document.body.appendChild(container);
+    }
+    
+    const alertHtml = `
+        <div class="custom-alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert-icon"><i class="bi bi-check-circle-fill"></i></div>
+            <div class="alert-content">
+                <strong>Success!</strong> ${message}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', alertHtml);
+    
+    setTimeout(() => {
+        const alerts = container.querySelectorAll('.custom-alert');
+        if (typeof bootstrap !== 'undefined') {
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }
+    }, 5000);
+}
 
 // ============================================
 // FORM SETUP
@@ -1002,6 +1040,10 @@ function uploadFile(form, docType) {
         if (status === 200 || status === 201) {
             clearError(docType);
             showSuccess(docType, 'Upload successful! Reloading...');
+            
+            // Set localStorage so success message persists after reload
+            localStorage.setItem('uploadSuccessMessage', data.message || 'Document uploaded successfully!');
+            
             setTimeout(() => window.location.reload(), 1500);
         } else {
             // `data` is already parsed above — use it directly
