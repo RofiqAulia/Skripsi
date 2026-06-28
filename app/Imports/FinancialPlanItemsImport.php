@@ -3,42 +3,39 @@
 namespace App\Imports;
 
 use App\Models\FinancialPlanItem;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class FinancialPlanItemsImport implements ToModel, WithHeadingRow
+class FinancialPlanItemsImport implements WithMultipleSheets
 {
     protected $planId;
+
+    // Maps sheet title → category key (case-insensitive)
+    protected $categoryMap = [
+        'arrival cost'   => 'arrival',
+        'education cost' => 'education',
+        'living cost'    => 'living',
+        'family support' => 'family',
+        // fallback by index (sheet 0–3)
+        0 => 'arrival',
+        1 => 'education',
+        2 => 'living',
+        3 => 'family',
+    ];
 
     public function __construct($planId)
     {
         $this->planId = $planId;
     }
 
-    public function model(array $row)
+    public function sheets(): array
     {
-        // The header row uses keys derived from the headings (e.g. 'id', 'estimated_cost', 'scholarship_coverage')
-        // We only update if 'id' exists and it belongs to the correct plan.
-        if (!isset($row['id'])) {
-            return null;
+        $categories = ['arrival', 'education', 'living', 'family'];
+        $sheets     = [];
+
+        foreach ($categories as $index => $cat) {
+            $sheets[$index] = new FinancialPlanCategoryImport($this->planId, $cat);
         }
 
-        $item = FinancialPlanItem::where('id', $row['id'])
-            ->where('financial_plan_id', $this->planId)
-            ->first();
-
-        if ($item) {
-            $item->update([
-                'estimated_cost' => isset($row['estimated_cost']) ? floatval($row['estimated_cost']) : 0,
-                'scholarship_coverage' => isset($row['scholarship_coverage']) ? floatval($row['scholarship_coverage']) : 0,
-            ]);
-            
-            // Trigger recalculations
-            $item->financialPlan->recalculateTotals();
-        }
-
-        return null; // Return null because we are just updating, not creating new via the importer natively.
+        return $sheets;
     }
 }
-

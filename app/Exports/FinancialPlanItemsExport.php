@@ -3,14 +3,9 @@
 namespace App\Exports;
 
 use App\Models\FinancialPlanItem;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class FinancialPlanItemsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class FinancialPlanItemsExport implements WithMultipleSheets
 {
     protected $planId;
 
@@ -19,39 +14,20 @@ class FinancialPlanItemsExport implements FromCollection, WithHeadings, WithMapp
         $this->planId = $planId;
     }
 
-    public function collection()
+    public function sheets(): array
     {
-        return FinancialPlanItem::where('financial_plan_id', $this->planId)->get();
-    }
-
-    public function headings(): array
-    {
-        return [
-            'ID',
-            'Category',
-            'Item Name',
-            'Estimated Cost',
-            'Scholarship Coverage'
+        $categories = [
+            'arrival'   => 'Arrival Cost',
+            'education' => 'Education Cost',
+            'living'    => 'Living Cost',
+            'family'    => 'Family Support',
         ];
-    }
 
-    public function map($item): array
-    {
-        return [
-            $item->id,
-            ucfirst($item->category),
-            $item->item_name,
-            $item->estimated_cost + 0, // ensure format
-            $item->scholarship_coverage + 0
-        ];
-    }
+        $sheets = [];
+        foreach ($categories as $key => $label) {
+            $sheets[] = new FinancialPlanCategorySheet($this->planId, $key, $label);
+        }
 
-    public function styles(Worksheet $sheet)
-    {
-        return [
-            // Style the first row as bold text.
-            1    => ['font' => ['bold' => true]],
-        ];
+        return $sheets;
     }
 }
-

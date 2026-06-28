@@ -309,8 +309,31 @@ class FinancialPlanController extends Controller
         ]);
 
         try {
-            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\FinancialPlanItemsImport($plan->id), $request->file('excel_file'));
-            return response()->json(['success' => true, 'message' => 'Budget items successfully imported!']);
+            \Maatwebsite\Excel\Facades\Excel::import(
+                new \App\Imports\FinancialPlanItemsImport($plan->id),
+                $request->file('excel_file')
+            );
+
+            // Final recalculation after all sheets imported
+            $items      = \App\Models\FinancialPlanItem::where('financial_plan_id', $plan->id)->get();
+            $totalCost  = $items->sum('estimated_cost');
+            $totalSchol = $items->sum('scholarship_coverage');
+            $plan->update([
+                'total_estimated_cost' => $totalCost,
+                'total_funding'        => $totalSchol,
+                'funding_gap'          => $totalSchol - $totalCost,
+                'scholarship_amount'   => $totalSchol,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All budget items successfully imported from all categories!',
+                'summary' => [
+                    'total_cost'    => $totalCost,
+                    'total_funding' => $totalSchol,
+                    'funding_gap'   => $totalSchol - $totalCost,
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error importing file: ' . $e->getMessage()], 500);
         }

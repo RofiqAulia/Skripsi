@@ -349,19 +349,32 @@ function uploadExcelFile() {
     const file = fileInput.files[0];
     if (!file) return;
 
+    // Validate file extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['xlsx','xls'].includes(ext)) {
+        Swal.fire({ title: 'Invalid File', text: 'Please select an Excel file (.xlsx or .xls)', icon: 'warning', confirmButtonColor: '#c0392b' });
+        return;
+    }
+
     const formData = new FormData();
     formData.append('excel_file', file);
 
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0'; overlay.style.left = '0'; overlay.style.width = '100vw'; overlay.style.height = '100vh';
-    overlay.style.backgroundColor = 'rgba(255,255,255,0.7)';
-    overlay.style.zIndex = '9999';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.innerHTML = '<div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-3 fw-bold">Importing Excel...</span>';
-    document.body.appendChild(overlay);
+    // Loading overlay
+    Swal.fire({
+        title: 'Importing Excel...',
+        html: `
+            <div class="d-flex flex-column align-items-center gap-3 py-2">
+                <div class="spinner-border" style="width:3rem;height:3rem;color:#c0392b;" role="status"></div>
+                <p class="mb-0 text-muted" style="font-size:0.9rem;">
+                    Reading all 4 categories:<br>
+                    <small>Arrival · Education · Living · Family</small>
+                </p>
+            </div>
+        `,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
 
     fetch(`{{ route('financial-plan.import-excel', $plan->id) }}`, {
         method: 'POST',
@@ -374,20 +387,58 @@ function uploadExcelFile() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            Swal.fire({ title: 'Success', text: data.message, icon: 'success', confirmButtonColor: '#3b82f6' }).then(() => {
+            const fmt = (n) => new Intl.NumberFormat().format(Math.round(n || 0));
+            const s   = data.summary || {};
+            const gap = s.funding_gap || 0;
+            const gapColor = gap >= 0 ? '#065f46' : '#991b1b';
+            const gapSign  = gap >= 0 ? '+' : '';
+
+            Swal.fire({
+                title: '✅ Import Successful!',
+                html: `
+                    <p class="text-muted mb-3" style="font-size:0.9rem;">${data.message}</p>
+                    <div style="background:#f8fafc;border-radius:12px;padding:1rem;text-align:left;border:1px solid #e2e8f0;">
+                        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #e2e8f0;">
+                            <span style="color:#64748b;font-size:0.85rem;">Total Estimated Cost</span>
+                            <strong style="font-family:monospace;">${fmt(s.total_cost)}</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #e2e8f0;">
+                            <span style="color:#64748b;font-size:0.85rem;">Total Scholarship</span>
+                            <strong style="color:#065f46;font-family:monospace;">${fmt(s.total_funding)}</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;">
+                            <span style="color:#64748b;font-size:0.85rem;">Funding Gap</span>
+                            <strong style="color:${gapColor};font-family:monospace;">${gapSign}${fmt(gap)}</strong>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0" style="font-size:0.8rem;color:#94a3b8;">Page will reload to reflect updated data.</p>
+                `,
+                icon: 'success',
+                confirmButtonText: 'OK, reload page',
+                confirmButtonColor: '#c0392b',
+            }).then(() => {
                 window.location.reload();
             });
         } else {
-            Swal.fire({ title: 'Import Failed', text: data.message || 'Error importing file.', icon: 'error', confirmButtonColor: '#3b82f6' });
-            document.body.removeChild(overlay);
+            Swal.fire({
+                title: 'Import Failed',
+                text: data.message || 'Error importing file.',
+                icon: 'error',
+                confirmButtonColor: '#c0392b'
+            });
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({ title: 'Error', text: 'An unexpected error occurred.', icon: 'error', confirmButtonColor: '#3b82f6' });
-        document.body.removeChild(overlay);
+        console.error('Import error:', error);
+        Swal.fire({
+            title: 'Connection Error',
+            text: 'An unexpected error occurred. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#c0392b'
+        });
     });
-    
-    fileInput.value = ''; // Reset
+
+    fileInput.value = ''; // Reset input
 }
+
 </script>
