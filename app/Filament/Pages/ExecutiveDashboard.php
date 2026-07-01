@@ -21,6 +21,11 @@ class ExecutiveDashboard extends Page
 
     protected string $view = 'filament.pages.executive-dashboard';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(['super_admin', 'pimpinan']) ?? false;
+    }
+
     // ── Livewire filter state ──
     public int $selectedYear;
     public string $selectedMonth = ''; // '' = all months

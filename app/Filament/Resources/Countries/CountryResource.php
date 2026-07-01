@@ -18,7 +18,7 @@ class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-globe-americas';
     protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
 
     public static function form(Schema $schema): Schema

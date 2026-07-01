@@ -18,7 +18,7 @@ class CompetencyResource extends Resource
 {
     protected static ?string $model = Competency::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
     protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
 
     protected static ?string $recordTitleAttribute = 'name';
