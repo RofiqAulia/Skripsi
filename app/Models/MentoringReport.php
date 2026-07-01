@@ -17,10 +17,8 @@ class MentoringReport extends Model
     ];
 
     // 🔥 Status constant (best practice)
-    const STATUS_DRAFT = 'draft';
-    const STATUS_SUBMITTED = 'submitted';
+    const STATUS_UNDER_REVIEW = 'under_review';
     const STATUS_REVISION = 'revision';
-    const STATUS_REJECTED = 'rejected';
     const STATUS_APPROVED = 'approved';
 
     // Relasi
@@ -33,7 +31,7 @@ class MentoringReport extends Model
     {
         static::creating(function ($report) {
             if (!$report->status) {
-                $report->status = self::STATUS_SUBMITTED;
+                $report->status = self::STATUS_UNDER_REVIEW;
             }
         });
     }

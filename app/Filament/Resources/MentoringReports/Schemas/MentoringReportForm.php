@@ -64,10 +64,8 @@ class MentoringReportForm
                 // ✅ Status
                 Select::make('status')
                     ->options([
-                        'draft'     => 'Draft',
-                        'submitted' => 'Submitted',
+                        'under_review' => 'Under Review',
                         'revision'  => 'Revision',
-                        'rejected'  => 'Rejected',
                         'approved'  => 'Approved',
                     ])
                     ->required(),

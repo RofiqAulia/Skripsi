@@ -81,7 +81,7 @@ class MentoringReportController extends Controller
             'summary' => $request->summary,
             'output' => $request->output,
             'file' => $filePath,
-            'status' => MentoringReport::STATUS_SUBMITTED,
+            'status' => MentoringReport::STATUS_UNDER_REVIEW,
             'mentor_notes' => null,
         ]);
 

@@ -51,6 +51,20 @@ class MentoringReportsTable
                     ->limit(30)
                     ->toggleable(),
 
+                TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'warning' => 'under_review',
+                        'danger' => 'revision',
+                        'success' => 'approved',
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'under_review' => 'Under Review',
+                        'revision' => 'Revision',
+                        'approved' => 'Approved',
+                        default => ucfirst($state),
+                    }),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
