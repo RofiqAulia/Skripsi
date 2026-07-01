@@ -26,10 +26,8 @@ class MentoringReportForm
                                 return [
                                     $session->id =>
                                         $session->user->name . ' | ' .
-                                        $session->mentor->user->name . ' | ' .
-                                        $session->schedule->date . ' (' .
-                                        $session->schedule->start_time . '-' .
-                                        $session->schedule->end_time . ')'
+                                        $session->mentor->user->name .
+                                        ($session->schedule ? ' | ' . $session->schedule->date . ' (' . $session->schedule->start_time . '-' . $session->schedule->end_time . ')' : ' | No Schedule')
                                 ];
                             })
                     )
