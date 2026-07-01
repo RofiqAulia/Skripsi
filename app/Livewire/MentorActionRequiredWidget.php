@@ -6,7 +6,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use App\Models\MentoringReport;
 use App\Filament\Resources\MentoringReports\MentoringReportResource;
 
@@ -44,7 +44,7 @@ class MentorActionRequiredWidget extends TableWidget
                     ->dateTime()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('review')
                     ->label('Review Now')
                     ->button()
