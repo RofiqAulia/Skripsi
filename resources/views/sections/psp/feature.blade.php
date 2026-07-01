@@ -513,16 +513,7 @@
                 <h5>Competency</h5>
                 <div class="filter-options scroll">
                     @php
-                    $pspCompetencies = [
-                        'Advance Mining Engineering','Advance Process Engineering',
-                        'Advance Digital analytics & Data Science','Artificial Intelligence',
-                        'Robotic Process Automation','Strategic Transformation & Project Management',
-                        'Strategic Portfolio & Investment Management','Strategic & Management',
-                        'Business & Administration','Business Analysis','Business Development',
-                        'Marketing & Sales Strategy','Digital Marketing','Sociology & Psychology',
-                        'Strategic Human Capital & Psychometric','Waste Management',
-                        'Renewable Energy & CO2','Corporate Sustainability & ESG','Health Safety Environment'
-                    ];
+                    $pspCompetencies = \App\Models\Competency::pluck('name')->toArray();
                     @endphp
                     @foreach($pspCompetencies as $comp)
                     @php $cnt = $programStudies->filter(fn($p)=>strtolower($p->competency)===strtolower($comp))->count(); @endphp

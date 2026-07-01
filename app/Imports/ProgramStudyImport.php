@@ -40,14 +40,25 @@ class ProgramStudyImport implements ToCollection, WithHeadingRow, WithChunkReadi
             $university = $this->cleanString($row['university'] ?? null);
 
             try {
+                $competencyName = $this->cleanString($row['competency'] ?? null);
+                $countryName = $this->cleanString($row['country'] ?? null);
+                
+                if ($competencyName) {
+                    \App\Models\Competency::firstOrCreate(['name' => $competencyName]);
+                }
+                
+                if ($countryName) {
+                    \App\Models\Country::firstOrCreate(['name' => $countryName]);
+                }
+
                 // Unique key: name + university (university may be null)
                 ProgramStudy::updateOrCreate(
                     ['name' => $name, 'university' => $university],
                     [
                         'scholarship'           => $this->cleanString($row['scholarship'] ?? null),
-                        'competency'            => $this->cleanString($row['competency'] ?? null),
+                        'competency'            => $competencyName,
                         'degree'                => $this->cleanString($row['degree'] ?? null),
-                        'country'               => $this->cleanString($row['country'] ?? null),
+                        'country'               => $countryName,
                         'qs_rank'               => $this->cleanInt($row['qs_rank'] ?? null),
                         'website'               => $this->cleanString($row['website'] ?? null),
                         'description'           => $this->cleanString($row['description'] ?? null),

@@ -57,7 +57,7 @@ class ProgramStudyForm
                             ->columnSpanFull(),
                         Select::make('competency')
                             ->label('Competency')
-                            ->options($competencyOptions)
+                            ->options(\App\Models\Competency::pluck('name', 'name')->toArray())
                             ->searchable()
                             ->required(),
                         TextInput::make('name')
@@ -77,10 +77,11 @@ class ProgramStudyForm
                         TextInput::make('qs_rank')
                             ->label('QS World Rank 2025')
                             ->numeric(),
-                        TextInput::make('country')
+                        Select::make('country')
                             ->label('Country')
-                            ->required()
-                            ->maxLength(255),
+                            ->options(\App\Models\Country::pluck('name', 'name')->toArray())
+                            ->searchable()
+                            ->required(),
                         TextInput::make('website')
                             ->label('Website Link')
                             ->url()
