@@ -18,7 +18,17 @@ class MentoringSessionForm
                 // ✅ User (nama)
                 Select::make('user_id')
                     ->label('Mentee')
-                    ->options(User::orderBy('name')->pluck('name', 'id'))
+                    ->options(function () {
+                        if (auth()->user()->hasRole('mentor')) {
+                            $mentor = auth()->user()->mentor;
+                            if ($mentor) {
+                                $studentIds = $mentor->sessions()->pluck('user_id');
+                                return User::whereIn('id', $studentIds)->orderBy('name')->pluck('name', 'id');
+                            }
+                            return [];
+                        }
+                        return User::role('mentee')->orderBy('name')->pluck('name', 'id');
+                    })
                     ->searchable()
                     ->required(),
 
