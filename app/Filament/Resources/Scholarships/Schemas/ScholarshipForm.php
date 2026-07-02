@@ -15,26 +15,7 @@ class ScholarshipForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $competencyOptions = [
-            'Advance Mining Engineering'                       => 'Advance Mining Engineering',
-            'Advance Process Engineering'                      => 'Advance Process Engineering',
-            'Advance Digital analytics & Data Science'         => 'Advance Digital analytics & Data Science',
-            'Artificial Intelligence'                          => 'Artificial Intelligence',
-            'Robotic Process Automation'                       => 'Robotic Process Automation',
-            'Strategic Transformation & Project Management'    => 'Strategic Transformation & Project Management',
-            'Strategic Portfolio & Investment Management'      => 'Strategic Portfolio & Investment Management',
-            'Strategic & Management Business & Administration' => 'Strategic & Management Business & Administration',
-            'Business Analysis'                                => 'Business Analysis',
-            'Business Development'                             => 'Business Development',
-            'Marketing & Sales Strategy'                       => 'Marketing & Sales Strategy',
-            'Digital Marketing'                                => 'Digital Marketing',
-            'Sociology & Psychology'                           => 'Sociology & Psychology',
-            'Strategic Human Capital & Psychometric'           => 'Strategic Human Capital & Psychometric',
-            'Waste Management'                                 => 'Waste Management',
-            'Renewable Energy & CO2'                           => 'Renewable Energy & CO2',
-            'Corporate Sustainability & ESG'                   => 'Corporate Sustainability & ESG',
-            'Health Safety Environment'                        => 'Health Safety Environment',
-        ];
+
 
         return $schema
             ->components([
@@ -72,7 +53,13 @@ class ScholarshipForm
                     ->components([
                         Select::make('competency')
                             ->label('Competency')
-                            ->options($competencyOptions)
+                            ->options(function (?Illuminate\Database\Eloquent\Model $record) {
+                                $options = \App\Models\Competency::active()->pluck('name', 'name')->toArray();
+                                if ($record && $record->competency && !array_key_exists($record->competency, $options)) {
+                                    $options[$record->competency] = $record->competency;
+                                }
+                                return $options;
+                            })
                             ->searchable(),
                         Select::make('program_study_id')
                             ->label('Study Program')

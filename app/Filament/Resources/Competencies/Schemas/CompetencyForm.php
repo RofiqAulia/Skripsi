@@ -13,6 +13,9 @@ class CompetencyForm
             ->components([
                 TextInput::make('name')
                     ->required(),
+                \Filament\Forms\Components\Toggle::make('is_active')
+                    ->label('Active')
+                    ->default(true),
             ]);
     }
 }

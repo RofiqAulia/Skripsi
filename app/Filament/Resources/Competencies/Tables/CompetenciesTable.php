@@ -16,6 +16,8 @@ class CompetenciesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                \Filament\Tables\Columns\ToggleColumn::make('is_active')
+                    ->label('Active'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -33,7 +35,7 @@ class CompetenciesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }
