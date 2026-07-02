@@ -21,10 +21,7 @@ class ProgramStudyResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Master Data';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
-    public static function canViewAny(): bool
-    {
-        return true;
-    }
+
 
 
     public static function form(Schema $schema): Schema

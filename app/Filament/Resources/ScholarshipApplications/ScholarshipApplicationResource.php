@@ -36,10 +36,7 @@ class ScholarshipApplicationResource extends Resource
     {
         return ! auth()->user()->hasAnyRole(['pimpinan', 'mentor']);
     }
-    public static function canViewAny(): bool
-    {
-        return true;
-    }
+
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {

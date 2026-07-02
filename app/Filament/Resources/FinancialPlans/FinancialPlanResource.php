@@ -41,10 +41,7 @@ class FinancialPlanResource extends Resource
     }
 
     protected static ?string $recordTitleAttribute = 'id';
-    public static function canViewAny(): bool
-    {
-        return true;
-    }
+
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {

@@ -52,8 +52,5 @@ class EventResource extends Resource
     /**
      * Restrict access to Super Admin only.
      */
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->hasRole('super_admin') ?? false;
-    }
+
 }
