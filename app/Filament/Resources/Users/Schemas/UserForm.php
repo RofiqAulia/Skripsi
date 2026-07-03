@@ -21,7 +21,7 @@ class UserForm
                     ->multiple()
                     ->preload()
                     ->searchable()
-                    ->rule(function (\Filament\Forms\Get $get, $record) {
+                    ->rule(function ($get, $record) {
                         return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
                             if (!is_array($value)) return;
                             
