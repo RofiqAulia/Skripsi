@@ -37,8 +37,10 @@ class PspApplicationResource extends Resource
         } elseif (auth()->check() && !auth()->user()->hasRole('super_admin')) {
             $userId = auth()->id();
             
-            // Collect all allowed department IDs for this user based on their leadership roles
+            // Collect all allowed IDs for this user based on their leadership roles
             $allowedDepartmentIds = collect();
+            $allowedGroupIds = collect();
+            $allowedDirektoratIds = collect();
 
             // 1. Is user a Department Head?
             $deptIds = \App\Models\Department::where('head_id', $userId)->pluck('id');
@@ -51,6 +53,7 @@ class PspApplicationResource extends Resource
             // 2. Is user a Group Head?
             $groupIds = \App\Models\Group::where('head_id', $userId)->pluck('id');
             if ($groupIds->isNotEmpty()) {
+                $allowedGroupIds = $allowedGroupIds->merge($groupIds);
                 $deptIdsFromGroups = \App\Models\Department::whereIn('group_id', $groupIds)->pluck('id');
                 $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromGroups);
             }
@@ -58,14 +61,26 @@ class PspApplicationResource extends Resource
             // 3. Is user a Direktorat Head?
             $direktoratIds = \App\Models\Direktorat::where('head_id', $userId)->pluck('id');
             if ($direktoratIds->isNotEmpty()) {
+                $allowedDirektoratIds = $allowedDirektoratIds->merge($direktoratIds);
                 $groupIdsFromDir = \App\Models\Group::whereIn('direktorat_id', $direktoratIds)->pluck('id');
+                $allowedGroupIds = $allowedGroupIds->merge($groupIdsFromDir);
                 $deptIdsFromDir = \App\Models\Department::whereIn('group_id', $groupIdsFromDir)->pluck('id');
                 $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromDir);
             }
 
-            if ($allowedDepartmentIds->isNotEmpty()) {
-                $query->whereHas('user', function ($q) use ($allowedDepartmentIds) {
-                    $q->whereIn('department_id', $allowedDepartmentIds->unique());
+            if ($allowedDepartmentIds->isNotEmpty() || $allowedGroupIds->isNotEmpty() || $allowedDirektoratIds->isNotEmpty()) {
+                $query->whereHas('user', function ($q) use ($allowedDepartmentIds, $allowedGroupIds, $allowedDirektoratIds) {
+                    $q->where(function($subQ) use ($allowedDepartmentIds, $allowedGroupIds, $allowedDirektoratIds) {
+                        if ($allowedDepartmentIds->isNotEmpty()) {
+                            $subQ->orWhereIn('department_id', $allowedDepartmentIds->unique());
+                        }
+                        if ($allowedGroupIds->isNotEmpty()) {
+                            $subQ->orWhereIn('group_id', $allowedGroupIds->unique());
+                        }
+                        if ($allowedDirektoratIds->isNotEmpty()) {
+                            $subQ->orWhereIn('direktorat_id', $allowedDirektoratIds->unique());
+                        }
+                    });
                 });
             } else {
                 // If not a leader of any level and not super_admin, they see nothing

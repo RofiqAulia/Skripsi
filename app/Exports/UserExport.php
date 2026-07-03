@@ -24,7 +24,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
             $user->age,
             $user->position,
             $user->company,
-            $user->department?->name, // Placement (Department Name)
+            $user->department?->name ?? $user->group?->name ?? $user->direktorat?->name, // Placement (Department/Group/Direktorat Name)
             $user->roles->pluck('name')->join(', '), // optionally include roles
         ];
     }

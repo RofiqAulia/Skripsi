@@ -30,6 +30,12 @@
         $progStudy = $pspApplication->scholarship?->programStudy
                   ?? $pspApplication->studyPlan?->programStudy
                   ?? null;
+
+        $usr = $pspApplication->user;
+        $showDept = !empty($usr->department_id);
+        $showGroup = !empty($usr->department_id) || !empty($usr->group_id);
+
+        $colWidth = 100 / (1 + ($showDept ? 1 : 0) + ($showGroup ? 1 : 0) + 1); // Submission + Dept? + Group? + Dir
     @endphp
 
     <!-- PROGRAM STUDY INFO CARD -->
@@ -90,10 +96,14 @@
             <!-- HEADER -->
             <thead>
                 <tr>
-                    <th style="width: 25%">Submission</th>
-                    <th style="width: 25%">Department Approval</th>
-                    <th style="width: 25%">Group Head Approval</th>
-                    <th style="width: 25%">Direktorat Approval</th>
+                    <th style="width: {{ $colWidth }}%">Submission</th>
+                    @if($showDept)
+                        <th style="width: {{ $colWidth }}%">Department Approval</th>
+                    @endif
+                    @if($showGroup)
+                        <th style="width: {{ $colWidth }}%">Group Head Approval</th>
+                    @endif
+                    <th style="width: {{ $colWidth }}%">Direktorat Approval</th>
                 </tr>
             </thead>
 
@@ -112,6 +122,7 @@
                         </div>
                     </td>
 
+                    @if($showDept)
                     <!-- STEP 2: Department Approval -->
                     @php
                         $step2Class = 'pending';
@@ -147,7 +158,9 @@
                             @endif
                         </div>
                     </td>
+                    @endif
 
+                    @if($showGroup)
                     <!-- STEP 3: Group Approval -->
                     @php
                         $step3Class = 'pending';
@@ -183,6 +196,7 @@
                             @endif
                         </div>
                     </td>
+                    @endif
 
                     <!-- STEP 4: Direktorat Approval -->
                     @php

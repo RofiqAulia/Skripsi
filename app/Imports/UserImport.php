@@ -26,9 +26,29 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         $user = User::where('email', $row['email'])->first();
 
         $departmentId = null;
+        $groupId = null;
+        $direktoratId = null;
+
         if (!empty($row['department'])) {
-            $department = \App\Models\Department::where('name', $row['department'])->first();
-            $departmentId = $department?->id;
+            $placementName = $row['department'];
+            
+            // Try to find as Department
+            $department = \App\Models\Department::where('name', $placementName)->first();
+            if ($department) {
+                $departmentId = $department->id;
+            } else {
+                // Try to find as Group
+                $group = \App\Models\Group::where('name', $placementName)->first();
+                if ($group) {
+                    $groupId = $group->id;
+                } else {
+                    // Try to find as Direktorat
+                    $direktorat = \App\Models\Direktorat::where('name', $placementName)->first();
+                    if ($direktorat) {
+                        $direktoratId = $direktorat->id;
+                    }
+                }
+            }
         } elseif (!empty($row['department_id'])) {
             $departmentId = $row['department_id']; // Fallback
         }
@@ -40,6 +60,8 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             'position' => $row['position'] ?? null,
             'company' => $row['company'] ?? null,
             'department_id' => $departmentId,
+            'group_id' => $groupId,
+            'direktorat_id' => $direktoratId,
         ];
 
         // Only update password if provided or if creating new

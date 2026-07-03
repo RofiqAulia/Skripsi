@@ -77,6 +77,16 @@ class PspController extends Controller
             ]
         );
 
+        // Determine starting approval stage based on user placement
+        $approvalStage = 0; // default: Department level
+        if (!$user->department_id) {
+            if ($user->group_id) {
+                $approvalStage = 1; // Start at Group level
+            } elseif ($user->direktorat_id) {
+                $approvalStage = 2; // Start at Direktorat level
+            }
+        }
+
         // Create/update PspApplication
         PspApplication::updateOrCreate(
             ['user_id' => $user->id],
@@ -84,6 +94,7 @@ class PspController extends Controller
                 'study_plan_id'   => $studyPlan->id,
                 'scholarship_id'  => $scholarship?->id,
                 'study_plan_text' => $request->study_plan_text,
+                'approval_stage'  => $approvalStage,
                 'status'          => 'submission',
             ]
         );

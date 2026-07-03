@@ -93,6 +93,11 @@
         $program    = $studyPlan?->programStudy;
         $scholarship = $application->scholarship ?? $studyPlan?->scholarship ?? $program?->scholarships?->first();
         $approver   = $application->approver;
+
+        $showDept = !empty($user->department_id);
+        $showGroup = !empty($user->department_id) || !empty($user->group_id);
+        $totalCols = ($showDept ? 1 : 0) + ($showGroup ? 1 : 0) + 1;
+        $colWidth = 100 / $totalCols;
     @endphp
 
     @if(file_exists(public_path('images/logo/sig-latar-putih.png')))
@@ -160,8 +165,9 @@
 
     <table style="width: 100%; margin-top: 60px; text-align: center; border-collapse: collapse;">
         <tr>
+            @if($showDept)
             <!-- Department Approver -->
-            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+            <td style="width: {{ $colWidth }}%; vertical-align: top; padding: 0 10px;">
                 Jakarta, {{ $application->department_approved_at ? \Carbon\Carbon::parse($application->department_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
                 Yang menyetujui,<br>
                 <strong>GM of {{ $application->user->department?->name ?? '.....................' }}</strong><br>
@@ -180,12 +186,14 @@
                 
                 <u>{{ $application->departmentApprover?->name ?? '....................................' }}</u>
             </td>
+            @endif
 
+            @if($showGroup)
             <!-- Group Approver -->
-            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+            <td style="width: {{ $colWidth }}%; vertical-align: top; padding: 0 10px;">
                 Jakarta, {{ $application->group_approved_at ? \Carbon\Carbon::parse($application->group_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
                 Yang menyetujui,<br>
-                <strong>SVP of {{ $application->user->department?->group?->name ?? '.....................' }}</strong><br>
+                <strong>SVP of {{ $application->user->department?->group?->name ?? $application->user->group?->name ?? '.....................' }}</strong><br>
                 
                 @if($application->groupApprover)
                     @if($application->groupApprover->signature_pad)
@@ -201,12 +209,13 @@
                 
                 <u>{{ $application->groupApprover?->name ?? '....................................' }}</u>
             </td>
+            @endif
 
             <!-- Direktorat Approver -->
-            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+            <td style="width: {{ $colWidth }}%; vertical-align: top; padding: 0 10px;">
                 Jakarta, {{ $application->direktorat_approved_at ? \Carbon\Carbon::parse($application->direktorat_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
                 Yang menyetujui,<br>
-                <strong>Direktur of {{ $application->user->department?->group?->direktorat?->name ?? '.....................' }}</strong><br>
+                <strong>Direktur of {{ $application->user->department?->group?->direktorat?->name ?? $application->user->group?->direktorat?->name ?? $application->user->direktorat?->name ?? '.....................' }}</strong><br>
                 
                 @if($isApproved)
                     @if($application->signature_pad)

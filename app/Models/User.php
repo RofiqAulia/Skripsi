@@ -30,6 +30,8 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
         'toefl_score',
         'ielts_score',
         'department_id',
+        'group_id',
+        'direktorat_id',
     ];
 
     public function setPasswordAttribute($value)
@@ -66,6 +68,16 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function direktorat()
+    {
+        return $this->belongsTo(Direktorat::class);
     }
 
     public function studyPlan()
