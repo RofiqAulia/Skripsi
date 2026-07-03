@@ -21,16 +21,20 @@ class EditPspApplication extends EditRecord
         if ($user->hasRole('pimpinan') || $user->hasRole('super_admin')) {
             $applicant = $this->record->user;
             
+            $applicantDept = $applicant->department;
+            $applicantGroup = $applicant->group ?? $applicantDept?->group;
+            $applicantDir = $applicant->direktorat ?? $applicantGroup?->direktorat;
+            
             // If the approver is the applicant's Department Head
-            if ($user->department_id && $applicant && $user->department_id == $applicant->department_id) {
+            if ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) {
                 $data['department_approver_id'] = $user->id;
             }
             // If the approver is the applicant's Group Head
-            if ($user->group_id && $applicant && $user->group_id == $applicant->group_id) {
+            if ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) {
                 $data['group_approver_id'] = $user->id;
             }
             // If the approver is the applicant's Direktorat Head
-            if ($user->direktorat_id && $applicant && $user->direktorat_id == $applicant->direktorat_id) {
+            if ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) {
                 $data['direktorat_approver_id'] = $user->id;
             }
             
