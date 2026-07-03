@@ -168,7 +168,7 @@
             @if($showDept)
             <!-- Department Approver -->
             <td style="width: {{ $colWidth }}%; vertical-align: top; padding: 0 10px;">
-                Jakarta, {{ $application->department_approved_at ? \Carbon\Carbon::parse($application->department_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
+                &nbsp;<br>
                 Yang menyetujui,<br>
                 <strong>GM of {{ $application->user->department?->name ?? '.....................' }}</strong><br>
                 
@@ -191,7 +191,7 @@
             @if($showGroup)
             <!-- Group Approver -->
             <td style="width: {{ $colWidth }}%; vertical-align: top; padding: 0 10px;">
-                Jakarta, {{ $application->group_approved_at ? \Carbon\Carbon::parse($application->group_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
+                &nbsp;<br>
                 Yang menyetujui,<br>
                 <strong>SVP of {{ $application->user->department?->group?->name ?? $application->user->group?->name ?? '.....................' }}</strong><br>
                 

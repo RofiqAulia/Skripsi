@@ -26,12 +26,15 @@ class EditPspApplication extends EditRecord
             
             if ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) {
                 $data['department_approver_id'] = $user->id;
+                $data['department_approved_at'] = $data['department_approved_at'] ?? now();
             }
             if ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) {
                 $data['group_approver_id'] = $user->id;
+                $data['group_approved_at'] = $data['group_approved_at'] ?? now();
             }
             if ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) {
                 $data['direktorat_approver_id'] = $user->id;
+                $data['direktorat_approved_at'] = $data['direktorat_approved_at'] ?? now();
             }
             
             $data['approver_id'] = $user->id;
