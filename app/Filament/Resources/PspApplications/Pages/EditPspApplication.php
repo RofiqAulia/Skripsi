@@ -15,39 +15,39 @@ class EditPspApplication extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $this->oldStatus = $this->record->status;
-        
-        // Auto-fill approver IDs based on who is saving the form
-        $user = auth()->user();
-        if ($user->hasRole('pimpinan') || $user->hasRole('super_admin')) {
-            $applicant = $this->record->user;
-            
-            $applicantDept = $applicant->department;
-            $applicantGroup = $applicant->group ?? $applicantDept?->group;
-            $applicantDir = $applicant->direktorat ?? $applicantGroup?->direktorat;
-            
-            // If the approver is the applicant's Department Head
-            if ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) {
-                $data['department_approver_id'] = $user->id;
-            }
-            // If the approver is the applicant's Group Head
-            if ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) {
-                $data['group_approver_id'] = $user->id;
-            }
-            // If the approver is the applicant's Direktorat Head
-            if ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) {
-                $data['direktorat_approver_id'] = $user->id;
-            }
-            
-            // Always set as the final approver if they interacted with it
-            $data['approver_id'] = $user->id;
-        }
-
         return $data;
     }
 
     protected function afterSave(): void
     {
         $application = $this->record;
+        $user = auth()->user();
+        
+        $updates = [];
+        
+        if ($user->hasRole('pimpinan') || $user->hasRole('super_admin')) {
+            $applicant = $application->user;
+            
+            $applicantDept = $applicant->department;
+            $applicantGroup = $applicant->group ?? $applicantDept?->group;
+            $applicantDir = $applicant->direktorat ?? $applicantGroup?->direktorat;
+            
+            if ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) {
+                $updates['department_approver_id'] = $user->id;
+            }
+            if ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) {
+                $updates['group_approver_id'] = $user->id;
+            }
+            if ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) {
+                $updates['direktorat_approver_id'] = $user->id;
+            }
+            
+            $updates['approver_id'] = $user->id;
+        }
+
+        if (!empty($updates)) {
+            $application->updateQuietly($updates);
+        }
 
         if (in_array($application->status, ['approved', 'review', 'rejected']) && $this->oldStatus !== $application->status) {
             $application->load([
