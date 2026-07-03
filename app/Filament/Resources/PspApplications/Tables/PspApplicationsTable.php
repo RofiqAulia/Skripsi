@@ -35,23 +35,70 @@ class PspApplicationsTable
                         3 => 'success',
                         default => 'gray',
                     }),
-                \Filament\Tables\Columns\TextColumn::make('status')
+                \Filament\Tables\Columns\TextColumn::make('dept_status')
+                    ->label('Dept Status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'submission' => 'Submission',
-                        'review'     => 'Revision',
-                        'approved'   => 'Approved',
-                        'rejected'   => 'Rejected',
-                        default      => ucfirst($state),
+                    ->getStateUsing(function ($record) {
+                        if ($record->approval_stage >= 1) return 'Approved';
+                        if ($record->approval_stage == 0) {
+                            return match ($record->status) {
+                                'submission' => 'Waiting',
+                                'review' => 'Revision',
+                                'rejected' => 'Rejected',
+                                default => 'Waiting',
+                            };
+                        }
+                        return '-';
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        'submission' => 'gray',
-                        'review'     => 'warning',
-                        'approved'   => 'success',
-                        'rejected'   => 'danger',
-                        default      => 'gray',
+                        'Approved' => 'success',
+                        'Waiting' => 'gray',
+                        'Revision' => 'warning',
+                        'Rejected' => 'danger',
+                        default => 'gray',
+                    }),
+                \Filament\Tables\Columns\TextColumn::make('group_status')
+                    ->label('Group Status')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        if ($record->approval_stage >= 2) return 'Approved';
+                        if ($record->approval_stage == 1) {
+                            return match ($record->status) {
+                                'review' => 'Revision',
+                                'rejected' => 'Rejected',
+                                default => 'Waiting',
+                            };
+                        }
+                        return '-';
                     })
-                    ->searchable(),
+                    ->color(fn (string $state): string => match ($state) {
+                        'Approved' => 'success',
+                        'Waiting' => 'gray',
+                        'Revision' => 'warning',
+                        'Rejected' => 'danger',
+                        default => 'gray',
+                    }),
+                \Filament\Tables\Columns\TextColumn::make('dir_status')
+                    ->label('Dir Status')
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        if ($record->approval_stage >= 3) return 'Approved';
+                        if ($record->approval_stage == 2) {
+                            return match ($record->status) {
+                                'review' => 'Revision',
+                                'rejected' => 'Rejected',
+                                default => 'Waiting',
+                            };
+                        }
+                        return '-';
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Approved' => 'success',
+                        'Waiting' => 'gray',
+                        'Revision' => 'warning',
+                        'Rejected' => 'danger',
+                        default => 'gray',
+                    }),
                 \Filament\Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
