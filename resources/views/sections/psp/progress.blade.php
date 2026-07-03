@@ -91,9 +91,9 @@
             <thead>
                 <tr>
                     <th style="width: 25%">Submission</th>
-                    <th style="width: 25%">Dept. Approval</th>
-                    <th style="width: 25%">Group Approval</th>
-                    <th style="width: 25%">Dir. Approval</th>
+                    <th style="width: 25%">Department Approval</th>
+                    <th style="width: 25%">Group Head Approval</th>
+                    <th style="width: 25%">Direktorat Approval</th>
                 </tr>
             </thead>
 
