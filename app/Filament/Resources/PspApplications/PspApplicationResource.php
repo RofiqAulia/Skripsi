@@ -35,37 +35,30 @@ class PspApplicationResource extends Resource
                 $query->where('id', 0);
             }
         } elseif (auth()->check() && !auth()->user()->hasRole('super_admin')) {
-            $userId = auth()->id();
+            $user = auth()->user();
             
             // Collect all allowed IDs for this user based on their leadership roles
             $allowedDepartmentIds = collect();
             $allowedGroupIds = collect();
             $allowedDirektoratIds = collect();
 
-            // 1. Is user a Department Head?
-            $deptIds = \App\Models\Department::where('head_id', $userId)->pluck('id');
-            if ($deptIds->isNotEmpty()) {
-                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIds);
-                // Department head only sees stage 0 (submission) or higher
-                // Actually they should see all apps from their department, but only can approve stage 0.
-            }
-
-            // 2. Is user a Group Head?
-            $groupIds = \App\Models\Group::where('head_id', $userId)->pluck('id');
-            if ($groupIds->isNotEmpty()) {
-                $allowedGroupIds = $allowedGroupIds->merge($groupIds);
-                $deptIdsFromGroups = \App\Models\Department::whereIn('group_id', $groupIds)->pluck('id');
-                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromGroups);
-            }
-
-            // 3. Is user a Direktorat Head?
-            $direktoratIds = \App\Models\Direktorat::where('head_id', $userId)->pluck('id');
-            if ($direktoratIds->isNotEmpty()) {
-                $allowedDirektoratIds = $allowedDirektoratIds->merge($direktoratIds);
-                $groupIdsFromDir = \App\Models\Group::whereIn('direktorat_id', $direktoratIds)->pluck('id');
-                $allowedGroupIds = $allowedGroupIds->merge($groupIdsFromDir);
-                $deptIdsFromDir = \App\Models\Department::whereIn('group_id', $groupIdsFromDir)->pluck('id');
-                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromDir);
+            if ($user->hasRole('pimpinan')) {
+                if ($user->department_id) {
+                    // 1. Is user a Department Head?
+                    $allowedDepartmentIds->push($user->department_id);
+                } elseif ($user->group_id) {
+                    // 2. Is user a Group Head?
+                    $allowedGroupIds->push($user->group_id);
+                    $deptIdsFromGroups = \App\Models\Department::where('group_id', $user->group_id)->pluck('id');
+                    $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromGroups);
+                } elseif ($user->direktorat_id) {
+                    // 3. Is user a Direktorat Head?
+                    $allowedDirektoratIds->push($user->direktorat_id);
+                    $groupIdsFromDir = \App\Models\Group::where('direktorat_id', $user->direktorat_id)->pluck('id');
+                    $allowedGroupIds = $allowedGroupIds->merge($groupIdsFromDir);
+                    $deptIdsFromDir = \App\Models\Department::whereIn('group_id', $groupIdsFromDir)->pluck('id');
+                    $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromDir);
+                }
             }
 
             if ($allowedDepartmentIds->isNotEmpty() || $allowedGroupIds->isNotEmpty() || $allowedDirektoratIds->isNotEmpty()) {
