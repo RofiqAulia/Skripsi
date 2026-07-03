@@ -17,7 +17,7 @@ class UserForm
                     ->directory('users/photos')
                     ->columnSpanFull(),
                 \Filament\Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')
+                    ->relationship('roles', 'name', fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('name', '!=', 'approver'))
                     ->multiple()
                     ->preload()
                     ->searchable()
