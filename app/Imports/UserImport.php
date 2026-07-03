@@ -16,9 +16,16 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
     public function model(array $row)
     {
-        // Skip if required fields are missing
+        // Validate email format and required fields
         if (empty($row['name']) || empty($row['email'])) {
             $this->rowsSkipped++;
+            $this->errors[] = "Row skipped: Name or email is empty.";
+            return null;
+        }
+
+        if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->rowsSkipped++;
+            $this->errors[] = "Row skipped: Invalid email format ({$row['email']}).";
             return null;
         }
 
@@ -49,6 +56,13 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                     }
                 }
             }
+
+            // Reject if placement name is provided but not found
+            if (!$departmentId && !$groupId && !$direktoratId) {
+                $this->rowsSkipped++;
+                $this->errors[] = "Row skipped: Placement '{$placementName}' not found for user {$row['email']}.";
+                return null;
+            }
         } elseif (!empty($row['department_id'])) {
             $departmentId = $row['department_id']; // Fallback
         }
@@ -63,6 +77,26 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             'group_id' => $groupId,
             'direktorat_id' => $direktoratId,
         ];
+
+        $role = !empty($row['roles']) ? trim($row['roles']) : 'mentee';
+
+        if ($role === 'pimpinan') {
+            $existingPimpinan = null;
+            if ($departmentId) {
+                $existingPimpinan = User::role('pimpinan')->where('department_id', $departmentId)->where('id', '!=', $user?->id)->first();
+            } elseif ($groupId) {
+                $existingPimpinan = User::role('pimpinan')->where('group_id', $groupId)->where('id', '!=', $user?->id)->first();
+            } elseif ($direktoratId) {
+                $existingPimpinan = User::role('pimpinan')->where('direktorat_id', $direktoratId)->where('id', '!=', $user?->id)->first();
+            }
+
+            if ($existingPimpinan) {
+                $this->rowsSkipped++;
+                $placementName = $row['department'] ?? 'the selected placement';
+                $this->errors[] = "Row skipped: A 'pimpinan' already exists for {$placementName}.";
+                return null;
+            }
+        }
 
         // Only update password if provided or if creating new
         if (!$user) {
@@ -81,7 +115,6 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
         // Assign role if supported
         if (method_exists($user, 'assignRole')) {
-            $role = !empty($row['roles']) ? trim($row['roles']) : 'mentee';
             $user->syncRoles([$role]);
         }
 

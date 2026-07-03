@@ -21,6 +21,37 @@ class UserForm
                     ->multiple()
                     ->preload()
                     ->searchable()
+                    ->rule(function (\Filament\Forms\Get $get, $record) {
+                        return function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                            if (!is_array($value)) return;
+                            
+                            $pimpinanRole = \Spatie\Permission\Models\Role::where('name', 'pimpinan')->first();
+                            if ($pimpinanRole && in_array($pimpinanRole->id, $value)) {
+                                $deptId = $get('department_id');
+                                $groupId = $get('group_id');
+                                $dirId = $get('direktorat_id');
+                                
+                                if (!$deptId && !$groupId && !$dirId) return;
+                                
+                                $query = \App\Models\User::role('pimpinan');
+                                if ($record) {
+                                    $query->where('id', '!=', $record->id);
+                                }
+                                
+                                if ($deptId) {
+                                    $query->where('department_id', $deptId);
+                                } elseif ($groupId) {
+                                    $query->where('group_id', $groupId);
+                                } elseif ($dirId) {
+                                    $query->where('direktorat_id', $dirId);
+                                }
+                                
+                                if ($query->exists()) {
+                                    $fail("Penempatan ini sudah memiliki user dengan role pimpinan (Hanya boleh 1).");
+                                }
+                            }
+                        };
+                    })
                     ->columnSpanFull(),
                 TextInput::make('position'),
                 TextInput::make('company'),
