@@ -15,39 +15,34 @@ class EditPspApplication extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $this->oldStatus = $this->record->status;
-        return $data;
-    }
-
-    protected function afterSave(): void
-    {
-        $application = $this->record;
+        
         $user = auth()->user();
-        
-        $updates = [];
-        
         if ($user->hasRole('pimpinan') || $user->hasRole('super_admin')) {
-            $applicant = $application->user;
+            $applicant = $this->record->user;
             
             $applicantDept = $applicant->department;
             $applicantGroup = $applicant->group ?? $applicantDept?->group;
             $applicantDir = $applicant->direktorat ?? $applicantGroup?->direktorat;
             
             if ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) {
-                $updates['department_approver_id'] = $user->id;
+                $data['department_approver_id'] = $user->id;
             }
             if ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) {
-                $updates['group_approver_id'] = $user->id;
+                $data['group_approver_id'] = $user->id;
             }
             if ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) {
-                $updates['direktorat_approver_id'] = $user->id;
+                $data['direktorat_approver_id'] = $user->id;
             }
             
-            $updates['approver_id'] = $user->id;
+            $data['approver_id'] = $user->id;
         }
 
-        if (!empty($updates)) {
-            $application->updateQuietly($updates);
-        }
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $application = $this->record;
 
         if (in_array($application->status, ['approved', 'review', 'rejected']) && $this->oldStatus !== $application->status) {
             $application->load([

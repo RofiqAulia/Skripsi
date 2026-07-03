@@ -69,15 +69,18 @@ class PspApplicationForm
                         \Filament\Forms\Components\Select::make('department_approver_id')
                             ->relationship('departmentApprover', 'name')
                             ->label('Department Approver')
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
                         \Filament\Forms\Components\Select::make('group_approver_id')
                             ->relationship('groupApprover', 'name')
                             ->label('Group Approver')
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
                         \Filament\Forms\Components\Select::make('direktorat_approver_id')
                             ->relationship('direktoratApprover', 'name')
                             ->label('Direktorat Approver')
-                            ->disabled(),
+                            ->disabled()
+                            ->dehydrated(),
                     ])->columns(3),
 
                 \Filament\Forms\Components\Textarea::make('notes')
