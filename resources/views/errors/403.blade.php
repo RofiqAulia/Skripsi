@@ -1,21 +1,11 @@
 @extends('errors.layout')
 
-@section('title', 'Akses Ditolak (Forbidden)')
+@section('title', 'Access Denied')
 @section('code', '403')
+@section('message', 'Sorry, you do not have permission to access this page or resource.')
 
 @section('icon')
-<div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-2 animate-bounce shadow-inner">
-    <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-</div>
-@endsection
-
-@section('message')
-Mohon maaf, Anda tidak memiliki izin untuk mengakses halaman ini atau melakukan tindakan tersebut. Sistem secara otomatis menolak akses untuk menjaga keamanan data.
-@endsection
-
-@section('best_practices')
-    <li><strong>Periksa Hak Akses (Role):</strong> Pastikan akun Anda memiliki peran/role yang sesuai untuk mengakses modul penilaian ini.</li>
-    <li><strong>Sesi Kedaluwarsa:</strong> Sesi login Anda mungkin sudah habis. Silakan coba <a href="{{ route('login') ?? url('/login') }}" class="underline font-semibold">login kembali</a>.</li>
-    <li><strong>Hubungi Administrator:</strong> Jika Anda seharusnya memiliki akses, silakan hubungi tim IT atau Administrator sistem untuk penyesuaian hak akses.</li>
-    <li><strong>Hindari Akses Paksa:</strong> Upaya berulang untuk masuk ke sistem tanpa izin dapat menyebabkan akun Anda diblokir sementara.</li>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+</svg>
 @endsection

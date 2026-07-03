@@ -1,21 +1,11 @@
 @extends('errors.layout')
 
-@section('title', 'Halaman Tidak Ditemukan')
+@section('title', 'Page Not Found')
 @section('code', '404')
+@section('message', 'Oops! The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.')
 
 @section('icon')
-<div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-2 shadow-inner transition-transform hover:rotate-180 duration-500">
-    <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-</div>
-@endsection
-
-@section('message')
-Halaman atau dokumen yang Anda cari mungkin telah dihapus, namanya diubah, atau sementara tidak tersedia.
-@endsection
-
-@section('best_practices')
-    <li><strong>Periksa URL:</strong> Pastikan kembali alamat web (URL) yang Anda masukkan sudah benar, tanpa ada salah ketik.</li>
-    <li><strong>Gunakan Navigasi Utama:</strong> Kembali ke Dashboard dan gunakan menu navigasi utama untuk mencari halaman penilaian atau modul yang Anda butuhkan.</li>
-    <li><strong>Bersihkan Cache:</strong> Terkadang browser menyimpan tautan lama yang sudah tidak aktif. Cobalah untuk membersihkan cache browser Anda.</li>
-    <li><strong>Perbarui Bookmark:</strong> Jika Anda menggunakan bookmark lama, perbarui bookmark tersebut setelah menemukan halaman yang benar dari Dashboard.</li>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+</svg>
 @endsection
