@@ -25,13 +25,21 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         // Check if user already exists
         $user = User::where('email', $row['email'])->first();
 
+        $departmentId = null;
+        if (!empty($row['department'])) {
+            $department = \App\Models\Department::where('name', $row['department'])->first();
+            $departmentId = $department?->id;
+        } elseif (!empty($row['department_id'])) {
+            $departmentId = $row['department_id']; // Fallback
+        }
+
         $data = [
             'name' => $row['name'],
             'email' => $row['email'],
             'age' => empty($row['age']) ? null : (int) $row['age'],
             'position' => $row['position'] ?? null,
             'company' => $row['company'] ?? null,
-            'department_id' => $row['department_id'] ?? null,
+            'department_id' => $departmentId,
         ];
 
         // Only update password if provided or if creating new

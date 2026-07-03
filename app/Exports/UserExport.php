@@ -24,7 +24,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
             $user->age,
             $user->position,
             $user->company,
-            $user->department_id, // Placement
+            $user->department?->name, // Placement (Department Name)
             $user->roles->pluck('name')->join(', '), // optionally include roles
         ];
     }
@@ -37,7 +37,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
             'Age',
             'Position',
             'Company',
-            'Department ID', // Placement
+            'Department', // Placement
             'Roles',
         ];
     }

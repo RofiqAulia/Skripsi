@@ -19,7 +19,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
                 '25',
                 'Software Engineer',
                 'PT Example Technology',
-                '1', // department_id (Placement)
+                'Department Digital Platfrom, Ecosystem & Innovation', // department (Placement)
                 'mentee',
             ],
             [
@@ -29,7 +29,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
                 '23',
                 'Data Analyst',
                 'Data Corp',
-                '2', // department_id (Placement)
+                'Department of Data Management & Analytics', // department (Placement)
                 'mentee',
             ]
         ];
@@ -44,7 +44,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
             'age',
             'position',
             'company',
-            'department_id', // placement
+            'department', // placement
             'roles',
         ];
     }
