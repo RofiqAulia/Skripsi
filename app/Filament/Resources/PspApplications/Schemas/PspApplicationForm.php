@@ -64,23 +64,20 @@ class PspApplicationForm
                             ->reactive(),
                     ])->columns(2),
 
-                \Filament\Schemas\Components\Section::make('Approvers (Filled automatically or manually)')
+                \Filament\Schemas\Components\Section::make('Approvers (Auto-filled by system)')
                     ->schema([
                         \Filament\Forms\Components\Select::make('department_approver_id')
                             ->relationship('departmentApprover', 'name')
                             ->label('Department Approver')
-                            ->searchable()
-                            ->preload(),
+                            ->disabled(),
                         \Filament\Forms\Components\Select::make('group_approver_id')
                             ->relationship('groupApprover', 'name')
                             ->label('Group Approver')
-                            ->searchable()
-                            ->preload(),
+                            ->disabled(),
                         \Filament\Forms\Components\Select::make('direktorat_approver_id')
                             ->relationship('direktoratApprover', 'name')
                             ->label('Direktorat Approver')
-                            ->searchable()
-                            ->preload(),
+                            ->disabled(),
                     ])->columns(3),
 
                 \Filament\Forms\Components\Textarea::make('notes')
