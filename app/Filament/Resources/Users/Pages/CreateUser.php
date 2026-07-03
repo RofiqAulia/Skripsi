@@ -18,4 +18,9 @@ class CreateUser extends CreateRecord
     {
         return 'User created successfully';
     }
+
+    protected function afterCreate(): void
+    {
+        $this->record->updateLeadership();
+    }
 }

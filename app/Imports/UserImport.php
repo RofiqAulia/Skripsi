@@ -23,11 +23,16 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return null;
         }
 
-        // Validate department (placement) is not empty
+        // Check if user already exists
+        $user = User::where('email', $row['email'])->first();
+
+        // Validate department (placement) is not empty for NEW users
         if (empty($row['department']) && empty($row['department_id'])) {
-            $this->rowsSkipped++;
-            $this->errors[] = "Row skipped: Placement (department) cannot be empty for user {$row['email']}.";
-            return null;
+            if (!$user || (!$user->department_id && !$user->group_id && !$user->direktorat_id)) {
+                $this->rowsSkipped++;
+                $this->errors[] = "Row skipped: Placement (department) cannot be empty for user {$row['email']}.";
+                return null;
+            }
         }
 
         if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
@@ -36,15 +41,17 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return null;
         }
 
-        // Check if user already exists
-        $user = User::where('email', $row['email'])->first();
-
-        $departmentId = null;
-        $groupId = null;
-        $direktoratId = null;
+        $departmentId = $user ? $user->department_id : null;
+        $groupId = $user ? $user->group_id : null;
+        $direktoratId = $user ? $user->direktorat_id : null;
 
         if (!empty($row['department'])) {
             $placementName = $row['department'];
+            
+            // Reset IDs since a new placement is provided
+            $departmentId = null;
+            $groupId = null;
+            $direktoratId = null;
             
             // Try to find as Department
             $department = \App\Models\Department::where('name', $placementName)->first();
@@ -123,6 +130,9 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         // Assign role if supported
         if (method_exists($user, 'assignRole')) {
             $user->syncRoles([$role]);
+            
+            // Auto-assign leadership based on the new role
+            $user->updateLeadership();
         }
 
         return $user;

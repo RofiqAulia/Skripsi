@@ -26,4 +26,9 @@ class EditUser extends EditRecord
     {
         return 'User data saved successfully';
     }
+
+    protected function afterSave(): void
+    {
+        $this->record->updateLeadership();
+    }
 }
