@@ -104,23 +104,4 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
     {
         return $this->hasMany(FinancialPlan::class);
     }
-
-    public function updateLeadership()
-    {
-        // First, remove this user from any existing head_id
-        \App\Models\Department::where('head_id', $this->id)->update(['head_id' => null]);
-        \App\Models\Group::where('head_id', $this->id)->update(['head_id' => null]);
-        \App\Models\Direktorat::where('head_id', $this->id)->update(['head_id' => null]);
-
-        // If they have the pimpinan role, assign them to their current placement
-        if ($this->hasRole('pimpinan')) {
-            if ($this->department_id) {
-                \App\Models\Department::where('id', $this->department_id)->update(['head_id' => $this->id]);
-            } elseif ($this->group_id) {
-                \App\Models\Group::where('id', $this->group_id)->update(['head_id' => $this->id]);
-            } elseif ($this->direktorat_id) {
-                \App\Models\Direktorat::where('id', $this->direktorat_id)->update(['head_id' => $this->id]);
-            }
-        }
-    }
 }

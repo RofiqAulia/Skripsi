@@ -130,9 +130,6 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         // Assign role if supported
         if (method_exists($user, 'assignRole')) {
             $user->syncRoles([$role]);
-            
-            // Auto-assign leadership based on the new role
-            $user->updateLeadership();
         }
 
         return $user;

@@ -34,11 +34,6 @@ class DepartmentResource extends Resource
                 \Filament\Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                \Filament\Forms\Components\Select::make('head_id')
-                    ->label('Department Head')
-                    ->relationship('head', 'name')
-                    ->searchable()
-                    ->preload(),
             ]);
     }
 

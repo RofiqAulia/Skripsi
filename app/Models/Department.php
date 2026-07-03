@@ -18,7 +18,9 @@ class Department extends Model
 
     public function head()
     {
-        return $this->belongsTo(User::class, 'head_id');
+        return $this->hasOne(User::class)->whereHas('roles', function($q) {
+            $q->where('name', 'pimpinan');
+        });
     }
 
     public function users()
