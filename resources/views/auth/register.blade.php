@@ -146,6 +146,32 @@
             </div>
         </div>
 
+        <!-- Placement -->
+        <div class="input-group">
+            <select name="placement" required style="width: 100%; padding: 12px 18px; background: #f3f4f6; border: 1px solid transparent; border-radius: 8px; font-size: 14px; color: #333; outline: none; box-sizing: border-box; transition: all 0.3s ease;">
+                <option value="" disabled selected>Select Your Placement (Department / Group / Direktorat)</option>
+                
+                <optgroup label="Departments">
+                    @foreach($departments as $dept)
+                        <option value="dept_{{ $dept->id }}" {{ old('placement') == 'dept_'.$dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                    @endforeach
+                </optgroup>
+
+                <optgroup label="Groups">
+                    @foreach($groups as $grp)
+                        <option value="group_{{ $grp->id }}" {{ old('placement') == 'group_'.$grp->id ? 'selected' : '' }}>{{ $grp->name }}</option>
+                    @endforeach
+                </optgroup>
+
+                <optgroup label="Direktorats">
+                    @foreach($direktorats as $dir)
+                        <option value="dir_{{ $dir->id }}" {{ old('placement') == 'dir_'.$dir->id ? 'selected' : '' }}>{{ $dir->name }}</option>
+                    @endforeach
+                </optgroup>
+            </select>
+            @error('placement')<span class="text-error">{{ $message }}</span>@enderror
+        </div>
+
         <!-- Photo -->
         <div class="input-group">
             <input type="file" name="photo" accept="image/*" title="Upload Photo (Optional)">

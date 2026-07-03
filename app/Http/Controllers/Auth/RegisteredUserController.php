@@ -20,7 +20,11 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $departments = \App\Models\Department::orderBy('name')->get();
+        $groups = \App\Models\Group::orderBy('name')->get();
+        $direktorats = \App\Models\Direktorat::orderBy('name')->get();
+        
+        return view('auth.register', compact('departments', 'groups', 'direktorats'));
     }
 
     /**
@@ -37,12 +41,25 @@ class RegisteredUserController extends Controller
             'company' => ['nullable', 'string', 'max:255'],
             'age' => ['nullable', 'integer', 'min:0'],
             'photo' => ['nullable', 'image', 'max:2048'],
+            'placement' => ['required', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        $departmentId = null;
+        $groupId = null;
+        $direktoratId = null;
+
+        if (str_starts_with($request->placement, 'dept_')) {
+            $departmentId = str_replace('dept_', '', $request->placement);
+        } elseif (str_starts_with($request->placement, 'group_')) {
+            $groupId = str_replace('group_', '', $request->placement);
+        } elseif (str_starts_with($request->placement, 'dir_')) {
+            $direktoratId = str_replace('dir_', '', $request->placement);
         }
 
         $user = User::create([
@@ -52,6 +69,9 @@ class RegisteredUserController extends Controller
             'company' => $request->company,
             'age' => $request->age,
             'photo' => $photoPath,
+            'department_id' => $departmentId,
+            'group_id' => $groupId,
+            'direktorat_id' => $direktoratId,
             'password' => Hash::make($request->password),
         ]);
 

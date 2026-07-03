@@ -16,10 +16,17 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
     public function model(array $row)
     {
-        // Validate email format and required fields
+        // Validate required fields
         if (empty($row['name']) || empty($row['email'])) {
             $this->rowsSkipped++;
             $this->errors[] = "Row skipped: Name or email is empty.";
+            return null;
+        }
+
+        // Validate department (placement) is not empty
+        if (empty($row['department']) && empty($row['department_id'])) {
+            $this->rowsSkipped++;
+            $this->errors[] = "Row skipped: Placement (department) cannot be empty for user {$row['email']}.";
             return null;
         }
 
