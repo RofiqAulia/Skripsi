@@ -34,7 +34,48 @@ class PspApplicationResource extends Resource
             } else {
                 $query->where('id', 0);
             }
+        } elseif (auth()->check() && !auth()->user()->hasRole('super_admin')) {
+            $userId = auth()->id();
+            
+            // Collect all allowed department IDs for this user based on their leadership roles
+            $allowedDepartmentIds = collect();
+
+            // 1. Is user a Department Head?
+            $deptIds = \App\Models\Department::where('head_id', $userId)->pluck('id');
+            if ($deptIds->isNotEmpty()) {
+                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIds);
+                // Department head only sees stage 0 (submission) or higher
+                // Actually they should see all apps from their department, but only can approve stage 0.
+            }
+
+            // 2. Is user a Group Head?
+            $groupIds = \App\Models\Group::where('head_id', $userId)->pluck('id');
+            if ($groupIds->isNotEmpty()) {
+                $deptIdsFromGroups = \App\Models\Department::whereIn('group_id', $groupIds)->pluck('id');
+                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromGroups);
+            }
+
+            // 3. Is user a Direktorat Head?
+            $direktoratIds = \App\Models\Direktorat::where('head_id', $userId)->pluck('id');
+            if ($direktoratIds->isNotEmpty()) {
+                $groupIdsFromDir = \App\Models\Group::whereIn('direktorat_id', $direktoratIds)->pluck('id');
+                $deptIdsFromDir = \App\Models\Department::whereIn('group_id', $groupIdsFromDir)->pluck('id');
+                $allowedDepartmentIds = $allowedDepartmentIds->merge($deptIdsFromDir);
+            }
+
+            if ($allowedDepartmentIds->isNotEmpty()) {
+                $query->whereHas('user', function ($q) use ($allowedDepartmentIds) {
+                    $q->whereIn('department_id', $allowedDepartmentIds->unique());
+                });
+            } else {
+                // If not a leader of any level and not super_admin, they see nothing
+                // (or only their own if they are a regular user, but regular users don't access filament panel usually)
+                if (auth()->user()->hasRole('pimpinan')) {
+                    $query->where('id', 0);
+                }
+            }
         }
+        
         return $query;
     }
 

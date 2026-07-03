@@ -18,6 +18,23 @@ class PspApplicationsTable
                 \Filament\Tables\Columns\TextColumn::make('user.name')
                     ->searchable()
                     ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('approval_stage')
+                    ->label('Stage')
+                    ->badge()
+                    ->formatStateUsing(fn (int $state): string => match ($state) {
+                        0 => 'Dept',
+                        1 => 'Group',
+                        2 => 'Direktorat',
+                        3 => 'Done',
+                        default => 'Unknown',
+                    })
+                    ->color(fn (int $state): string => match ($state) {
+                        0 => 'gray',
+                        1 => 'info',
+                        2 => 'primary',
+                        3 => 'success',
+                        default => 'gray',
+                    }),
                 \Filament\Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -35,9 +52,6 @@ class PspApplicationsTable
                         default      => 'gray',
                     })
                     ->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('approver.name')
-                    ->searchable()
-                    ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

@@ -42,30 +42,53 @@ class PspApplicationForm
                         return new \Illuminate\Support\HtmlString($html);
                     })
                     ->columnSpanFull(),
-                \Filament\Forms\Components\Select::make('status')
-                    ->options([
-                        'submission' => 'Submission',
-                        'review' => 'Revision',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ])
-                    ->required()
-                    ->reactive(),
-                \Filament\Forms\Components\Select::make('approved_by')
-                    ->relationship('approver', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
-                        if (empty($state)) {
-                            $component->state(auth()->id());
-                        }
-                    }),
+                \Filament\Schemas\Components\Section::make('Approval State')
+                    ->schema([
+                        \Filament\Forms\Components\Select::make('approval_stage')
+                            ->options([
+                                0 => '0 - Submission (Waiting Dept)',
+                                1 => '1 - Department Approved (Waiting Group)',
+                                2 => '2 - Group Approved (Waiting Direktorat)',
+                                3 => '3 - Direktorat Approved (Final)',
+                            ])
+                            ->required()
+                            ->reactive(),
+                        \Filament\Forms\Components\Select::make('status')
+                            ->options([
+                                'submission' => 'Submission',
+                                'review' => 'Revision',
+                                'approved' => 'Approved',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->required()
+                            ->reactive(),
+                    ])->columns(2),
+
+                \Filament\Schemas\Components\Section::make('Approvers (Filled automatically or manually)')
+                    ->schema([
+                        \Filament\Forms\Components\Select::make('department_approver_id')
+                            ->relationship('departmentApprover', 'name')
+                            ->label('Department Approver')
+                            ->searchable()
+                            ->preload(),
+                        \Filament\Forms\Components\Select::make('group_approver_id')
+                            ->relationship('groupApprover', 'name')
+                            ->label('Group Approver')
+                            ->searchable()
+                            ->preload(),
+                        \Filament\Forms\Components\Select::make('direktorat_approver_id')
+                            ->relationship('direktoratApprover', 'name')
+                            ->label('Direktorat Approver')
+                            ->searchable()
+                            ->preload(),
+                    ])->columns(3),
+
                 \Filament\Forms\Components\Textarea::make('notes')
                     ->columnSpanFull(),
 
                 // ===== SIGNATURE SECTION =====
                 \Filament\Schemas\Components\Section::make('Approval Signature')
-                    ->description('Choose one method: upload a signature image OR draw directly using mouse/pen.')
+                    ->description('Choose one method: upload a signature image OR draw directly using mouse/pen. (For final approval)')
                     ->schema([
                         \Filament\Forms\Components\FileUpload::make('signature_image')
                             ->label('Upload Signature Image')

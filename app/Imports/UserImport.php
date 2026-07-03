@@ -23,27 +23,36 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         }
 
         // Check if user already exists
-        if (User::where('email', $row['email'])->exists()) {
-            $this->errors[] = "Email {$row['email']} is already registered.";
-            $this->rowsSkipped++;
-            return null;
+        $user = User::where('email', $row['email'])->first();
+
+        $data = [
+            'name' => $row['name'],
+            'email' => $row['email'],
+            'age' => empty($row['age']) ? null : (int) $row['age'],
+            'position' => $row['position'] ?? null,
+            'company' => $row['company'] ?? null,
+            'department_id' => $row['department_id'] ?? null,
+        ];
+
+        // Only update password if provided or if creating new
+        if (!$user) {
+            $data['password'] = Hash::make(empty($row['password']) ? 'password123' : $row['password']);
+        } elseif (!empty($row['password'])) {
+            $data['password'] = Hash::make($row['password']);
+        }
+
+        if ($user) {
+            $user->update($data);
+        } else {
+            $user = User::create($data);
         }
 
         $this->rowsImported++;
 
-        $user = User::create([
-            'name' => $row['name'],
-            'email' => $row['email'],
-            'password' => Hash::make(empty($row['password']) ? 'password123' : $row['password']),
-            'age' => empty($row['age']) ? null : (int) $row['age'],
-            'position' => $row['position'] ?? null,
-            'company' => $row['company'] ?? null,
-        ]);
-
         // Assign role if supported
         if (method_exists($user, 'assignRole')) {
             $role = !empty($row['roles']) ? trim($row['roles']) : 'mentee';
-            $user->assignRole($role);
+            $user->syncRoles([$role]);
         }
 
         return $user;

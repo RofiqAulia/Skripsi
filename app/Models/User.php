@@ -29,6 +29,7 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
         'signature_pad',
         'toefl_score',
         'ielts_score',
+        'department_id',
     ];
 
     public function setPasswordAttribute($value)
@@ -60,6 +61,11 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
     public function sessions()
     {
         return $this->hasMany(MentoringSession::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function studyPlan()

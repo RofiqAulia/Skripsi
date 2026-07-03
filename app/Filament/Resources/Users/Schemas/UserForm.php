@@ -24,6 +24,11 @@ class UserForm
                     ->columnSpanFull(),
                 TextInput::make('position'),
                 TextInput::make('company'),
+                \Filament\Forms\Components\Select::make('department_id')
+                    ->label('Department / Placement')
+                    ->relationship('department', 'name')
+                    ->searchable()
+                    ->preload(),
                 TextInput::make('name'),
                 TextInput::make('email')
                     ->label('Email address')

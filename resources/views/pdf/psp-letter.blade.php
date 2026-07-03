@@ -158,34 +158,76 @@
     <div class="section-title">Research Topic</div>
     <div class="study-plan-text">{{ $application->study_plan_text ?? ($studyPlan?->future_competence ?? '-') }}</div>
 
-    <div class="signature-section">
-        <div class="signature-box">
-            Jakarta, {{ now()->translatedFormat('d F Y') }}<br>
-            Yang menyetujui,<br>
-            <br>
-            @if($isApproved && $approver)
-                {{-- Priority 1: Signature pad drawn on approval (base64 data) --}}
-                @if($application->signature_pad)
-                    <img src="{{ $application->signature_pad }}" class="signature-img">
-                {{-- Priority 2: Uploaded signature image on approval --}}
-                @elseif($application->signature_image)
-                    <img src="{{ storage_path('app/public/' . $application->signature_image) }}" class="signature-img">
-                {{-- Priority 3: Approver profile signature pad --}}
-                @elseif($approver->signature_pad)
-                    <img src="{{ $approver->signature_pad }}" class="signature-img">
-                {{-- Priority 4: Approver profile signature image --}}
-                @elseif($approver->signature_image)
-                    <img src="{{ storage_path('app/public/' . $approver->signature_image) }}" class="signature-img">
+    <table style="width: 100%; margin-top: 60px; text-align: center; border-collapse: collapse;">
+        <tr>
+            <!-- Department Approver -->
+            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+                Jakarta, {{ $application->department_approved_at ? \Carbon\Carbon::parse($application->department_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
+                Yang menyetujui,<br>
+                <strong>GM of {{ $application->user->department?->name ?? '.....................' }}</strong><br>
+                
+                @if($application->departmentApprover)
+                    @if($application->departmentApprover->signature_pad)
+                        <img src="{{ $application->departmentApprover->signature_pad }}" class="signature-img" style="max-height:60px;">
+                    @elseif($application->departmentApprover->signature_image)
+                        <img src="{{ storage_path('app/public/' . $application->departmentApprover->signature_image) }}" class="signature-img" style="max-height:60px;">
+                    @else
+                        <br><br><br><br>
+                    @endif
                 @else
-                    <br><br><br>
+                    <br><br><br><br>
                 @endif
-            @else
-                <br><br><br>
-            @endif
-            <br>
-            {{ $approver->name ?? '....................................' }}
-        </div>
-    </div>
+                
+                <u>{{ $application->departmentApprover?->name ?? '....................................' }}</u>
+            </td>
+
+            <!-- Group Approver -->
+            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+                Jakarta, {{ $application->group_approved_at ? \Carbon\Carbon::parse($application->group_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
+                Yang menyetujui,<br>
+                <strong>SVP of {{ $application->user->department?->group?->name ?? '.....................' }}</strong><br>
+                
+                @if($application->groupApprover)
+                    @if($application->groupApprover->signature_pad)
+                        <img src="{{ $application->groupApprover->signature_pad }}" class="signature-img" style="max-height:60px;">
+                    @elseif($application->groupApprover->signature_image)
+                        <img src="{{ storage_path('app/public/' . $application->groupApprover->signature_image) }}" class="signature-img" style="max-height:60px;">
+                    @else
+                        <br><br><br><br>
+                    @endif
+                @else
+                    <br><br><br><br>
+                @endif
+                
+                <u>{{ $application->groupApprover?->name ?? '....................................' }}</u>
+            </td>
+
+            <!-- Direktorat Approver -->
+            <td style="width: 33%; vertical-align: top; padding: 0 10px;">
+                Jakarta, {{ $application->direktorat_approved_at ? \Carbon\Carbon::parse($application->direktorat_approved_at)->translatedFormat('d F Y') : '..............................' }}<br>
+                Yang menyetujui,<br>
+                <strong>Direktur of {{ $application->user->department?->group?->direktorat?->name ?? '.....................' }}</strong><br>
+                
+                @if($isApproved)
+                    @if($application->signature_pad)
+                        <img src="{{ $application->signature_pad }}" class="signature-img" style="max-height:60px;">
+                    @elseif($application->signature_image)
+                        <img src="{{ storage_path('app/public/' . $application->signature_image) }}" class="signature-img" style="max-height:60px;">
+                    @elseif($application->direktoratApprover && $application->direktoratApprover->signature_pad)
+                        <img src="{{ $application->direktoratApprover->signature_pad }}" class="signature-img" style="max-height:60px;">
+                    @elseif($application->direktoratApprover && $application->direktoratApprover->signature_image)
+                        <img src="{{ storage_path('app/public/' . $application->direktoratApprover->signature_image) }}" class="signature-img" style="max-height:60px;">
+                    @else
+                        <br><br><br><br>
+                    @endif
+                @else
+                    <br><br><br><br>
+                @endif
+                
+                <u>{{ $application->direktoratApprover?->name ?? '....................................' }}</u>
+            </td>
+        </tr>
+    </table>
 
     <!-- SIG Footer -->
     <div class="sig-footer">

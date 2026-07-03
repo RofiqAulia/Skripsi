@@ -9,9 +9,22 @@
     </div>
 
     @php
+        $stage = $pspApplication->approval_stage ?? 0;
         $status = $pspApplication->status; // submission | review | approved | rejected
 
-        $step1Done     = in_array($status, ['submission','review','approved','rejected']);
+        $step1Done = true;
+        
+        $step2Done = $stage >= 1;
+        $step2Rejected = $stage == 0 && $status == 'rejected';
+        $step2Review = $stage == 0 && $status == 'review';
+        
+        $step3Done = $stage >= 2;
+        $step3Rejected = $stage == 1 && $status == 'rejected';
+        $step3Review = $stage == 1 && $status == 'review';
+        
+        $step4Done = $stage == 3;
+        $step4Rejected = $stage == 2 && $status == 'rejected';
+        $step4Review = $stage == 2 && $status == 'review';
 
         // Resolve program study — via scholarship relation or directly from studyPlan
         $progStudy = $pspApplication->scholarship?->programStudy
@@ -77,8 +90,10 @@
             <!-- HEADER -->
             <thead>
                 <tr>
-                    <th>Submission</th>
-                    <th>Unit Leader Approval</th>
+                    <th style="width: 25%">Submission</th>
+                    <th style="width: 25%">Dept. Approval</th>
+                    <th style="width: 25%">Group Approval</th>
+                    <th style="width: 25%">Dir. Approval</th>
                 </tr>
             </thead>
 
@@ -86,48 +101,104 @@
             <tbody>
                 <tr>
 
-                    <!-- STEP 1: Submission (always done once submitted) -->
-                    <td class="step {{ $step1Done ? 'done' : 'pending' }}">
+                    <!-- STEP 1: Submission -->
+                    <td class="step done">
                         <div class="step-inner">
-                            <div class="icon {{ $step1Done ? 'done-icon' : 'pending-icon' }}">
-                                {{ $step1Done ? '✓' : '•' }}
+                            <div class="icon done-icon">✓</div>
+                            <div class="status-title">Submitted</div>
+                            <div class="status-desc text-muted" style="font-size:12px;">
+                                {{ $pspApplication->created_at->format('d M Y') }}
                             </div>
-                            <div class="status-title">{{ $step1Done ? 'Submitted' : 'Waiting' }}</div>
-                            @if($step1Done)
-                                <div class="status-desc text-muted" style="font-size:12px;">
-                                    {{ $pspApplication->created_at->format('d M Y') }}
+                        </div>
+                    </td>
+
+                    <!-- STEP 2: Department Approval -->
+                    @php
+                        $step2Class = 'pending';
+                        if ($step2Done) $step2Class = 'done';
+                        elseif ($step2Rejected) $step2Class = 'revision';
+                        elseif ($step2Review) $step2Class = 'revision';
+                    @endphp
+                    <td class="step {{ $step2Class }}">
+                        <div class="step-inner">
+                            @if($step2Done)
+                                <div class="icon done-icon">✓</div>
+                                <div class="status-title">Approved</div>
+                                @if($pspApplication->departmentApprover)
+                                    <div class="status-desc text-muted" style="font-size:12px;">
+                                        by {{ $pspApplication->departmentApprover->name }}
+                                    </div>
+                                @endif
+                            @elseif($step2Rejected)
+                                <div class="icon revision-icon">!</div>
+                                <div class="status-title" style="color:#ef4444;">Rejected</div>
+                                <div class="status-desc">
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
                                 </div>
+                            @elseif($step2Review)
+                                <div class="icon revision-icon">⟳</div>
+                                <div class="status-title">Revision</div>
+                                <div class="status-desc" style="color:#f97316;">
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
+                                </div>
+                            @else
+                                <div class="icon pending-icon">•</div>
+                                <div class="status-title">Waiting</div>
                             @endif
                         </div>
                     </td>
 
-                    <!-- STEP 2: Unit Leader Approval -->
-                    <td class="step
-                        {{ in_array($status, ['rejected', 'review']) ? 'revision' : ($status === 'approved' ? 'done' : 'pending') }}">
+                    <!-- STEP 3: Group Approval -->
+                    @php
+                        $step3Class = 'pending';
+                        if ($step3Done) $step3Class = 'done';
+                        elseif ($step3Rejected) $step3Class = 'revision';
+                        elseif ($step3Review) $step3Class = 'revision';
+                    @endphp
+                    <td class="step {{ $step3Class }}">
                         <div class="step-inner">
-                            @if($status === 'rejected')
+                            @if($step3Done)
+                                <div class="icon done-icon">✓</div>
+                                <div class="status-title">Approved</div>
+                                @if($pspApplication->groupApprover)
+                                    <div class="status-desc text-muted" style="font-size:12px;">
+                                        by {{ $pspApplication->groupApprover->name }}
+                                    </div>
+                                @endif
+                            @elseif($step3Rejected)
                                 <div class="icon revision-icon">!</div>
                                 <div class="status-title" style="color:#ef4444;">Rejected</div>
                                 <div class="status-desc">
-                                    {{ $pspApplication->notes ?? 'Your application was not approved. Please check the notes.' }}
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
                                 </div>
-                                <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
-                                    <a href="{{ route('psp.letter', $pspApplication->id) }}" class="btn-download" target="_blank">
-                                        ⬇ Download Rejection Letter
-                                    </a>
-                                    {{-- <form action="{{ route('psp.letter.send', $pspApplication->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn-download" style="background:#f0f9ff; border-color:#0284c7; color:#0284c7;">
-                                            <i class="bi bi-envelope"></i> Send to Email
-                                        </button>
-                                    </form> --}}
+                            @elseif($step3Review)
+                                <div class="icon revision-icon">⟳</div>
+                                <div class="status-title">Revision</div>
+                                <div class="status-desc" style="color:#f97316;">
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
                                 </div>
-                            @elseif($status === 'approved')
+                            @else
+                                <div class="icon pending-icon">•</div>
+                                <div class="status-title">Waiting</div>
+                            @endif
+                        </div>
+                    </td>
+
+                    <!-- STEP 4: Direktorat Approval -->
+                    @php
+                        $step4Class = 'pending';
+                        if ($step4Done) $step4Class = 'done';
+                        elseif ($step4Rejected) $step4Class = 'revision';
+                        elseif ($step4Review) $step4Class = 'revision';
+                    @endphp
+                    <td class="step {{ $step4Class }}">
+                        <div class="step-inner">
+                            @if($step4Done)
                                 <div class="icon done-icon">✓</div>
                                 <div class="status-title">Approved</div>
-                                @if($pspApplication->approver)
+                                @if($pspApplication->direktoratApprover)
                                     <div class="status-desc text-muted" style="font-size:12px;">
-                                        by {{ $pspApplication->approver->name }}
+                                        by {{ $pspApplication->direktoratApprover->name }}
                                     </div>
                                 @endif
                                 <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
@@ -135,11 +206,22 @@
                                         ⬇ Download Approval Letter
                                     </a>
                                 </div>
-                            @elseif($status === 'review')
+                            @elseif($step4Rejected)
+                                <div class="icon revision-icon">!</div>
+                                <div class="status-title" style="color:#ef4444;">Rejected</div>
+                                <div class="status-desc">
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
+                                </div>
+                                <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
+                                    <a href="{{ route('psp.letter', $pspApplication->id) }}" class="btn-download" target="_blank">
+                                        ⬇ Download Rejection Letter
+                                    </a>
+                                </div>
+                            @elseif($step4Review)
                                 <div class="icon revision-icon">⟳</div>
                                 <div class="status-title">Revision</div>
                                 <div class="status-desc" style="color:#f97316;">
-                                    {{ $pspApplication->notes ?? 'Your study plan requires revision. Please check the notes.' }}
+                                    {{ $pspApplication->notes ?? 'Check notes.' }}
                                 </div>
                             @else
                                 <div class="icon pending-icon">•</div>
@@ -157,7 +239,7 @@
 
     <!-- NOTE -->
     <div class="mt-3 text-muted small">
-        * Approval letter is available after reaching Unit Leader approval stage.
+        * Approval letter is available after reaching final Direktorat approval stage or if rejected.
     </div>
 
 </div>
@@ -236,7 +318,7 @@
     border-top: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
     padding: 0;
-    width: 50%;
+    width: 25%;
 }
 
 .psp-table td:last-child {
@@ -245,31 +327,32 @@
 
 /* INNER CONTENT */
 .step-inner {
-    padding: 30px 20px;
+    padding: 30px 10px;
 }
 
 /* ================= ICON ================= */
 .psp-table .icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 15px;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
     border: 2px solid #d1d5db;
+    border-radius: 50%;
     color: #555;
 }
 
 /* ================= TEXT ================= */
 .psp-table .status-title {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .psp-table .status-desc {
-    font-size: 14px;
+    font-size: 12px;
     color: #444;
     margin-bottom: 12px;
     margin-top: 6px;
@@ -295,7 +378,7 @@
     border: 1px solid #8b0000;
     background: transparent;
     color: #8b0000;
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
     border-radius: 4px;
     text-decoration: none;
