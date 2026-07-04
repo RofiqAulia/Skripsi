@@ -58,7 +58,7 @@ class StudyProgressReportController extends Controller
         $upcomingCourses = $this->formatCourseArray($request->input('upcoming_courses_name'), $request->input('upcoming_courses_credits'), null);
         $otherActivities = $this->formatActivityArray($request->input('activity_name'), $request->input('activity_date'), $request->input('activity_description'));
 
-        StudyProgressReport::create([
+        $report = StudyProgressReport::create([
             'user_id' => $user->id,
             'psp_application_id' => $pspApplication ? $pspApplication->id : null,
             'semester' => $request->input('semester'),
@@ -98,6 +98,25 @@ class StudyProgressReportController extends Controller
             // JSON Activity
             'other_academic_activities' => $otherActivities,
         ]);
+
+        try {
+            // Generate PDF
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.study-progress-report', compact('report', 'user', 'pspApplication'));
+            $pdfContent = $pdf->output();
+
+            // Send to Mentee
+            if ($user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\StudyProgressReportSubmittedMail($report, $user, $pdfContent));
+            }
+
+            // Send to Pimpinan Direktorat
+            if ($pspApplication && $pspApplication->direktoratApprover && $pspApplication->direktoratApprover->email) {
+                \Illuminate\Support\Facades\Mail::to($pspApplication->direktoratApprover->email)->send(new \App\Mail\StudyProgressReportSubmittedMail($report, $user, $pdfContent));
+            }
+        } catch (\Exception $e) {
+            // Log error but don't fail the submission
+            \Illuminate\Support\Facades\Log::error('Failed to send Study Progress Report email: ' . $e->getMessage());
+        }
 
         return redirect()->route('dashboard')->with('success', 'Study Progress Report submitted successfully.');
     }
