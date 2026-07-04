@@ -1,7 +1,7 @@
 <section class="sa-section">
 
     {{-- ══════ HERO BANNER ══════ --}}
-    <div class="sa-hero" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);">
+    <div class="sa-hero" style="background: linear-gradient(135deg, #991b1b, #dc2626);">
         <div class="sa-hero-orb sa-hero-orb-1" style="background: rgba(255,255,255,0.1)"></div>
         <div class="sa-hero-orb sa-hero-orb-2" style="background: rgba(255,255,255,0.05)"></div>
         <div class="sa-hero-inner">
@@ -83,11 +83,11 @@
     @else
         <div class="sa-list">
             @foreach($applications as $app)
-            <div class="sa-card {{ $app->status === 'approved' ? 'lolos' : ($app->status === 'revision' ? 'pending' : ($app->status === 'rejected' ? 'tidak_lolos' : 'pending')) }}">
+            <div class="sa-card {{ $app->status === 'approved' ? 'lolos' : ($app->status === 'revisi' ? 'pending' : ($app->status === 'rejected' ? 'tidak_lolos' : 'pending')) }}">
                 {{-- Card Header --}}
                 <div class="sa-card-header">
                     <div class="sa-card-title">
-                        <span class="sa-badge status-{{ $app->status === 'approved' ? 'lolos' : ($app->status === 'revision' ? 'pending' : ($app->status === 'rejected' ? 'tidak_lolos' : 'pending')) }}">
+                        <span class="sa-badge status-{{ $app->status === 'approved' ? 'lolos' : ($app->status === 'revisi' ? 'pending' : ($app->status === 'rejected' ? 'tidak_lolos' : 'pending')) }}">
                             @if($app->status === 'approved') <i class="bi bi-check-circle-fill"></i>
                             @elseif($app->status === 'rejected') <i class="bi bi-x-circle-fill"></i>
                             @else <i class="bi bi-hourglass-split"></i> @endif
@@ -102,7 +102,7 @@
                         </div>
                     </div>
                     <div class="sa-card-actions">
-                        @if($app->status === 'revision' || $app->status === 'rejected')
+                        @if($app->status === 'revisi' || $app->status === 'rejected')
                             <a href="{{ route('study-progress-report.create') }}" class="sa-btn-expand" style="text-decoration: none;">
                                 <i class="bi bi-pencil-square"></i> Edit / Revise
                             </a>
@@ -116,16 +116,16 @@
 
                 {{-- Rejection / Revision Note --}}
                 @if($app->notes_pimpinan)
-                <div class="sa-success-cta" style="background: {{ $app->status === 'revision' ? '#fffbeb' : '#fef2f2' }}; border: 1px solid {{ $app->status === 'revision' ? '#fde68a' : '#fecaca' }};">
-                    <div class="sa-success-icon" style="background: {{ $app->status === 'revision' ? '#fef3c7' : '#fee2e2' }}; color: {{ $app->status === 'revision' ? '#d97706' : '#dc2626' }};">
-                        {{ $app->status === 'revision' ? '⚠️' : '❌' }}
+                <div class="sa-success-cta" style="background: {{ $app->status === 'revisi' ? '#fffbeb' : '#fef2f2' }}; border: 1px solid {{ $app->status === 'revisi' ? '#fde68a' : '#fecaca' }};">
+                    <div class="sa-success-icon" style="background: {{ $app->status === 'revisi' ? '#fef3c7' : '#fee2e2' }}; color: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }};">
+                        {{ $app->status === 'revisi' ? '⚠️' : '❌' }}
                     </div>
                     <div class="sa-success-content">
-                        <h5 style="color: {{ $app->status === 'revision' ? '#b45309' : '#991b1b' }};">Catatan Pimpinan</h5>
-                        <p style="color: {{ $app->status === 'revision' ? '#92400e' : '#7f1d1d' }};">{{ $app->notes_pimpinan }}</p>
+                        <h5 style="color: {{ $app->status === 'revisi' ? '#b45309' : '#991b1b' }};">Catatan Pimpinan</h5>
+                        <p style="color: {{ $app->status === 'revisi' ? '#92400e' : '#7f1d1d' }};">{{ $app->notes_pimpinan }}</p>
                     </div>
-                    @if($app->status === 'revision' || $app->status === 'rejected')
-                        <a href="{{ route('study-progress-report.create') }}" class="sa-btn-continue-fp" style="background: {{ $app->status === 'revision' ? '#d97706' : '#dc2626' }}; border-color: {{ $app->status === 'revision' ? '#d97706' : '#dc2626' }};">
+                    @if($app->status === 'revisi' || $app->status === 'rejected')
+                        <a href="{{ route('study-progress-report.create') }}" class="sa-btn-continue-fp" style="background: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }}; border-color: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }};">
                             Perbaiki Laporan <i class="bi bi-arrow-repeat"></i>
                         </a>
                     @endif
@@ -148,7 +148,7 @@
 }
 .sa-hero {
     position: relative;
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    background: linear-gradient(135deg, #991b1b, #dc2626);
     padding: 3rem 0;
     overflow: hidden;
 }
@@ -230,7 +230,7 @@
 
 .sa-btn-add {
     background: #fff;
-    color: #1e3a8a;
+    color: #991b1b;
     border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 10px;
@@ -242,7 +242,7 @@
     transition: all 0.2s;
     box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }
-.sa-btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); color: #1e3a8a; }
+.sa-btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); color: #991b1b; }
 .sa-btn-add--locked { background: rgba(255,255,255,0.5); color: rgba(0,0,0,0.4); cursor: not-allowed; box-shadow: none; }
 
 .sa-container { max-width: 1140px; margin-top: 2rem; }

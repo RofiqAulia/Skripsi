@@ -18,7 +18,7 @@ class StudyProgressReportController extends Controller
 
         $statsTotal = $applications->count();
         $statsApproved = $applications->where('status', 'approved')->count();
-        $statsRevision = $applications->where('status', 'revision')->count();
+        $statsRevision = $applications->where('status', 'revisi')->count();
         $statsRejected = $applications->where('status', 'rejected')->count();
 
         $pspApp = \App\Models\PspApplication::where('user_id', $user->id)
@@ -200,7 +200,7 @@ class StudyProgressReportController extends Controller
 
         $existingReport = StudyProgressReport::where('user_id', $user->id)->latest()->first();
 
-        if ($existingReport && $existingReport->status === 'revision') {
+        if ($existingReport && $existingReport->status === 'revisi') {
             $existingReport->update($data);
             $report = $existingReport;
         } else {
