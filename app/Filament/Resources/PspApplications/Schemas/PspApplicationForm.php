@@ -13,6 +13,9 @@ class PspApplicationForm
             ->components([
                 \Filament\Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
+                    ->default(fn () => auth()->id())
+                    ->disabled(fn () => !auth()->user()->hasRole('super_admin'))
+                    ->dehydrated()
                     ->required()
                     ->searchable()
                     ->preload(),
@@ -74,7 +77,21 @@ class PspApplicationForm
                                 return false; // Default fallback
                             })
                             ->required()
-                            ->reactive(),
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $user = auth()->user();
+                                if ($state == 1) {
+                                    $set('department_approver_id', $user->id);
+                                } elseif ($state == 2) {
+                                    $set('group_approver_id', $user->id);
+                                } elseif ($state == 3) {
+                                    $set('direktorat_approver_id', $user->id);
+                                } elseif ($state == 0) {
+                                    $set('department_approver_id', null);
+                                    $set('group_approver_id', null);
+                                    $set('direktorat_approver_id', null);
+                                }
+                            }),
                         \Filament\Forms\Components\Select::make('status')
                             ->options([
                                 'submission' => 'Submission',
@@ -92,17 +109,35 @@ class PspApplicationForm
                             ->relationship('departmentApprover', 'name')
                             ->label('Department Approver')
                             ->disabled()
-                            ->dehydrated(),
+                            ->dehydrated()
+                            ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
+                                $user = auth()->user();
+                                if (!$state && \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                    $component->state($user->id);
+                                }
+                            }),
                         \Filament\Forms\Components\Select::make('group_approver_id')
                             ->relationship('groupApprover', 'name')
                             ->label('Group Approver')
                             ->disabled()
-                            ->dehydrated(),
+                            ->dehydrated()
+                            ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
+                                $user = auth()->user();
+                                if (!$state && \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                    $component->state($user->id);
+                                }
+                            }),
                         \Filament\Forms\Components\Select::make('direktorat_approver_id')
                             ->relationship('direktoratApprover', 'name')
                             ->label('Direktorat Approver')
                             ->disabled()
-                            ->dehydrated(),
+                            ->dehydrated()
+                            ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
+                                $user = auth()->user();
+                                if (!$state && \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                    $component->state($user->id);
+                                }
+                            }),
                     ])->columns(3),
 
                 \Filament\Forms\Components\Textarea::make('notes')
