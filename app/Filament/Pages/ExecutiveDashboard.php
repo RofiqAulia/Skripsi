@@ -269,19 +269,19 @@ class ExecutiveDashboard extends Page
                     if ($isDeptHead) {
                         $q->orWhere(function ($sub) use ($user) {
                             $sub->where('approval_stage', 0)
-                              ->whereHas('user', fn($u) => $u->where('department_id', $user->department_id));
+                              ->whereHas('user', fn($u) => $u->where('department_id', $user->department_id)->orWhereNull('department_id'));
                         });
                     }
                     if ($isGroupHead) {
                         $q->orWhere(function ($sub) use ($user) {
                             $sub->where('approval_stage', 1)
-                              ->whereHas('user', fn($u) => $u->where('group_id', $user->group_id));
+                              ->whereHas('user', fn($u) => $u->where('group_id', $user->group_id)->orWhereNull('group_id'));
                         });
                     }
                     if ($isDirHead) {
                         $q->orWhere(function ($sub) use ($user) {
                             $sub->where('approval_stage', 2)
-                              ->whereHas('user', fn($u) => $u->where('direktorat_id', $user->direktorat_id));
+                              ->whereHas('user', fn($u) => $u->where('direktorat_id', $user->direktorat_id)->orWhereNull('direktorat_id'));
                         });
                     }
                     if (!$isDeptHead && !$isGroupHead && !$isDirHead) {
