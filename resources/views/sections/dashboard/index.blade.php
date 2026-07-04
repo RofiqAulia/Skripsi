@@ -84,7 +84,7 @@
                 </div>
             </div>
             <div class="mt-2 border-top pt-2 w-100" style="border-color: rgba(0,0,0,0.05) !important;">
-                <a href="{{ url('/admin/study-progress-reports/create') }}" class="btn btn-sm w-100 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
+                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-100 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
                     <i class="bi bi-upload me-1"></i> Submit Report
                 </a>
             </div>
