@@ -360,23 +360,31 @@
 <!-- Upload Report Modal -->
 <div class="modal fade" id="uploadReportModal" tabindex="-1" aria-labelledby="uploadReportModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content border-0 shadow-lg rounded-4" style="overflow: hidden;">
+      <div class="modal-header border-0 pb-0" style="background: rgba(127, 29, 29, 0.03);">
+        <h5 class="modal-title fw-bold" id="uploadReportModalLabel" style="color: var(--primary, #7f1d1d); font-size: 1.1rem;">
+          <i class="bi bi-cloud-arrow-up-fill me-2"></i>Upload Progress Report
+        </h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
       <form action="{{ route('study-progress-report.upload') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="uploadReportModalLabel">Upload Study Progress Report</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
+        <div class="modal-body pt-4">
           <div class="mb-3">
-            <label for="report_file" class="form-label">Report Document</label>
-            <input class="form-control" type="file" id="report_file" name="report_file" accept=".pdf,.doc,.docx" required>
-            <div class="form-text">Accepted formats: PDF, DOC, DOCX. Maximum size: 5MB.</div>
+            <label for="report_file" class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Select Document</label>
+            <div class="input-group">
+              <input class="form-control form-control-lg shadow-none" type="file" id="report_file" name="report_file" accept=".pdf,.doc,.docx" required style="font-size: 0.9rem; border-color: rgba(0,0,0,0.1); border-radius: 0.75rem;">
+            </div>
+            <div class="form-text mt-2" style="font-size: 0.8rem;">
+              <i class="bi bi-info-circle me-1"></i>Accepted formats: <strong>PDF, DOC, DOCX</strong>. Maximum size: <strong>5MB</strong>.
+            </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Upload Report</button>
+        <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex gap-2">
+          <button type="button" class="btn rounded-pill px-4" data-bs-dismiss="modal" style="font-size: 0.85rem; font-weight: 500; color: #6b7280; background: #f3f4f6; border: none;">Cancel</button>
+          <button type="submit" class="btn rounded-pill px-4" style="font-size: 0.85rem; font-weight: 500; color: #fff; background: var(--primary-grad, #7f1d1d); border: none; box-shadow: 0 4px 6px -1px rgba(127, 29, 29, 0.2);">
+            <i class="bi bi-upload me-1"></i> Upload Report
+          </button>
         </div>
       </form>
     </div>
