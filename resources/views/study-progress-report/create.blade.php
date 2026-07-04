@@ -334,9 +334,32 @@
                             <div class="info-label text-primary">Position</div>
                             <input type="text" name="position" class="form-control form-control-sm border-0 p-0 fw-bold" value="{{ old('position', $user->position) }}" placeholder="Enter Position (Editable)">
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Department</div>
-                            <div class="info-value">{{ $user->department->name ?? '-' }}</div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">Department</div>
+                            <select name="department_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                                <option value="">-- Select Department --</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" {{ old('department_id', $user->department_id) == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">Group Head</div>
+                            <select name="group_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                                <option value="">-- Select Group --</option>
+                                @foreach($groups as $grp)
+                                    <option value="{{ $grp->id }}" {{ old('group_id', $user->group_id) == $grp->id ? 'selected' : '' }}>{{ $grp->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">Direktorat</div>
+                            <select name="direktorat_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                                <option value="">-- Select Direktorat --</option>
+                                @foreach($direktorats as $dir)
+                                    <option value="{{ $dir->id }}" {{ old('direktorat_id', $user->direktorat_id) == $dir->id ? 'selected' : '' }}>{{ $dir->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

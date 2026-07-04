@@ -17,7 +17,11 @@ class StudyProgressReportController extends Controller
             ->latest()
             ->first();
 
-        return view('study-progress-report.create', compact('pspApplication'));
+        $departments = \App\Models\Department::all();
+        $groups = \App\Models\Group::all();
+        $direktorats = \App\Models\Direktorat::all();
+
+        return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats'));
     }
 
     public function store(Request $request)
@@ -29,6 +33,9 @@ class StudyProgressReportController extends Controller
             'nik' => 'nullable|string|max:255',
             'company' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
+            'department_id' => 'nullable|exists:departments,id',
+            'group_id' => 'nullable|exists:groups,id',
+            'direktorat_id' => 'nullable|exists:direktorats,id',
             'semester' => 'required|numeric|min:1',
             'gpa' => 'required|numeric|min:0|max:4',
             'max_gpa' => 'required|numeric|min:0|max:4',
@@ -38,6 +45,9 @@ class StudyProgressReportController extends Controller
             'nik' => $request->input('nik') ?? $user->nik,
             'company' => $request->input('company') ?? $user->company,
             'position' => $request->input('position') ?? $user->position,
+            'department_id' => $request->input('department_id') ?? $user->department_id,
+            'group_id' => $request->input('group_id') ?? $user->group_id,
+            'direktorat_id' => $request->input('direktorat_id') ?? $user->direktorat_id,
         ]);
 
         $pspApplication = PspApplication::where('user_id', $user->id)->latest()->first();
