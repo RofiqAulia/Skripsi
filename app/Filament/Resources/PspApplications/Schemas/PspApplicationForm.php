@@ -54,6 +54,16 @@ class PspApplicationForm
                                 2 => '2 - Group Approved (Waiting Direktorat)',
                                 3 => '3 - Direktorat Approved (Final)',
                             ])
+                            ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
+                                $user = auth()->user();
+                                if ($state == 0 && \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                    $component->state(1);
+                                } elseif ($state == 1 && \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                    $component->state(2);
+                                } elseif ($state == 2 && \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                    $component->state(3);
+                                }
+                            })
                             ->disableOptionWhen(function (string $value, ?\Illuminate\Database\Eloquent\Model $record): bool {
                                 $user = auth()->user();
                                 if ($user->hasRole('super_admin')) {
