@@ -131,7 +131,7 @@ body {
 }
 
 /* ═══ STAT CARDS ═══ */
-.stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
 .stat-card { padding: 20px; display: flex; flex-direction: column; gap: 12px; position: relative; }
 .stat-icon {
     width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;

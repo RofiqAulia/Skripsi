@@ -73,6 +73,23 @@
             </div>
         </div>
 
+        <!-- 5. STUDY PROGRESS REPORT -->
+        <div class="stat-card glass-card h-100 d-flex flex-column">
+            <div class="d-flex align-items-start gap-3 flex-grow-1">
+                <div class="stat-icon" style="background: var(--primary-grad);"><i class="bi bi-journal-text"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Study Report</span>
+                    <span class="stat-value" style="font-size: 22px;">Progress</span>
+                    <span class="stat-sub">Semester Report</span>
+                </div>
+            </div>
+            <div class="mt-2 border-top pt-2 w-100" style="border-color: rgba(0,0,0,0.05) !important;">
+                <a href="{{ url('/admin/study-progress-reports/create') }}" class="btn btn-sm w-100 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
+                    <i class="bi bi-upload me-1"></i> Submit Report
+                </a>
+            </div>
+        </div>
+
         <!-- 5. OVERALL PROGRESS -->
         <div class="stat-card glass-card stat-highlight">
             <div class="stat-icon" style="background: var(--primary-grad);"><i class="bi bi-bar-chart-line-fill"></i></div>
