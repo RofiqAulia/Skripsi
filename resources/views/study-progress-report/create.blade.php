@@ -414,15 +414,12 @@
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-123 text-muted"></i></span>
                                     <input type="number" name="semester" id="semester" class="form-control border-start-0 ps-0" required min="1" value="{{ old('semester') }}" placeholder="e.g. 3">
                                 </div>
-                            <div class="col-md-2 mb-3">
-                                <label class="form-label">Semester</label>
-                                <input type="number" name="semester" class="form-control" value="{{ old('semester') }}" min="1" required>
                             </div>
-                            <div class="col-md-5 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label">IPK (Semester Ini)</label>
                                 <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa') }}">
                             </div>
-                            <div class="col-md-5 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label">Max IPK / GPA Scale</label>
                                 <input type="number" name="max_gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('max_gpa', 4.00) }}">
                             </div>
