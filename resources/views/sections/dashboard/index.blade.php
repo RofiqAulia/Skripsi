@@ -83,9 +83,12 @@
                     <span class="stat-sub">Semester Report</span>
                 </div>
             </div>
-            <div class="mt-2 border-top pt-2 w-100" style="border-color: rgba(0,0,0,0.05) !important;">
-                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-100 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
-                    <i class="bi bi-upload me-1"></i> Submit Report
+            <div class="mt-2 border-top pt-2 w-100 d-flex gap-2" style="border-color: rgba(0,0,0,0.05) !important;">
+                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
+                    <i class="bi bi-pencil-square me-1"></i> Fill Form
+                </a>
+                <a href="{{ route('document') }}" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: var(--primary); background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2);">
+                    <i class="bi bi-upload me-1"></i> Upload
                 </a>
             </div>
         </div>
