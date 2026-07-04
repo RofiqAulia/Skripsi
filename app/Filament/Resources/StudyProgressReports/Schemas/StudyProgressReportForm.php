@@ -72,13 +72,11 @@ class StudyProgressReportForm
                                     \Filament\Forms\Components\TextInput::make('gpa')
                                         ->label('IPK')
                                         ->numeric()
-                                        ->step('0.01')
-                                        ->required(),
+                                        ->step('0.01'),
                                     \Filament\Forms\Components\TextInput::make('max_gpa')
                                         ->label('Max IPK')
                                         ->numeric()
-                                        ->step('0.01')
-                                        ->required(),
+                                        ->step('0.01'),
                                 ])->columns(3),
                         ]),
                     \Filament\Schemas\Components\Tabs\Tab::make('Mata Kuliah')
@@ -86,24 +84,24 @@ class StudyProgressReportForm
                             \Filament\Forms\Components\Repeater::make('completed_courses')
                                 ->label('A. Mata Kuliah yang sudah dijalankan')
                                 ->schema([
-                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah')->required(),
-                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric()->required(),
-                                    \Filament\Forms\Components\TextInput::make('nilai')->label('Nilai')->required(),
-                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric()->required(),
+                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah'),
+                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric(),
+                                    \Filament\Forms\Components\TextInput::make('nilai')->label('Nilai'),
+                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric(),
                                 ])->columns(4),
                             \Filament\Forms\Components\Repeater::make('ongoing_courses')
                                 ->label('B. Mata Kuliah yang sedang dijalankan')
                                 ->schema([
-                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah')->required(),
-                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric()->required(),
-                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric()->required(),
+                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah'),
+                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric(),
+                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric(),
                                 ])->columns(3),
                             \Filament\Forms\Components\Repeater::make('upcoming_courses')
                                 ->label('C. Mata Kuliah yang belum dan akan dijalankan')
                                 ->schema([
-                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah')->required(),
-                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric()->required(),
-                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric()->required(),
+                                    \Filament\Forms\Components\TextInput::make('name')->label('Nama Mata Kuliah'),
+                                    \Filament\Forms\Components\TextInput::make('sks')->label('SKS')->numeric(),
+                                    \Filament\Forms\Components\TextInput::make('semester')->label('Semester')->numeric(),
                                 ])->columns(3),
                         ]),
                     \Filament\Schemas\Components\Tabs\Tab::make('Tesis / Penelitian')
@@ -152,10 +150,9 @@ class StudyProgressReportForm
                                 ->schema([
                                     \Filament\Forms\Components\Select::make('jenis')
                                         ->label('Jenis Kegiatan')
-                                        ->options(['Seminar' => 'Seminar', 'Workshop' => 'Workshop', 'Training' => 'Training'])
-                                        ->required(),
-                                    \Filament\Forms\Components\TextInput::make('nama')->label('Nama Kegiatan')->required(),
-                                    \Filament\Forms\Components\TextInput::make('tanggal_tempat')->label('Tanggal / Tempat')->required(),
+                                        ->options(['Seminar' => 'Seminar', 'Workshop' => 'Workshop', 'Training' => 'Training']),
+                                    \Filament\Forms\Components\TextInput::make('nama')->label('Nama Kegiatan'),
+                                    \Filament\Forms\Components\TextInput::make('tanggal_tempat')->label('Tanggal / Tempat'),
                                     \Filament\Forms\Components\FileUpload::make('sertifikat')->label('Sertifikat')->directory('certificates'),
                                 ])->columns(2),
                         ]),
