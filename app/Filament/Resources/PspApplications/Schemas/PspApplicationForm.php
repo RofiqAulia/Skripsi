@@ -62,15 +62,15 @@ class PspApplicationForm
                                 
                                 $val = (int) $value;
                                 // Dept Head can only transition to 1 (or revert to 0)
-                                if ($user->department_id || \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                if (\App\Models\Department::where('head_id', $user->id)->exists()) {
                                     return !in_array($val, [0, 1]);
                                 }
                                 // Group Head can only transition to 2 (or revert to 1)
-                                if ($user->group_id || \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                if (\App\Models\Group::where('head_id', $user->id)->exists()) {
                                     return !in_array($val, [1, 2]);
                                 }
                                 // Direktur can only transition to 3 (or revert to 2)
-                                if ($user->direktorat_id || \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                if (\App\Models\Direktorat::where('head_id', $user->id)->exists()) {
                                     return !in_array($val, [2, 3]);
                                 }
                                 
@@ -78,19 +78,20 @@ class PspApplicationForm
                             })
                             ->required()
                             ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set) {
+                            ->afterStateUpdated(function ($state, $old, callable $set) {
                                 $user = auth()->user();
-                                if ($state == 1) {
-                                    $set('department_approver_id', $user->id);
-                                } elseif ($state == 2) {
-                                    $set('group_approver_id', $user->id);
-                                } elseif ($state == 3) {
-                                    $set('direktorat_approver_id', $user->id);
-                                } elseif ($state == 0) {
-                                    $set('department_approver_id', null);
-                                    $set('group_approver_id', null);
-                                    $set('direktorat_approver_id', null);
+                                
+                                // Jika maju (Approval)
+                                if ($state > $old) {
+                                    if ($state == 1) $set('department_approver_id', $user->id);
+                                    if ($state == 2) $set('group_approver_id', $user->id);
+                                    if ($state == 3) $set('direktorat_approver_id', $user->id);
                                 }
+                                
+                                // Jika mundur (Revisi/Pembatalan)
+                                if ($state < 1) $set('department_approver_id', null);
+                                if ($state < 2) $set('group_approver_id', null);
+                                if ($state < 3) $set('direktorat_approver_id', null);
                             }),
                         \Filament\Forms\Components\Select::make('status')
                             ->options([
