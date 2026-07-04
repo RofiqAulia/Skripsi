@@ -39,7 +39,7 @@ class StudyProgressReportsTable
                 //
             ])
             ->recordActions([
-                \Filament\Tables\Actions\Action::make('Approve')
+                \Filament\Actions\Action::make('Approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -62,7 +62,7 @@ class StudyProgressReportsTable
                         return false;
                     }),
 
-                \Filament\Tables\Actions\Action::make('Revisi')
+                \Filament\Actions\Action::make('Revisi')
                     ->icon('heroicon-o-arrow-path')
                     ->color('warning')
                     ->requiresConfirmation()
@@ -85,7 +85,7 @@ class StudyProgressReportsTable
                         return false;
                     }),
 
-                \Filament\Tables\Actions\Action::make('Reject')
+                \Filament\Actions\Action::make('Reject')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
