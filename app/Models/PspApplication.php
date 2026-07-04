@@ -61,4 +61,29 @@ class PspApplication extends Model
     {
         return $this->hasMany(StudyProgressReport::class);
     }
+
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            // Jika statusnya approved, pastikan stage nya 3 (Done)
+            if ($model->status === 'approved' && $model->approval_stage < 3) {
+                $model->approval_stage = 3;
+            }
+            // Jika status diturunkan dari approved, pastikan stagenya turun ke 2
+            elseif ($model->status !== 'approved' && $model->approval_stage == 3) {
+                $model->approval_stage = 2;
+            }
+
+            // Set approver ids automatically based on stage
+            if ($model->approval_stage >= 1 && empty($model->department_approver_id)) {
+                $model->department_approver_id = auth()->id();
+            }
+            if ($model->approval_stage >= 2 && empty($model->group_approver_id)) {
+                $model->group_approver_id = auth()->id();
+            }
+            if ($model->approval_stage >= 3 && empty($model->direktorat_approver_id)) {
+                $model->direktorat_approver_id = auth()->id();
+            }
+        });
+    }
 }
