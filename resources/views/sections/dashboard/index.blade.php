@@ -97,8 +97,8 @@
                         </div>
                     @endif
                 @endif
-                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-100 rounded-pill mt-1" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
-                    <i class="bi bi-pencil-square me-1"></i> Fill Form
+                <a href="{{ route('study-progress-report.index') }}" class="btn btn-sm w-100 rounded-pill mt-1" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
+                    <i class="bi bi-eye me-1"></i> Lihat Detail
                 </a>
             </div>
         </div>
@@ -222,58 +222,6 @@
                         <p>No mentoring sessions yet</p>
                         <a href="{{ route('mentoring') }}" class="btn-sm-action">Book a Session</a>
                     </div>
-                @endif
-            </div>
-
-            <!-- STUDY REPORT HISTORY -->
-            <div class="dash-card glass-card">
-                <div class="card-head">
-                    <h4><i class="bi bi-journal-text"></i> Study Report History</h4>
-                </div>
-                @if(isset($studyReports) && $studyReports->count())
-                    <div class="session-table-wrap">
-                        <table class="session-table">
-                            <thead>
-                                <tr><th>Semester</th><th>GPA</th><th>Status</th><th>Notes</th><th>Action</th></tr>
-                            </thead>
-                            <tbody>
-                                @foreach($studyReports as $report)
-                                <tr>
-                                    <td>Semester {{ $report->semester }}</td>
-                                    <td>{{ $report->gpa }}</td>
-                                    <td>
-                                        <span class="badge-base badge-{{ $report->status == 'approved' ? 'approved' : ($report->status == 'revision' ? 'pending' : ($report->status == 'rejected' ? 'rejected' : 'secondary')) }}">
-                                            {{ ucfirst($report->status) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if($report->notes_pimpinan)
-                                            <span class="text-muted" style="font-size: 11px;" title="{{ $report->notes_pimpinan }}">
-                                                {{ Str::limit($report->notes_pimpinan, 30) }}
-                                            </span>
-                                        @else
-                                            <span class="text-muted">—</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($report->status == 'revision')
-                                            <a href="{{ route('study-progress-report.create') }}" class="btn-sm-action px-2 py-1" style="font-size:10px;"><i class="bi bi-pencil"></i> Edit</a>
-                                        @else
-                                            <span class="text-muted"><i class="bi bi-check-circle"></i></span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="empty-hint">
-                        <i class="bi bi-journal-x"></i>
-                        <p>No study reports yet</p>
-                        <a href="{{ route('study-progress-report.create') }}" class="btn-sm-action">Submit First Report</a>
-                    </div>
-                @endif
             </div>
 
         </div>

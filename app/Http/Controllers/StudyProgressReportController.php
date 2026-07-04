@@ -8,6 +8,33 @@ use App\Models\PspApplication;
 
 class StudyProgressReportController extends Controller
 {
+    public function index()
+    {
+        $user = auth()->user();
+
+        $applications = \App\Models\StudyProgressReport::where('user_id', $user->id)
+            ->orderBy('semester', 'desc')
+            ->get();
+
+        $statsTotal = $applications->count();
+        $statsApproved = $applications->where('status', 'approved')->count();
+        $statsRevision = $applications->where('status', 'revision')->count();
+        $statsRejected = $applications->where('status', 'rejected')->count();
+
+        $pspApp = \App\Models\PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
+        return view('landing.study-progress-report', compact(
+            'applications',
+            'statsTotal',
+            'statsApproved',
+            'statsRevision',
+            'statsRejected',
+            'pspApp'
+        ));
+    }
     public function create()
     {
         $user = auth()->user();

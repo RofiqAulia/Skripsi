@@ -93,6 +93,8 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/study-progress-report', [StudyProgressReportController::class, 'index'])
+        ->name('study-progress-report.index');
     Route::get('/study-progress-report/create', [StudyProgressReportController::class, 'create'])
         ->name('study-progress-report.create');
     Route::post('/study-progress-report', [StudyProgressReportController::class, 'store'])
