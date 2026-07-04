@@ -87,9 +87,79 @@ class StudyProgressReportController extends Controller
         return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
     }
 
+    public function edit($id)
+    {
+        $user = auth()->user();
+        $report = StudyProgressReport::where('user_id', $user->id)->findOrFail($id);
+        
+        $pspApplication = PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
+        $departments = \App\Models\Department::all();
+        $groups = \App\Models\Group::all();
+        $direktorats = \App\Models\Direktorat::all();
+
+        // Flash old input from the report being edited
+        if (!session()->hasOldInput()) {
+            $flashData = $report->toArray();
+            
+            // Format arrays back into separate arrays for name, credits, etc.
+            if ($report->completed_courses) {
+                $flashData['completed_courses_name'] = array_column($report->completed_courses, 'name');
+                $flashData['completed_courses_credits'] = array_column($report->completed_courses, 'credits');
+                $flashData['completed_courses_grade'] = array_column($report->completed_courses, 'grade');
+            }
+            if ($report->ongoing_courses) {
+                $flashData['ongoing_courses_name'] = array_column($report->ongoing_courses, 'name');
+                $flashData['ongoing_courses_credits'] = array_column($report->ongoing_courses, 'credits');
+            }
+            if ($report->upcoming_courses) {
+                $flashData['upcoming_courses_name'] = array_column($report->upcoming_courses, 'name');
+                $flashData['upcoming_courses_credits'] = array_column($report->upcoming_courses, 'credits');
+            }
+            if ($report->other_academic_activities) {
+                $flashData['activity_name'] = array_column($report->other_academic_activities, 'name');
+                $flashData['activity_date'] = array_column($report->other_academic_activities, 'date');
+                $flashData['activity_description'] = array_column($report->other_academic_activities, 'description');
+            }
+            
+            session()->flashInput($flashData);
+        }
+
+        // Kita gunakan view edit.blade.php
+        $latestReport = $report;
+
+        return view('study-progress-report.edit', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = auth()->user();
+        $existingReport = StudyProgressReport::where('user_id', $user->id)->findOrFail($id);
+
+        // Hanya boleh update jika statusnya revisi atau rejected (atau bisa juga draft jika ada)
+        if (!in_array($existingReport->status, ['revisi', 'rejected'])) {
+            return redirect()->route('study-progress-report.index')->withErrors(['error' => 'You can only edit reports that are in Revision or Rejected status.']);
+        }
+
+        // Panggil validasi dan proses data sama persis seperti di store, tapi kita arahkan penyimpanannya ke record ini.
+        // Untuk mempermudah, kita akan me-refactor store logic, tapi saat ini kita copy paste sebagian / buat helper.
+        // Tapi cara termudah karena kita sudah handle update di `store` sebelumnya:
+        // Kita ubah store() agar tidak membuat baru jika ada ID.
+        // Atau kita duplikat logic sedikit.
+        return $this->processReport($request, $user, $existingReport);
+    }
+
     public function store(Request $request)
     {
         $user = auth()->user();
+        return $this->processReport($request, $user, null);
+    }
+
+    private function processReport(Request $request, $user, $existingReport = null)
+    {
 
         // Validasi dasar
         $request->validate([
@@ -198,9 +268,7 @@ class StudyProgressReportController extends Controller
             $data['signature_image'] = $signatureImage;
         }
 
-        $existingReport = StudyProgressReport::where('user_id', $user->id)->latest()->first();
-
-        if ($existingReport && $existingReport->status === 'revisi') {
+        if ($existingReport) {
             $existingReport->update($data);
             $report = $existingReport;
         } else {

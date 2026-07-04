@@ -103,7 +103,7 @@
                     </div>
                     <div class="sa-card-actions">
                         @if($app->status === 'revisi' || $app->status === 'rejected')
-                            <a href="{{ route('study-progress-report.create') }}" class="sa-btn-expand" style="text-decoration: none;">
+                            <a href="{{ route('study-progress-report.edit', $app->id) }}" class="sa-btn-expand" style="text-decoration: none;">
                                 <i class="bi bi-pencil-square"></i> Edit / Revise
                             </a>
                         @else
@@ -125,7 +125,7 @@
                         <p style="color: {{ $app->status === 'revisi' ? '#92400e' : '#7f1d1d' }};">{{ $app->notes_pimpinan }}</p>
                     </div>
                     @if($app->status === 'revisi' || $app->status === 'rejected')
-                        <a href="{{ route('study-progress-report.create') }}" class="sa-btn-continue-fp" style="background: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }}; border-color: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }};">
+                        <a href="{{ route('study-progress-report.edit', $app->id) }}" class="sa-btn-continue-fp" style="background: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }}; border-color: {{ $app->status === 'revisi' ? '#d97706' : '#dc2626' }};">
                             Perbaiki Laporan <i class="bi bi-arrow-repeat"></i>
                         </a>
                     @endif

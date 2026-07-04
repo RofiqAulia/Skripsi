@@ -313,10 +313,11 @@
                 </div>
             @endif
             
-            <h4 class="form-title mb-4">Create Study Progress Report</h4>
+            <h4 class="form-title mb-4">Edit / Revise Study Progress Report</h4>
             
-            <form action="{{ route('study-progress-report.store') }}" method="POST" enctype="multipart/form-data" id="studyProgressForm">
+            <form action="{{ route('study-progress-report.update', $latestReport->id) }}" method="POST" enctype="multipart/form-data" id="studyProgressForm">
                 @csrf
+                @method('PUT')
 
                 <!-- 1. DATA KARYAWAN & STUDY (READONLY) -->
                 <div class="glass-card">
