@@ -24,9 +24,9 @@ class EditPspApplication extends EditRecord
             $applicantGroup = $applicant->group ?? $applicantDept?->group;
             $applicantDir = $applicant->direktorat ?? $applicantGroup?->direktorat;
             
-            $isDeptHead = ($user->department_id && $applicantDept && $user->department_id == $applicantDept->id) || ($applicantDept && $applicantDept->head_id == $user->id);
-            $isGroupHead = ($user->group_id && $applicantGroup && $user->group_id == $applicantGroup->id) || ($applicantGroup && $applicantGroup->head_id == $user->id);
-            $isDirHead = ($user->direktorat_id && $applicantDir && $user->direktorat_id == $applicantDir->id) || ($applicantDir && $applicantDir->head_id == $user->id);
+            $isDeptHead = $user->department_id || \App\Models\Department::where('head_id', $user->id)->exists();
+            $isGroupHead = $user->group_id || \App\Models\Group::where('head_id', $user->id)->exists();
+            $isDirHead = $user->direktorat_id || \App\Models\Direktorat::where('head_id', $user->id)->exists();
 
             if ($isDeptHead) {
                 $data['department_approver_id'] = $user->id;
