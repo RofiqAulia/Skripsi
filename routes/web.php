@@ -120,16 +120,63 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/debug-psp', function () {
-    return \App\Models\PspApplication::with('user')->get()->map(function($app) {
-        return [
-            'id' => $app->id,
-            'user' => $app->user->name ?? 'Unknown',
-            'stage' => $app->approval_stage,
-            'status' => $app->status,
-            'dept_id' => $app->user->department_id ?? null,
-            'group_id' => $app->user->group_id ?? null,
-            'dir_id' => $app->user->direktorat_id ?? null,
-        ];
-    });
+Route::get('/debug-sql', function () {
+    $user = \App\Models\User::where('email', 'azir@example.com')->first() ?? \App\Models\User::first();
+    auth()->login($user);
+    
+    $query = \App\Models\PspApplication::query()
+        ->where('status', '!=', 'rejected')
+        ->where(function ($q) {
+            $q->where('status', '!=', 'approved')
+              ->orWhere('approval_stage', '<', 3);
+        })
+        ->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($user) {
+            if ($user->hasRole('super_admin')) {
+                $query->whereIn('approval_stage', [0, 1, 2]);
+                return;
+            }
+
+            $isDeptHead = $user->hasRole('pimpinan') && $user->department_id;
+            $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
+            $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
+
+            $query->where(function ($q) use ($user, $isDeptHead, $isGroupHead, $isDirHead) {
+                if ($isDeptHead) {
+                    $q->orWhere(function ($sub) use ($user) {
+                        $sub->where('approval_stage', 0)
+                          ->whereHas('user', fn($u) => $u->where('department_id', $user->department_id));
+                    });
+                }
+                if ($isGroupHead) {
+                    $q->orWhere(function ($sub) use ($user) {
+                        $sub->where('approval_stage', 1)
+                          ->whereHas('user', fn($u) => $u->where('group_id', $user->group_id));
+                    });
+                }
+                if ($isDirHead) {
+                    $q->orWhere(function ($sub) use ($user) {
+                        $sub->where('approval_stage', 2)
+                          ->whereHas('user', fn($u) => $u->where('direktorat_id', $user->direktorat_id));
+                    });
+                }
+                
+                if (!$isDeptHead && !$isGroupHead && !$isDirHead) {
+                    $q->whereRaw('1 = 0');
+                }
+            });
+        });
+
+    return [
+        'sql' => $query->toSql(),
+        'bindings' => $query->getBindings(),
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'roles' => $user->roles->pluck('name'),
+            'dept' => $user->department_id,
+            'group' => $user->group_id,
+            'dir' => $user->direktorat_id
+        ],
+        'results' => $query->get()->toArray()
+    ];
 });

@@ -32,6 +32,21 @@ class ExecutiveDashboard extends Page
 
     public function mount(): void
     {
+        // Dump debug info to a file
+        file_put_contents(
+            storage_path('logs/debug_psp.json'),
+            json_encode([
+                'user' => [
+                    'id' => auth()->id(),
+                    'roles' => auth()->user()->roles->pluck('name'),
+                    'dept' => auth()->user()->department_id,
+                    'group' => auth()->user()->group_id,
+                    'dir' => auth()->user()->direktorat_id
+                ],
+                'apps' => \App\Models\PspApplication::all()->toArray()
+            ], JSON_PRETTY_PRINT)
+        );
+        
         $this->selectedYear = (int) date('Y');
     }
 
