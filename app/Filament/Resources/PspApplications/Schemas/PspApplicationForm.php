@@ -51,6 +51,28 @@ class PspApplicationForm
                                 2 => '2 - Group Approved (Waiting Direktorat)',
                                 3 => '3 - Direktorat Approved (Final)',
                             ])
+                            ->disableOptionWhen(function (string $value): bool {
+                                $user = auth()->user();
+                                if ($user->hasRole('super_admin')) {
+                                    return false; // all options enabled
+                                }
+                                
+                                $val = (int) $value;
+                                // Dept Head can only transition to 1 (or revert to 0)
+                                if ($user->department_id || \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                    return !in_array($val, [0, 1]);
+                                }
+                                // Group Head can only transition to 2 (or revert to 1)
+                                if ($user->group_id || \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                    return !in_array($val, [1, 2]);
+                                }
+                                // Direktur can only transition to 3 (or revert to 2)
+                                if ($user->direktorat_id || \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                    return !in_array($val, [2, 3]);
+                                }
+                                
+                                return false; // Default fallback
+                            })
                             ->required()
                             ->reactive(),
                         \Filament\Forms\Components\Select::make('status')
