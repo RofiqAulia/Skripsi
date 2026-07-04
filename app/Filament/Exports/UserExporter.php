@@ -17,6 +17,8 @@ class UserExporter extends Exporter
         return [
             ExportColumn::make('name')
                 ->label('Name'),
+            ExportColumn::make('nik')
+                ->label('NIK'),
             ExportColumn::make('email')
                 ->label('Email'),
             ExportColumn::make('position')

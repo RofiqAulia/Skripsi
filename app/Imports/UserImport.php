@@ -83,6 +83,7 @@ class UserImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
         $data = [
             'name' => $row['name'],
+            'nik' => $row['nik'] ?? null,
             'email' => $row['email'],
             'age' => empty($row['age']) ? null : (int) $row['age'],
             'position' => $row['position'] ?? null,

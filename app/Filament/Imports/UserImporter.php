@@ -20,6 +20,9 @@ class UserImporter extends Importer
                 ->requiredMapping()
                 ->rules(['required', 'max:255'])
                 ->label('Name'),
+            ImportColumn::make('nik')
+                ->rules(['max:255'])
+                ->label('NIK'),
             ImportColumn::make('email')
                 ->requiredMapping()
                 ->rules(['required', 'email', 'max:255', 'unique:users,email'])

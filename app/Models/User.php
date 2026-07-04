@@ -19,6 +19,7 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
 
     protected $fillable = [
         'name',
+        'nik',
         'email',
         'password',
         'position',
@@ -88,6 +89,11 @@ class User extends Authenticatable implements HasAvatar, FilamentUser
     public function pspApplication()
     {
         return $this->hasOne(PspApplication::class);
+    }
+
+    public function studyProgressReports()
+    {
+        return $this->hasMany(StudyProgressReport::class);
     }
 
     public function documents()

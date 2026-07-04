@@ -20,6 +20,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
     {
         return [
             $user->name,
+            $user->nik,
             $user->email,
             $user->age,
             $user->position,
@@ -33,6 +34,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
     {
         return [
             'Name',
+            'NIK',
             'Email',
             'Age',
             'Position',

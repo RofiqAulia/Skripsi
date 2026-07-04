@@ -56,4 +56,9 @@ class PspApplication extends Model
     {
         return $this->hasMany(ScholarshipApplication::class, 'psp_application_id');
     }
+
+    public function studyProgressReports()
+    {
+        return $this->hasMany(StudyProgressReport::class);
+    }
 }

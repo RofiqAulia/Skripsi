@@ -14,6 +14,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
         return [
             [
                 'John Doe',
+                '123456789',
                 'john.doe@example.com',
                 'password123',
                 '25',
@@ -24,6 +25,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
             ],
             [
                 'Jane Smith',
+                '987654321',
                 'jane.smith@example.com',
                 '',
                 '23',
@@ -39,6 +41,7 @@ class UserTemplateExport implements FromArray, WithHeadings, WithStyles
     {
         return [
             'name',
+            'nik',
             'email',
             'password',
             'age',
