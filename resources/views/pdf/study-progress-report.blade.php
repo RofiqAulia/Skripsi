@@ -100,7 +100,15 @@
         <tr>
             <td class="label">Unit Kerja Semula</td>
             <td class="colon">:</td>
-            <td>{{ $user->department->name ?? '-' }}</td>
+            <td>
+                @php
+                    $departmentName = $user->department ? $user->department->name : '';
+                    $groupName = $user->group ? $user->group->name : '';
+                    $dirName = $user->direktorat ? $user->direktorat->name : '';
+                    $workUnit = implode(' / ', array_filter([$departmentName, $groupName, $dirName]));
+                @endphp
+                {{ $workUnit ?: '-' }}
+            </td>
         </tr>
         <tr>
             <td class="label">Perusahaan</td>

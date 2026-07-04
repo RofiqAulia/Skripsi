@@ -295,7 +295,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <h1 class="page-title">Submit Study Progress Report</h1>
-            <p class="page-subtitle">Laporkan perkembangan studi Anda secara berkala untuk pemantauan program.</p>
+            <p class="page-subtitle">Report your study progress periodically for program monitoring.</p>
 
             @if ($errors->any())
                 <div class="alert alert-danger rounded-3 border-0 shadow-sm mb-4">
