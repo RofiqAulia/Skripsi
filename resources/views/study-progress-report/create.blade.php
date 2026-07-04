@@ -337,18 +337,17 @@
                     @if($pspApplication)
                         <div class="info-grid">
                             <div class="info-item">
-                                <div class="info-label">University</div>
-                                <div class="info-value">{{ $pspApplication->studyPlan->university ?? '-' }}</div>
+                                <div class="info-label">University & Country</div>
+                                <div class="info-value">{{ $pspApplication->studyPlan->programStudy->university ?? '-' }} · {{ $pspApplication->studyPlan->programStudy->country ?? '-' }}</div>
                             </div>
-                            <div class="info-label" style="display:none;">Program</div>
                             <div class="info-item">
-                                <div class="info-label">Faculty & Major</div>
-                                <div class="info-value">{{ $pspApplication->studyPlan->faculty ?? '-' }} - {{ $pspApplication->studyPlan->major ?? '-' }}</div>
+                                <div class="info-label">Program Study</div>
+                                <div class="info-value">{{ $pspApplication->studyPlan->programStudy->name ?? '-' }}</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Degree</div>
                                 <div class="info-value">
-                                    <span class="badge bg-danger rounded-pill px-3">{{ strtoupper($pspApplication->studyPlan->type ?? '-') }}</span>
+                                    <span class="badge bg-danger rounded-pill px-3">{{ strtoupper($pspApplication->studyPlan->programStudy->degree ?? '-') }}</span>
                                 </div>
                             </div>
                             <div class="info-item">
