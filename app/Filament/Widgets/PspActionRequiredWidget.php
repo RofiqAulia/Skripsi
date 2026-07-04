@@ -35,19 +35,19 @@ class PspActionRequiredWidget extends TableWidget
                         $query->where(function ($q) use ($user, $isDeptHead, $isGroupHead, $isDirHead) {
                             if ($isDeptHead) {
                                 $q->orWhere(function ($sub) use ($user) {
-                                    $sub->where('approval_stage', 0)
+                                    $sub->where('approval_stage', 1)
                                       ->whereHas('user', fn($u) => $u->where('department_id', $user->department_id));
                                 });
                             }
                             if ($isGroupHead) {
                                 $q->orWhere(function ($sub) use ($user) {
-                                    $sub->where('approval_stage', 1)
+                                    $sub->where('approval_stage', 2)
                                       ->whereHas('user', fn($u) => $u->where('group_id', $user->group_id));
                                 });
                             }
                             if ($isDirHead) {
                                 $q->orWhere(function ($sub) use ($user) {
-                                    $sub->where('approval_stage', 2)
+                                    $sub->where('approval_stage', 3)
                                       ->whereHas('user', fn($u) => $u->where('direktorat_id', $user->direktorat_id));
                                 });
                             }
