@@ -22,9 +22,8 @@ class PspActionRequiredWidget extends TableWidget
                     ->where(function (Builder $query) {
                         $user = auth()->user();
                         
-                        // Super admin bisa melihat semua yang masih pending
                         if ($user->hasRole('super_admin')) {
-                            $query->whereIn('approval_stage', [0, 1, 2]);
+                            $query->whereIn('approval_stage', [1, 2, 3]);
                             return;
                         }
 

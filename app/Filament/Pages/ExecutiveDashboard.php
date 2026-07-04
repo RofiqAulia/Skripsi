@@ -230,8 +230,9 @@ class ExecutiveDashboard extends Page
         $pendingProgramStudy = 0;
 
         if ($user->hasRole('super_admin')) {
-            $pendingPsp = PspApplication::whereIn('approval_stage', [0, 1, 2])
+            $pendingPsp = PspApplication::whereIn('approval_stage', [1, 2, 3])
                 ->where('status', '!=', 'rejected')
+                ->where('status', '!=', 'approved')
                 ->count();
             $pendingDocs = Document::where('status', 'uploaded')->count();
             $pendingMentoring = MentoringSession::where('status', 'pending')->count();
