@@ -81,7 +81,7 @@ class ExecutiveDashboard extends Page
 
         // ── KPI Stats ──
         $totalMentees = User::role('mentee')->whereBetween('created_at', [$from, $to])->count();
-        $pspApproved  = PspApplication::where('status', 'approved')->whereBetween('created_at', [$from, $to])->count();
+        $pspApproved  = PspApplication::where('status', 'approved')->where('approval_stage', 3)->whereBetween('created_at', [$from, $to])->count();
 
         $toeflLolos = Document::where('type', 'ielts_toefl')
             ->where('status', 'approved')
@@ -122,7 +122,7 @@ class ExecutiveDashboard extends Page
         // PSP+Lolos cross-insight
         $pspAndLolos = ScholarshipApplication::where('status', 'lolos')
             ->whereNotNull('psp_application_id')
-            ->whereHas('pspApplication', fn ($q) => $q->where('status', 'approved'))
+            ->whereHas('pspApplication', fn ($q) => $q->where('status', 'approved')->where('approval_stage', 3))
             ->count();
 
         // ── Line Chart: Scholarship per period ──
