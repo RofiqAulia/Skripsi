@@ -97,6 +97,10 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
         ->name('study-progress-report.create');
     Route::post('/study-progress-report', [StudyProgressReportController::class, 'store'])
         ->name('study-progress-report.store');
+    Route::get('/study-progress-report/download-template', [StudyProgressReportController::class, 'downloadTemplate'])
+        ->name('study-progress-report.download-template');
+    Route::post('/study-progress-report/upload', [StudyProgressReportController::class, 'uploadManual'])
+        ->name('study-progress-report.upload');
 
     /*
     |--------------------------------------------------------------------------

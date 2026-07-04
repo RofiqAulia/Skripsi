@@ -121,6 +121,85 @@ class StudyProgressReportController extends Controller
         return redirect()->route('dashboard')->with('success', 'Study Progress Report submitted successfully.');
     }
 
+    public function downloadTemplate()
+    {
+        $user = auth()->user();
+        $pspApplication = PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
+        if (!class_exists('\PhpOffice\PhpWord\TemplateProcessor')) {
+            return redirect()->back()->with('error', 'Template processor is not available.');
+        }
+
+        $templatePath = public_path('templates/Laporan_Report_Study.docx');
+        if (!file_exists($templatePath)) {
+            return redirect()->back()->with('error', 'Template file not found.');
+        }
+
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
+
+        // Fill data
+        $templateProcessor->setValue('name', $user->name ?? '-');
+        $templateProcessor->setValue('nik', $user->nik ?? '-');
+        $templateProcessor->setValue('company', $user->company ?? '-');
+        $templateProcessor->setValue('position', $user->position ?? '-');
+        
+        $departmentName = $user->department ? $user->department->name : '';
+        $groupName = $user->group ? $user->group->name : '';
+        $dirName = $user->direktorat ? $user->direktorat->name : '';
+        $workUnit = implode(' / ', array_filter([$departmentName, $groupName, $dirName]));
+        $templateProcessor->setValue('work_unit', $workUnit ?: '-');
+
+        $programName = '';
+        $universityName = '';
+        if ($pspApplication && $pspApplication->studyPlan) {
+            $programName = $pspApplication->studyPlan->program->name ?? '';
+            $universityName = $pspApplication->studyPlan->university->name ?? '';
+        }
+        $templateProcessor->setValue('program', $programName ?: '-');
+        $templateProcessor->setValue('university', $universityName ?: '-');
+
+        $fileName = 'Study_Progress_Report_Template_' . str_replace(' ', '_', $user->name) . '.docx';
+        $tempPath = storage_path('app/public/' . $fileName);
+        
+        $templateProcessor->saveAs($tempPath);
+
+        return response()->download($tempPath)->deleteFileAfterSend(true);
+    }
+
+    public function uploadManual(Request $request)
+    {
+        $request->validate([
+            'report_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
+        ], [
+            'report_file.required' => 'Please select a file to upload.',
+            'report_file.mimes' => 'File must be PDF, DOC, or DOCX.',
+            'report_file.max' => 'File size must not exceed 5MB.',
+        ]);
+
+        $user = auth()->user();
+        $file = $request->file('report_file');
+        
+        try {
+            $path = $file->store('documents/' . $user->id, 'public');
+            
+            \App\Models\Document::create([
+                'user_id' => $user->id,
+                'type' => 'study_progress_report',
+                'category' => 'manual_upload',
+                'file' => $path,
+                'status' => 'uploaded',
+            ]);
+            
+            return redirect()->back()->with('success', 'Manual Study Progress Report uploaded successfully!');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Manual Study Progress Report upload error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to upload report. Please try again.');
+        }
+    }
+
     private function formatCourseArray($names, $credits, $grades = null)
     {
         if (empty($names)) return null;

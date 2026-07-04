@@ -87,12 +87,12 @@
                 <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
                     <i class="bi bi-pencil-square me-1"></i> Fill Form
                 </a>
-                <a href="{{ route('document') }}" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: var(--primary); background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2);">
+                <button type="button" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: var(--primary); background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2);" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
                     <i class="bi bi-upload me-1"></i> Upload
-                </a>
+                </button>
             </div>
             <div class="text-center mt-1">
-                <a href="{{ asset('templates/Laporan_Report_Study.docx') }}" download class="text-muted" style="font-size: 9px; text-decoration: underline;">
+                <a href="{{ route('study-progress-report.download-template') }}" class="text-muted" style="font-size: 9px; text-decoration: underline;">
                     <i class="bi bi-download"></i> Download Report Template
                 </a>
             </div>
@@ -355,6 +355,32 @@
         </div>
 
     </div>
+</div>
+
+<!-- Upload Report Modal -->
+<div class="modal fade" id="uploadReportModal" tabindex="-1" aria-labelledby="uploadReportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="{{ route('study-progress-report.upload') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadReportModalLabel">Upload Study Progress Report</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="report_file" class="form-label">Report Document</label>
+            <input class="form-control" type="file" id="report_file" name="report_file" accept=".pdf,.doc,.docx" required>
+            <div class="form-text">Accepted formats: PDF, DOC, DOCX. Maximum size: 5MB.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Upload Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- Score Update Modal -->
