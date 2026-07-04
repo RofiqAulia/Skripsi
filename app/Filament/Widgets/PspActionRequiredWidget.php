@@ -35,19 +35,19 @@ class PspActionRequiredWidget extends TableWidget
                         $query->where(function ($q) use ($dept, $group, $dir) {
                             if ($dept) {
                                 $q->orWhere(function ($sub) use ($dept) {
-                                    $sub->where('approval_stage', 0)
+                                    $sub->where('approval_stage', 1)
                                       ->whereHas('user', fn($u) => $u->where('department_id', $dept->id));
                                 });
                             }
                             if ($group) {
                                 $q->orWhere(function ($sub) use ($group) {
-                                    $sub->where('approval_stage', 1)
+                                    $sub->where('approval_stage', 2)
                                       ->whereHas('user', fn($u) => $u->where('group_id', $group->id));
                                 });
                             }
                             if ($dir) {
                                 $q->orWhere(function ($sub) use ($dir) {
-                                    $sub->where('approval_stage', 2)
+                                    $sub->where('approval_stage', 3)
                                       ->whereHas('user', fn($u) => $u->where('direktorat_id', $dir->id));
                                 });
                             }
@@ -69,16 +69,16 @@ class PspActionRequiredWidget extends TableWidget
                 \Filament\Tables\Columns\TextColumn::make('approval_stage')
                     ->label('Menunggu')
                     ->formatStateUsing(fn ($state) => match ((int)$state) {
-                        0 => 'Dept Head',
-                        1 => 'Group Head',
-                        2 => 'Direktur',
+                        1 => 'Dept Head',
+                        2 => 'Group Head',
+                        3 => 'Direktur',
                         default => 'Unknown',
                     })
                     ->badge()
                     ->color(fn ($state) => match ((int)$state) {
-                        0 => 'warning',
-                        1 => 'info',
-                        2 => 'primary',
+                        1 => 'warning',
+                        2 => 'info',
+                        3 => 'primary',
                         default => 'secondary',
                     }),
                 \Filament\Tables\Columns\TextColumn::make('created_at')

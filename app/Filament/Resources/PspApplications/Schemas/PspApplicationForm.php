@@ -62,25 +62,32 @@ class PspApplicationForm
                                 
                                 $val = (int) $value;
                                 
-                                // Selalu perbolehkan opsi yang saat ini tersimpan di database agar tidak error validasi
+                                // 1. Selalu perbolehkan opsi yang saat ini tersimpan di database agar form bisa disimpan (tanpa mengubah stage)
                                 if ($record && $val === (int) $record->approval_stage) {
                                     return false;
                                 }
 
-                                // Dept Head can only transition to 1
-                                if (\App\Models\Department::where('head_id', $user->id)->exists()) {
-                                    return $val !== 1;
+                                // 2. Jika opsi yang dievaluasi adalah 1 (Dept Approved), pastikan user adalah Dept Head
+                                if ($val === 1) {
+                                    return !\App\Models\Department::where('head_id', $user->id)->exists();
                                 }
-                                // Group Head can only transition to 2
-                                if (\App\Models\Group::where('head_id', $user->id)->exists()) {
-                                    return $val !== 2;
+
+                                // 3. Jika opsi yang dievaluasi adalah 2 (Group Approved), pastikan user adalah Group Head
+                                if ($val === 2) {
+                                    return !\App\Models\Group::where('head_id', $user->id)->exists();
                                 }
-                                // Direktur can only transition to 3
-                                if (\App\Models\Direktorat::where('head_id', $user->id)->exists()) {
-                                    return $val !== 3;
+
+                                // 4. Jika opsi yang dievaluasi adalah 3 (Dir Approved), pastikan user adalah Dir Head
+                                if ($val === 3) {
+                                    return !\App\Models\Direktorat::where('head_id', $user->id)->exists();
                                 }
                                 
-                                return true; // Default: disable all for normal users
+                                // Opsi 0 (Submission) hanya bisa dipilih/dikembalikan oleh Dept Head
+                                if ($val === 0) {
+                                    return !\App\Models\Department::where('head_id', $user->id)->exists();
+                                }
+                                
+                                return true; // Sisanya disable
                             })
                             ->required()
                             ->reactive()
