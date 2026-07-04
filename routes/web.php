@@ -7,6 +7,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ScholarshipInsightController;
 use App\Http\Controllers\ScholarshipApplicationController;
 use App\Http\Controllers\FinancialPlanController;
+use App\Http\Controllers\StudyProgressReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,17 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
 
     Route::post('/report-mentoring', [MentoringReportController::class, 'store'])
         ->name('report.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | STUDY PROGRESS REPORT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/study-progress-report/create', [StudyProgressReportController::class, 'create'])
+        ->name('study-progress-report.create');
+    Route::post('/study-progress-report', [StudyProgressReportController::class, 'store'])
+        ->name('study-progress-report.store');
 
     /*
     |--------------------------------------------------------------------------
