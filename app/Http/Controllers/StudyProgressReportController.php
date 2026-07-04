@@ -168,8 +168,10 @@ class StudyProgressReportController extends Controller
     public function uploadManual(Request $request)
     {
         $request->validate([
+            'semester' => 'required|numeric|min:1',
             'report_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ], [
+            'semester.required' => 'Please select the reporting semester.',
             'report_file.required' => 'Please select a file to upload.',
             'report_file.mimes' => 'File must be PDF, DOC, or DOCX.',
             'report_file.max' => 'File size must not exceed 5MB.',
@@ -178,15 +180,20 @@ class StudyProgressReportController extends Controller
         $user = auth()->user();
         $file = $request->file('report_file');
         
+        $pspApplication = PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
         try {
             $path = $file->store('documents/' . $user->id, 'public');
             
-            \App\Models\Document::create([
+            \App\Models\StudyProgressReport::create([
                 'user_id' => $user->id,
-                'type' => 'study_progress_report',
-                'category' => 'manual_upload',
-                'file' => $path,
-                'status' => 'uploaded',
+                'psp_application_id' => $pspApplication ? $pspApplication->id : null,
+                'semester' => $request->input('semester'),
+                'status' => 'submission',
+                'manual_file_path' => $path,
             ]);
             
             return redirect()->back()->with('success', 'Manual Study Progress Report uploaded successfully!');

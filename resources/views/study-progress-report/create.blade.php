@@ -291,7 +291,7 @@
     }
 </style>
 
-<div class="container py-5">
+<div class="container py-5" style="margin-top: 80px;">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <h1 class="page-title">Submit Study Progress Report</h1>

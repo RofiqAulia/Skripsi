@@ -371,6 +371,15 @@
         @csrf
         <div class="modal-body pt-4">
           <div class="mb-3">
+            <label for="semester" class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Reporting Semester</label>
+            <select class="form-select form-select-lg shadow-none" id="semester" name="semester" required style="font-size: 0.9rem; border-color: rgba(0,0,0,0.1); border-radius: 0.75rem;">
+              <option value="" disabled selected>Pilih Semester...</option>
+              @for($i = 1; $i <= 8; $i++)
+                <option value="{{ $i }}">Semester {{ $i }}</option>
+              @endfor
+            </select>
+          </div>
+          <div class="mb-3">
             <label for="report_file" class="form-label fw-medium text-secondary" style="font-size: 0.9rem;">Select Document</label>
             <div class="input-group">
               <input class="form-control form-control-lg shadow-none" type="file" id="report_file" name="report_file" accept=".pdf,.doc,.docx" required style="font-size: 0.9rem; border-color: rgba(0,0,0,0.1); border-radius: 0.75rem;">
