@@ -21,7 +21,43 @@ class StudyProgressReportController extends Controller
         $groups = \App\Models\Group::all();
         $direktorats = \App\Models\Direktorat::all();
 
-        return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats'));
+        $latestReport = \App\Models\StudyProgressReport::where('user_id', $user->id)
+            ->latest()
+            ->first();
+
+        // Jika reject, mulai dari kosong
+        if ($latestReport && $latestReport->status === 'rejected') {
+            $latestReport = null;
+        }
+
+        // Flash old input from latestReport
+        if ($latestReport && !session()->hasOldInput()) {
+            $flashData = $latestReport->toArray();
+            
+            // Format arrays back into separate arrays for name, credits, etc.
+            if ($latestReport->completed_courses) {
+                $flashData['completed_courses_name'] = array_column($latestReport->completed_courses, 'name');
+                $flashData['completed_courses_credits'] = array_column($latestReport->completed_courses, 'credits');
+                $flashData['completed_courses_grade'] = array_column($latestReport->completed_courses, 'grade');
+            }
+            if ($latestReport->ongoing_courses) {
+                $flashData['ongoing_courses_name'] = array_column($latestReport->ongoing_courses, 'name');
+                $flashData['ongoing_courses_credits'] = array_column($latestReport->ongoing_courses, 'credits');
+            }
+            if ($latestReport->upcoming_courses) {
+                $flashData['upcoming_courses_name'] = array_column($latestReport->upcoming_courses, 'name');
+                $flashData['upcoming_courses_credits'] = array_column($latestReport->upcoming_courses, 'credits');
+            }
+            if ($latestReport->other_academic_activities) {
+                $flashData['activity_name'] = array_column($latestReport->other_academic_activities, 'name');
+                $flashData['activity_date'] = array_column($latestReport->other_academic_activities, 'date');
+                $flashData['activity_description'] = array_column($latestReport->other_academic_activities, 'description');
+            }
+            
+            session()->flashInput($flashData);
+        }
+
+        return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
     }
 
     public function store(Request $request)

@@ -814,6 +814,87 @@
         `;
         tbody.insertAdjacentHTML('beforeend', html);
     }
+
+    // Populate old data for repeater fields if exists (from validation or pre-fill)
+    document.addEventListener('DOMContentLoaded', function() {
+        function escapeHtml(unsafe) {
+            if(unsafe === null || unsafe === undefined) return '';
+            return unsafe
+                 .toString()
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        let oldCompletedName = {!! json_encode(old('completed_courses_name', [])) !!};
+        let oldCompletedCredits = {!! json_encode(old('completed_courses_credits', [])) !!};
+        let oldCompletedGrade = {!! json_encode(old('completed_courses_grade', [])) !!};
+        
+        if (oldCompletedName && oldCompletedName.length > 0) {
+            let tbody = document.querySelector('#completedCoursesTable tbody');
+            tbody.innerHTML = ''; 
+            oldCompletedName.forEach((name, i) => {
+                let credits = oldCompletedCredits[i] || '';
+                let grade = oldCompletedGrade[i] || '';
+                tbody.insertAdjacentHTML('beforeend', `<tr>
+                    <td><input type="text" name="completed_courses_name[]" class="form-control" value="${escapeHtml(name)}"></td>
+                    <td><input type="number" name="completed_courses_credits[]" class="form-control" min="1" value="${escapeHtml(credits)}"></td>
+                    <td><input type="text" name="completed_courses_grade[]" class="form-control" value="${escapeHtml(grade)}"></td>
+                    <td class="text-center"><button type="button" class="btn-delete-row" onclick="removeRow(this)"><i class="bi bi-trash3"></i></button></td>
+                </tr>`);
+            });
+        }
+
+        let oldOngoingName = {!! json_encode(old('ongoing_courses_name', [])) !!};
+        let oldOngoingCredits = {!! json_encode(old('ongoing_courses_credits', [])) !!};
+        if (oldOngoingName && oldOngoingName.length > 0) {
+            let tbody = document.querySelector('#ongoingCoursesTable tbody');
+            tbody.innerHTML = ''; 
+            oldOngoingName.forEach((name, i) => {
+                let credits = oldOngoingCredits[i] || '';
+                tbody.insertAdjacentHTML('beforeend', `<tr>
+                    <td><input type="text" name="ongoing_courses_name[]" class="form-control" value="${escapeHtml(name)}"></td>
+                    <td><input type="number" name="ongoing_courses_credits[]" class="form-control" min="1" value="${escapeHtml(credits)}"></td>
+                    <td class="text-center"><button type="button" class="btn-delete-row" onclick="removeRow(this)"><i class="bi bi-trash3"></i></button></td>
+                </tr>`);
+            });
+        }
+
+        let oldUpcomingName = {!! json_encode(old('upcoming_courses_name', [])) !!};
+        let oldUpcomingCredits = {!! json_encode(old('upcoming_courses_credits', [])) !!};
+        if (oldUpcomingName && oldUpcomingName.length > 0) {
+            let tbody = document.querySelector('#upcomingCoursesTable tbody');
+            tbody.innerHTML = ''; 
+            oldUpcomingName.forEach((name, i) => {
+                let credits = oldUpcomingCredits[i] || '';
+                tbody.insertAdjacentHTML('beforeend', `<tr>
+                    <td><input type="text" name="upcoming_courses_name[]" class="form-control" value="${escapeHtml(name)}"></td>
+                    <td><input type="number" name="upcoming_courses_credits[]" class="form-control" min="1" value="${escapeHtml(credits)}"></td>
+                    <td class="text-center"><button type="button" class="btn-delete-row" onclick="removeRow(this)"><i class="bi bi-trash3"></i></button></td>
+                </tr>`);
+            });
+        }
+
+        let oldActivityName = {!! json_encode(old('activity_name', [])) !!};
+        let oldActivityDate = {!! json_encode(old('activity_date', [])) !!};
+        let oldActivityDesc = {!! json_encode(old('activity_description', [])) !!};
+        if (oldActivityName && oldActivityName.length > 0) {
+            let tbody = document.querySelector('#activitiesTable tbody');
+            tbody.innerHTML = ''; 
+            oldActivityName.forEach((name, i) => {
+                let date = oldActivityDate[i] || '';
+                let desc = oldActivityDesc[i] || '';
+                tbody.insertAdjacentHTML('beforeend', `<tr>
+                    <td><input type="text" name="activity_name[]" class="form-control" value="${escapeHtml(name)}"></td>
+                    <td><input type="date" name="activity_date[]" class="form-control" value="${escapeHtml(date)}"></td>
+                    <td><input type="text" name="activity_description[]" class="form-control" value="${escapeHtml(desc)}"></td>
+                    <td class="text-center"><button type="button" class="btn-delete-row" onclick="removeRow(this)"><i class="bi bi-trash3"></i></button></td>
+                </tr>`);
+            });
+        }
+    });
 </script>
 
 <!-- jQuery and Select2 JS -->
