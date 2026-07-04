@@ -108,23 +108,23 @@ class StudyProgressReportForm
                         ]),
                     \Filament\Schemas\Components\Tabs\Tab::make('Tesis / Penelitian')
                         ->schema([
-                            \Filament\Forms\Components\Fieldset::make('1) Judul')
+                            \Filament\Schemas\Components\Fieldset::make('1) Judul')
                                 ->schema([
                                     \Filament\Forms\Components\TextInput::make('thesis_title')->label('Judul Tesis/Penelitian'),
                                     \Filament\Forms\Components\Select::make('thesis_title_status')->label('Status')->options(['Approve' => 'Approve', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                 ]),
-                            \Filament\Forms\Components\Fieldset::make('2) Proposal Tesis')
+                            \Filament\Schemas\Components\Fieldset::make('2) Proposal Tesis')
                                 ->schema([
                                     \Filament\Forms\Components\TextInput::make('thesis_proposal')->label('Proposal Tesis'),
                                     \Filament\Forms\Components\Select::make('thesis_proposal_status')->label('Status')->options(['Approve' => 'Approve', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                 ]),
-                            \Filament\Forms\Components\Fieldset::make('3) Ujian Proposal')
+                            \Filament\Schemas\Components\Fieldset::make('3) Ujian Proposal')
                                 ->schema([
                                     \Filament\Forms\Components\Select::make('proposal_exam_status')->label('Status Ujian Proposal')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                     \Filament\Forms\Components\DatePicker::make('proposal_exam_date')->label('4) Tanggal Ujian'),
                                     \Filament\Forms\Components\TextInput::make('proposal_exam_score')->label('5) Nilai Ujian'),
                                 ])->columns(3),
-                            \Filament\Forms\Components\Fieldset::make('Lanjutan Penelitian')
+                            \Filament\Schemas\Components\Fieldset::make('Lanjutan Penelitian')
                                 ->schema([
                                     \Filament\Forms\Components\Select::make('proposal_revision_status')->label('6) Perbaikan / Revisi Proposal')->options(['Approve' => 'Approve', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                     \Filament\Forms\Components\Select::make('research_implementation_status')->label('7) Pelaksanaan Penelitian')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
@@ -132,14 +132,14 @@ class StudyProgressReportForm
                                     \Filament\Forms\Components\Select::make('data_analysis_status')->label('9) Analisis Data')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                     \Filament\Forms\Components\Select::make('thesis_writing_status')->label('10) Penulisan Tesis')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                 ])->columns(2),
-                            \Filament\Forms\Components\Fieldset::make('Ujian Tesis Akhir')
+                            \Filament\Schemas\Components\Fieldset::make('Ujian Tesis Akhir')
                                 ->schema([
                                     \Filament\Forms\Components\Select::make('thesis_exam_status')->label('11) Status Ujian Tesis')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                     \Filament\Forms\Components\DatePicker::make('thesis_exam_date')->label('12) Tanggal Ujian'),
                                     \Filament\Forms\Components\TextInput::make('thesis_exam_score')->label('13) Nilai Ujian'),
                                     \Filament\Forms\Components\Select::make('thesis_revision_status')->label('14) Perbaikan / Revisi Tesis')->options(['Approve' => 'Approve', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                 ])->columns(2),
-                            \Filament\Forms\Components\Fieldset::make('Publikasi Jurnal')
+                            \Filament\Schemas\Components\Fieldset::make('Publikasi Jurnal')
                                 ->schema([
                                     \Filament\Forms\Components\Select::make('journal_article_status')->label('15) Penulisan Artikel Jurnal')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
                                     \Filament\Forms\Components\Select::make('journal_publication_status')->label('16) Publikasi Jurnal')->options(['Finish' => 'Finish', 'On Process' => 'On Process', 'Not Yet' => 'Not Yet']),
