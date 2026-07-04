@@ -8,25 +8,27 @@
     <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
         <h2 style="color: #b71c1c; text-align: center;">Study Progress Report Submitted</h2>
         
-        <p>Halo,</p>
+        <p>Dear Sir/Madam,</p>
         
-        <p>Laporan Perkembangan Studi (Study Progress Report) terbaru telah berhasil dikirimkan ke dalam sistem RPX Scholarship.</p>
+        <p>A new Study Progress Report has been successfully submitted and is now available for your review.</p>
         
-        <p><strong>Rincian Pengirim:</strong></p>
+        <p><strong>Submission Details:</strong></p>
         <ul>
-            <li><strong>Nama:</strong> {{ $user->name }}</li>
-            <li><strong>NIK:</strong> {{ $user->nik ?? '-' }}</li>
-            <li><strong>Semester Laporan:</strong> Semester {{ $report->semester }}</li>
-            <li><strong>IPK Saat Ini:</strong> {{ $report->gpa }} / {{ $report->max_gpa }}</li>
+            <li><strong>Name:</strong> {{ $user->name }}</li>
+            <li><strong>Employee ID:</strong> {{ $user->nik ?? '-' }}</li>
+            <li><strong>Reporting Semester:</strong> Semester {{ $report->semester }}</li>
+            <li><strong>Current GPA:</strong> {{ $report->gpa }} / {{ $report->max_gpa }}</li>
         </ul>
         
-        <p>Laporan ini akan digunakan sebagai bahan evaluasi dan pemantauan perkembangan studi peserta program RPX Scholarship.</p>
+        <p>This report has been submitted for your information and will serve as part of the evaluation and monitoring of the participant's academic progress throughout the scholarship program.</p>
 
-        <p>Salinan lengkap dari laporan ini telah kami lampirkan dalam bentuk dokumen PDF (terlampir pada email ini) untuk dapat Anda simpan atau tinjau lebih lanjut.</p>
+        <p>A complete copy of the submitted report is attached to this email in PDF format for your reference and record.</p>
         
         <br>
-        <p>Terima kasih,</p>
-        <p><strong>Admin RPX Scholarship</strong></p>
+        <p>Thank you for your attention.</p>
+        <br>
+        <p>Kind regards,</p>
+        <p><strong>Department of CLD</strong></p>
     </div>
 </body>
 </html>
