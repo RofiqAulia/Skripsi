@@ -61,20 +61,20 @@ class PspApplicationForm
                                 }
                                 
                                 $val = (int) $value;
-                                // Dept Head can only transition to 1 (or revert to 0)
+                                // Dept Head can only transition to 1
                                 if (\App\Models\Department::where('head_id', $user->id)->exists()) {
-                                    return !in_array($val, [0, 1]);
+                                    return $val !== 1;
                                 }
-                                // Group Head can only transition to 2 (or revert to 1)
+                                // Group Head can only transition to 2
                                 if (\App\Models\Group::where('head_id', $user->id)->exists()) {
-                                    return !in_array($val, [1, 2]);
+                                    return $val !== 2;
                                 }
-                                // Direktur can only transition to 3 (or revert to 2)
+                                // Direktur can only transition to 3
                                 if (\App\Models\Direktorat::where('head_id', $user->id)->exists()) {
-                                    return !in_array($val, [2, 3]);
+                                    return $val !== 3;
                                 }
                                 
-                                return false; // Default fallback
+                                return true; // Default: disable all for normal users
                             })
                             ->required()
                             ->reactive()
