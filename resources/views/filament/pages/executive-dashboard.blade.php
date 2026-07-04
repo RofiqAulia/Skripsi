@@ -212,6 +212,15 @@
 </div>
 
 {{-- ══════════════════════════════════════════════════════
+     TINDAK LANJUT PSP (ACTION REQUIRED WIDGET)
+══════════════════════════════════════════════════════ --}}
+@if(auth()->user()?->hasAnyRole(['super_admin', 'pimpinan']))
+    <div class="mt-8 mb-8">
+        @livewire(\App\Filament\Widgets\PspActionRequiredWidget::class)
+    </div>
+@endif
+
+{{-- ══════════════════════════════════════════════════════
      ROW 1: Line Chart + Doughnut Chart
 ══════════════════════════════════════════════════════ --}}
 <div class="ed-row">
