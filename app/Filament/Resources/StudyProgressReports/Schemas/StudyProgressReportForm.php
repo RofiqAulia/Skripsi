@@ -32,7 +32,7 @@ class StudyProgressReportForm
                                 ->live()
                                 ->required(),
 
-                            \Filament\Forms\Components\Fieldset::make('Data Karyawan')
+                            \Filament\Schemas\Components\Fieldset::make('Data Karyawan')
                                 ->schema([
                                     \Filament\Forms\Components\Placeholder::make('nama_karyawan')
                                         ->label('Nama')
@@ -51,7 +51,7 @@ class StudyProgressReportForm
                                         ->content(fn ($get) => $get('user_id') ? \App\Models\User::find($get('user_id'))?->company : '-'),
                                 ])->columns(3),
 
-                            \Filament\Forms\Components\Fieldset::make('Data Studi')
+                            \Filament\Schemas\Components\Fieldset::make('Data Studi')
                                 ->schema([
                                     \Filament\Forms\Components\Placeholder::make('program_studi')
                                         ->label('Program Studi')
@@ -174,6 +174,34 @@ class StudyProgressReportForm
                                 ->required(),
                         ])
                         ->visible(fn() => auth()->user() && (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('mentor'))),
+
+                    \Filament\Schemas\Components\Tabs\Tab::make('Dokumen & Tanda Tangan')
+                        ->schema([
+                            \Filament\Schemas\Components\Fieldset::make('Sertifikat & Tanda Tangan')
+                                ->schema([
+                                    \Filament\Forms\Components\FileUpload::make('certificates')
+                                        ->label('Sertifikat (PDF/Image)')
+                                        ->multiple()
+                                        ->directory('certificates')
+                                        ->downloadable()
+                                        ->openable()
+                                        ->columnSpanFull()
+                                        ->disabled(),
+                                    \Filament\Forms\Components\FileUpload::make('signature_image')
+                                        ->label('Tanda Tangan (Gambar Upload)')
+                                        ->directory('signatures')
+                                        ->image()
+                                        ->disabled(),
+                                    \Filament\Forms\Components\Placeholder::make('signature_pad')
+                                        ->label('Tanda Tangan (Pad)')
+                                        ->content(function ($record) {
+                                            if ($record && $record->signature_pad) {
+                                                return \Illuminate\Support\HtmlString::make('<img src="' . $record->signature_pad . '" style="max-height: 100px;">');
+                                            }
+                                            return '-';
+                                        }),
+                                ])->columns(2),
+                        ]),
                 ])
                 ->columnSpanFull()
         ]);

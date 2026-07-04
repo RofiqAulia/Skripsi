@@ -35,6 +35,9 @@ class StudyProgressReport extends Model
         'journal_article_status',
         'journal_publication_status',
         'other_academic_activities',
+        'certificates',
+        'signature_pad',
+        'signature_image',
     ];
 
     protected $casts = [
@@ -42,6 +45,7 @@ class StudyProgressReport extends Model
         'ongoing_courses' => 'array',
         'upcoming_courses' => 'array',
         'other_academic_activities' => 'array',
+        'certificates' => 'array',
         'proposal_exam_date' => 'date',
         'thesis_exam_date' => 'date',
     ];

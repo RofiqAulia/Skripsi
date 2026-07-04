@@ -684,6 +684,50 @@
                     </div>
                 </div>
 
+                <!-- Certificates & Signature -->
+                <div class="card glass-card mb-4 border-0 rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="section-title">
+                            <i class="bi bi-file-earmark-medical-fill me-2 text-primary"></i> 
+                            Certificates & Signature
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="certificates" class="form-label">Upload Certificates <span class="text-muted">(Optional)</span></label>
+                            <input class="form-control" type="file" id="certificates" name="certificates[]" accept=".pdf,image/*" multiple>
+                            <div class="form-text">You can select multiple files. PDF or Image max 5MB.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label d-block">Participant Signature</label>
+                            <div class="form-text mb-3">You can either draw your signature below or upload an image.</div>
+                            
+                            <ul class="nav nav-pills mb-3" id="signature-pills-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-pill px-4 me-2" id="pills-draw-tab" data-bs-toggle="pill" data-bs-target="#pills-draw" type="button" role="tab" style="font-size: 0.9rem;">Draw Signature</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-pill px-4" id="pills-upload-tab" data-bs-toggle="pill" data-bs-target="#pills-upload" type="button" role="tab" style="font-size: 0.9rem;">Upload Image</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="pills-tabContent">
+                                <div class="tab-pane fade show active" id="pills-draw" role="tabpanel">
+                                    <div class="border rounded-3" style="background: #f8fafc; overflow: hidden; width: fit-content;">
+                                        <canvas id="signature-pad" class="signature-pad" width="400" height="200"></canvas>
+                                    </div>
+                                    <input type="hidden" name="signature_pad" id="signature_pad_input">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">
+                                        <i class="bi bi-eraser me-1"></i> Clear
+                                    </button>
+                                </div>
+                                <div class="tab-pane fade" id="pills-upload" role="tabpanel">
+                                    <input class="form-control" type="file" name="signature_image" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-3 mb-5 mt-4">
                     <a href="{{ route('dashboard') }}" class="btn-cancel text-decoration-none">Cancel</a>
                     <button type="submit" class="btn-submit">
@@ -768,6 +812,26 @@
             theme: 'bootstrap-5',
             width: '100%'
         });
+
+        // Signature Pad initialization
+        var canvas = document.getElementById('signature-pad');
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            penColor: 'rgb(0, 0, 0)'
+        });
+
+        document.getElementById('clear-signature').addEventListener('click', function () {
+            signaturePad.clear();
+            document.getElementById('signature_pad_input').value = '';
+        });
+
+        // Before submit, get data URL
+        $('form').on('submit', function() {
+            if (!signaturePad.isEmpty()) {
+                document.getElementById('signature_pad_input').value = signaturePad.toDataURL();
+            }
+        });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 @endsection

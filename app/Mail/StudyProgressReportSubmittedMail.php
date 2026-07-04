@@ -63,9 +63,20 @@ class StudyProgressReportSubmittedMail extends Mailable
      */
     public function attachments()
     {
-        return [
+        $attachments = [
             Attachment::fromData(fn () => $this->pdfContent, $this->fileName)
                 ->withMime('application/pdf'),
         ];
+
+        if (!empty($this->report->certificates)) {
+            foreach ($this->report->certificates as $certificatePath) {
+                $fullPath = storage_path('app/public/' . $certificatePath);
+                if (file_exists($fullPath)) {
+                    $attachments[] = Attachment::fromPath($fullPath);
+                }
+            }
+        }
+
+        return $attachments;
     }
 }

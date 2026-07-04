@@ -58,6 +58,22 @@ class StudyProgressReportController extends Controller
         $upcomingCourses = $this->formatCourseArray($request->input('upcoming_courses_name'), $request->input('upcoming_courses_credits'), null);
         $otherActivities = $this->formatActivityArray($request->input('activity_name'), $request->input('activity_date'), $request->input('activity_description'));
 
+        // Handle Certificates
+        $certificates = [];
+        if ($request->hasFile('certificates')) {
+            foreach ($request->file('certificates') as $file) {
+                $path = $file->store('certificates/' . $user->id, 'public');
+                $certificates[] = $path;
+            }
+        }
+
+        // Handle Signature
+        $signatureImage = null;
+        if ($request->hasFile('signature_image')) {
+            $signatureImage = $request->file('signature_image')->store('signatures/' . $user->id, 'public');
+        }
+        $signaturePad = $request->input('signature_pad');
+
         $report = StudyProgressReport::create([
             'user_id' => $user->id,
             'psp_application_id' => $pspApplication ? $pspApplication->id : null,
@@ -97,6 +113,11 @@ class StudyProgressReportController extends Controller
             
             // JSON Activity
             'other_academic_activities' => $otherActivities,
+
+            // New fields
+            'certificates' => $certificates,
+            'signature_image' => $signatureImage,
+            'signature_pad' => $signaturePad,
         ]);
 
         try {

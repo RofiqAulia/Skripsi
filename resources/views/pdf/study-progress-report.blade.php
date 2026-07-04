@@ -351,11 +351,27 @@
         </div>
         
         <div class="signature-box">
-            @if($user->signature_image || $user->signature_pad)
+            <div style="margin-bottom: 20px;">
+                @php
+                    $country = $pspApplication->studyPlan->programStudy->country ?? 'Indonesia';
+                @endphp
+                {{ $country }}, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
+            </div>
+            
+            @if($report->signature_image || $report->signature_pad || $user->signature_image || $user->signature_pad)
                 <div>
                     @php
                         $sigSrc = '';
-                        if ($user->signature_pad) {
+                        if ($report->signature_pad) {
+                            $sigSrc = $report->signature_pad;
+                        } elseif ($report->signature_image) {
+                            $path = storage_path('app/public/' . $report->signature_image);
+                            if (file_exists($path)) {
+                                $ext = pathinfo($path, PATHINFO_EXTENSION);
+                                $data = base64_encode(file_get_contents($path));
+                                $sigSrc = 'data:image/' . $ext . ';base64,' . $data;
+                            }
+                        } elseif ($user->signature_pad) {
                             $sigSrc = $user->signature_pad;
                         } elseif ($user->signature_image) {
                             $path = storage_path('app/public/' . $user->signature_image);
@@ -372,6 +388,8 @@
                         <div style="height: 80px;"></div>
                     @endif
                 </div>
+            @else
+                <div style="height: 80px;"></div>
             @endif
             
             <div class="signature-name">{{ strtoupper($user->name) }}</div>
