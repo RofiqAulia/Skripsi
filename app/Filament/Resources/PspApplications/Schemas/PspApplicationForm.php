@@ -49,9 +49,9 @@ class PspApplicationForm
                     ->schema([
                         \Filament\Forms\Components\Select::make('approval_stage')
                             ->options([
-                                1 => 'Tahap 1 (Menunggu Department)',
-                                2 => 'Tahap 2 (Menunggu Group)',
-                                3 => 'Tahap 3 (Menunggu Direktorat)',
+                                0 => 'Tahap 1 (Menunggu Department)',
+                                1 => 'Tahap 2 (Menunggu Group)',
+                                2 => 'Tahap 3 (Menunggu Direktorat)',
                             ])
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
@@ -61,12 +61,10 @@ class PspApplicationForm
 
                                 $stateNum = (int) $state;
 
-                                if ($isDeptHead && $stateNum < 1) {
+                                if ($isGroupHead && $stateNum < 1) {
                                     $component->state(1);
-                                } elseif ($isGroupHead && $stateNum < 2) {
+                                } elseif ($isDirHead && $stateNum < 2) {
                                     $component->state(2);
-                                } elseif ($isDirHead && $stateNum < 3) {
-                                    $component->state(3);
                                 }
                             })
                             ->disableOptionWhen(function (string $value, ?\Illuminate\Database\Eloquent\Model $record): bool {
@@ -86,9 +84,9 @@ class PspApplicationForm
                                     return false;
                                 }
 
-                                if ($isDeptHead) return !in_array($val, [1, 2]);
-                                if ($isGroupHead) return !in_array($val, [2, 3]);
-                                if ($isDirHead) return !in_array($val, [3]);
+                                if ($isDeptHead) return !in_array($val, [0, 1]);
+                                if ($isGroupHead) return !in_array($val, [1, 2]);
+                                if ($isDirHead) return !in_array($val, [2]);
                                 
                                 return true; // Sisanya disable
                             })
@@ -98,12 +96,12 @@ class PspApplicationForm
                                 $user = auth()->user();
                                 
                                 // Jika maju (Approval)
-                                if ($state == 2) $set('department_approver_id', $user->id);
-                                if ($state == 3) $set('group_approver_id', $user->id);
+                                if ($state == 1) $set('department_approver_id', $user->id);
+                                if ($state == 2) $set('group_approver_id', $user->id);
                                 
                                 // Jika mundur (Revisi/Pembatalan)
-                                if ($state < 2) $set('department_approver_id', null);
-                                if ($state < 3) $set('group_approver_id', null);
+                                if ($state < 1) $set('department_approver_id', null);
+                                if ($state < 2) $set('group_approver_id', null);
                             }),
                         \Filament\Forms\Components\Select::make('status')
                             ->options([
@@ -119,9 +117,9 @@ class PspApplicationForm
                                 $stage = (int) $get('approval_stage');
                                 $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
                                 
-                                if ($state === 'approved' && $stage === 3 && $isDirHead) {
+                                if ($state === 'approved' && $stage === 2 && $isDirHead) {
                                     $set('direktorat_approver_id', $user->id);
-                                } elseif ($state !== 'approved' && $stage === 3 && $isDirHead) {
+                                } elseif ($state !== 'approved' && $stage === 2 && $isDirHead) {
                                     $set('direktorat_approver_id', null);
                                 }
                             }),
