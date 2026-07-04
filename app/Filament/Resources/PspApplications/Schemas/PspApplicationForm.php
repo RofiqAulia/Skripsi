@@ -49,10 +49,9 @@ class PspApplicationForm
                     ->schema([
                         \Filament\Forms\Components\Select::make('approval_stage')
                             ->options([
-                                0 => '0 - Submission (Waiting Dept)',
-                                1 => '1 - Department Approved (Waiting Group)',
-                                2 => '2 - Group Approved (Waiting Direktorat)',
-                                3 => '3 - Direktorat Approved (Final)',
+                                1 => 'Tahap 1 (Menunggu Department)',
+                                2 => 'Tahap 2 (Menunggu Group)',
+                                3 => 'Tahap 3 (Menunggu Direktorat)',
                             ])
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
@@ -87,25 +86,9 @@ class PspApplicationForm
                                     return false;
                                 }
 
-                                // 2. Jika opsi yang dievaluasi adalah 1 (Dept Approved), pastikan user adalah Dept Head
-                                if ($val === 1) {
-                                    return !$isDeptHead;
-                                }
-
-                                // 3. Jika opsi yang dievaluasi adalah 2 (Group Approved), pastikan user adalah Group Head
-                                if ($val === 2) {
-                                    return !$isGroupHead;
-                                }
-
-                                // 4. Jika opsi yang dievaluasi adalah 3 (Dir Approved), pastikan user adalah Dir Head
-                                if ($val === 3) {
-                                    return !$isDirHead;
-                                }
-                                
-                                // Opsi 0 (Submission) hanya bisa dipilih/dikembalikan oleh Dept Head
-                                if ($val === 0) {
-                                    return !$isDeptHead;
-                                }
+                                if ($isDeptHead) return !in_array($val, [1, 2]);
+                                if ($isGroupHead) return !in_array($val, [2, 3]);
+                                if ($isDirHead) return !in_array($val, [3]);
                                 
                                 return true; // Sisanya disable
                             })
@@ -115,16 +98,12 @@ class PspApplicationForm
                                 $user = auth()->user();
                                 
                                 // Jika maju (Approval)
-                                if ($state > $old) {
-                                    if ($state == 1) $set('department_approver_id', $user->id);
-                                    if ($state == 2) $set('group_approver_id', $user->id);
-                                    if ($state == 3) $set('direktorat_approver_id', $user->id);
-                                }
+                                if ($state == 2) $set('department_approver_id', $user->id);
+                                if ($state == 3) $set('group_approver_id', $user->id);
                                 
                                 // Jika mundur (Revisi/Pembatalan)
-                                if ($state < 1) $set('department_approver_id', null);
-                                if ($state < 2) $set('group_approver_id', null);
-                                if ($state < 3) $set('direktorat_approver_id', null);
+                                if ($state < 2) $set('department_approver_id', null);
+                                if ($state < 3) $set('group_approver_id', null);
                             }),
                         \Filament\Forms\Components\Select::make('status')
                             ->options([
@@ -134,7 +113,18 @@ class PspApplicationForm
                                 'rejected' => 'Rejected',
                             ])
                             ->required()
-                            ->reactive(),
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $user = auth()->user();
+                                $stage = (int) $get('approval_stage');
+                                $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
+                                
+                                if ($state === 'approved' && $stage === 3 && $isDirHead) {
+                                    $set('direktorat_approver_id', $user->id);
+                                } elseif ($state !== 'approved' && $stage === 3 && $isDirHead) {
+                                    $set('direktorat_approver_id', null);
+                                }
+                            }),
                     ])->columns(2),
 
                 \Filament\Schemas\Components\Section::make('Approvers (Auto-filled by system)')
