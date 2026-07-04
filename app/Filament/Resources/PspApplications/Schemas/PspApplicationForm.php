@@ -54,13 +54,19 @@ class PspApplicationForm
                                 2 => '2 - Group Approved (Waiting Direktorat)',
                                 3 => '3 - Direktorat Approved (Final)',
                             ])
-                            ->disableOptionWhen(function (string $value): bool {
+                            ->disableOptionWhen(function (string $value, ?\Illuminate\Database\Eloquent\Model $record): bool {
                                 $user = auth()->user();
                                 if ($user->hasRole('super_admin')) {
                                     return false; // all options enabled
                                 }
                                 
                                 $val = (int) $value;
+                                
+                                // Selalu perbolehkan opsi yang saat ini tersimpan di database agar tidak error validasi
+                                if ($record && $val === (int) $record->approval_stage) {
+                                    return false;
+                                }
+
                                 // Dept Head can only transition to 1
                                 if (\App\Models\Department::where('head_id', $user->id)->exists()) {
                                     return $val !== 1;
