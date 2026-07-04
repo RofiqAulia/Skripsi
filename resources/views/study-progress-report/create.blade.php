@@ -706,6 +706,12 @@
                         </div>
 
                         <div class="mb-4">
+                            <label for="other_files" class="form-label">File Pendukung Lainnya <span class="text-muted">(Optional)</span></label>
+                            <input class="form-control" type="file" id="other_files" name="other_files[]" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" multiple>
+                            <div class="form-text">Boleh berupa PDF, Word, PPT, atau Gambar. Anda dapat memilih lebih dari satu file sekaligus.</div>
+                        </div>
+
+                        <div class="mb-4">
                             <label class="form-label d-block">Participant Signature</label>
                             <div class="form-text mb-3">You can either draw your signature below or upload an image.</div>
                             

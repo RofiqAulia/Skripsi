@@ -199,6 +199,14 @@ class StudyProgressReportForm
                                         ->openable()
                                         ->columnSpanFull()
                                         ->disabled(),
+                                    \Filament\Forms\Components\FileUpload::make('other_files')
+                                        ->label('File Pendukung Lainnya')
+                                        ->multiple()
+                                        ->directory('other_files')
+                                        ->downloadable()
+                                        ->openable()
+                                        ->columnSpanFull()
+                                        ->disabled(),
                                     \Filament\Forms\Components\FileUpload::make('signature_image')
                                         ->label('Tanda Tangan (Gambar Upload)')
                                         ->directory('signatures')

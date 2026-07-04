@@ -37,6 +37,7 @@ class StudyProgressReport extends Model
         'journal_publication_status',
         'other_academic_activities',
         'certificates',
+        'other_files',
         'signature_pad',
         'signature_image',
     ];
@@ -47,6 +48,7 @@ class StudyProgressReport extends Model
         'upcoming_courses' => 'array',
         'other_academic_activities' => 'array',
         'certificates' => 'array',
+        'other_files' => 'array',
         'proposal_exam_date' => 'date',
         'thesis_exam_date' => 'date',
     ];

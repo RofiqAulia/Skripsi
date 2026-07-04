@@ -71,6 +71,9 @@
         .clear {
             clear: both;
         }
+        .no-break {
+            page-break-inside: avoid;
+        }
     </style>
 </head>
 <body>
@@ -227,7 +230,7 @@
         <p style="margin-top: 5px;">-</p>
     @endif
 
-    <div class="section-title" style="page-break-before: always;">Penjelasan Tesis / Penelitian</div>
+    <div class="section-title no-break">Penjelasan Tesis / Penelitian</div>
     <table class="data-table">
         <tr>
             <td class="label">Judul</td>
@@ -345,7 +348,7 @@
     <div class="section-title">Catatan :</div>
     <p style="min-height: 50px;">-</p>
 
-    <div class="signature-section">
+    <div class="signature-section no-break">
         <div class="signature-text">
             Demikian laporan perkembangan studi ini saya buat dengan sebenar benarnya.
         </div>

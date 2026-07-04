@@ -77,6 +77,15 @@ class StudyProgressReportSubmittedMail extends Mailable
             }
         }
 
+        if (!empty($this->report->other_files)) {
+            foreach ($this->report->other_files as $otherPath) {
+                $fullPath = storage_path('app/public/' . $otherPath);
+                if (file_exists($fullPath)) {
+                    $attachments[] = Attachment::fromPath($fullPath);
+                }
+            }
+        }
+
         return $attachments;
     }
 }

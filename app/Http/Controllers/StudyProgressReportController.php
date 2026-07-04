@@ -67,6 +67,15 @@ class StudyProgressReportController extends Controller
             }
         }
 
+        // Handle Other Files
+        $otherFiles = [];
+        if ($request->hasFile('other_files')) {
+            foreach ($request->file('other_files') as $file) {
+                $path = $file->store('other_files/' . $user->id, 'public');
+                $otherFiles[] = $path;
+            }
+        }
+
         // Handle Signature
         $signatureImage = null;
         if ($request->hasFile('signature_image')) {
@@ -116,6 +125,7 @@ class StudyProgressReportController extends Controller
 
             // New fields
             'certificates' => $certificates,
+            'other_files' => $otherFiles,
             'signature_image' => $signatureImage,
             'signature_pad' => $signaturePad,
         ]);
