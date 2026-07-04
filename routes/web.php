@@ -119,3 +119,17 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/debug-psp', function () {
+    return \App\Models\PspApplication::with('user')->get()->map(function($app) {
+        return [
+            'id' => $app->id,
+            'user' => $app->user->name ?? 'Unknown',
+            'stage' => $app->approval_stage,
+            'status' => $app->status,
+            'dept_id' => $app->user->department_id ?? null,
+            'group_id' => $app->user->group_id ?? null,
+            'dir_id' => $app->user->direktorat_id ?? null,
+        ];
+    });
+});

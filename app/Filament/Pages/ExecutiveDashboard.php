@@ -232,7 +232,9 @@ class ExecutiveDashboard extends Page
         if ($user->hasRole('super_admin')) {
             $pendingPsp = PspApplication::whereIn('approval_stage', [0, 1, 2])
                 ->where('status', '!=', 'rejected')
-                ->where('status', '!=', 'approved')
+                ->where(function($q) {
+                    $q->where('status', '!=', 'approved')->orWhere('approval_stage', '<', 3);
+                })
                 ->count();
             $pendingDocs = Document::where('status', 'uploaded')->count();
             $pendingMentoring = MentoringSession::where('status', 'pending')->count();
@@ -245,7 +247,9 @@ class ExecutiveDashboard extends Page
 
             $pendingPsp = PspApplication::whereIn('approval_stage', [0, 1, 2])
                 ->where('status', '!=', 'rejected')
-                ->where('status', '!=', 'approved')
+                ->where(function($q) {
+                    $q->where('status', '!=', 'approved')->orWhere('approval_stage', '<', 3);
+                })
                 ->where(function ($q) use ($user, $isDeptHead, $isGroupHead, $isDirHead) {
                     if ($isDeptHead) {
                         $q->orWhere(function ($sub) use ($user) {

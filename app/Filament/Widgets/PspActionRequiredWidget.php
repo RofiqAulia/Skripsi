@@ -18,7 +18,11 @@ class PspActionRequiredWidget extends TableWidget
         return $table
             ->query(
                 PspApplication::query()
-                    ->whereNotIn('status', ['rejected', 'approved'])
+                    ->where('status', '!=', 'rejected')
+                    ->where(function ($q) {
+                        $q->where('status', '!=', 'approved')
+                          ->orWhere('approval_stage', '<', 3);
+                    })
                     ->where(function (Builder $query) {
                         $user = auth()->user();
                         
