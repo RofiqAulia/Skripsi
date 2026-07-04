@@ -119,8 +119,7 @@ class StudyProgressReportController extends Controller
         }
         $signaturePad = $request->input('signature_pad');
 
-        $report = StudyProgressReport::create([
-            'user_id' => $user->id,
+        $data = [
             'psp_application_id' => $pspApplication ? $pspApplication->id : null,
             'semester' => $request->input('semester'),
             'gpa' => $request->input('gpa'),
@@ -159,12 +158,28 @@ class StudyProgressReportController extends Controller
             // JSON Activity
             'other_academic_activities' => $otherActivities,
 
-            // New fields
-            'certificates' => $certificates,
-            'other_files' => $otherFiles,
-            'signature_image' => $signatureImage,
             'signature_pad' => $signaturePad,
-        ]);
+        ];
+
+        if (!empty($certificates)) {
+            $data['certificates'] = $certificates;
+        }
+        if (!empty($otherFiles)) {
+            $data['other_files'] = $otherFiles;
+        }
+        if ($signatureImage) {
+            $data['signature_image'] = $signatureImage;
+        }
+
+        $existingReport = StudyProgressReport::where('user_id', $user->id)->latest()->first();
+
+        if ($existingReport && $existingReport->status === 'revision') {
+            $existingReport->update($data);
+            $report = $existingReport;
+        } else {
+            $data['user_id'] = $user->id;
+            $report = StudyProgressReport::create($data);
+        }
 
         try {
             // Generate PDF
