@@ -149,7 +149,7 @@
 .sa-hero {
     position: relative;
     background: linear-gradient(135deg, #991b1b, #dc2626);
-    padding: 3rem 0;
+    padding: calc(3rem + 80px) 0 3rem 0;
     overflow: hidden;
 }
 .sa-hero-orb {
