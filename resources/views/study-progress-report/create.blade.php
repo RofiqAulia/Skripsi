@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
 <style>
     :root {
         --primary-color: #b71c1c;
@@ -336,7 +341,7 @@
                         </div>
                         <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
                             <div class="info-label text-primary">Department</div>
-                            <select name="department_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                            <select name="department_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none select2">
                                 <option value="">-- Select Department --</option>
                                 @foreach($departments as $dept)
                                     <option value="{{ $dept->id }}" {{ old('department_id', $user->department_id) == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
@@ -345,7 +350,7 @@
                         </div>
                         <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
                             <div class="info-label text-primary">Group Head</div>
-                            <select name="group_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                            <select name="group_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none select2">
                                 <option value="">-- Select Group --</option>
                                 @foreach($groups as $grp)
                                     <option value="{{ $grp->id }}" {{ old('group_id', $user->group_id) == $grp->id ? 'selected' : '' }}>{{ $grp->name }}</option>
@@ -354,7 +359,7 @@
                         </div>
                         <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
                             <div class="info-label text-primary">Direktorat</div>
-                            <select name="direktorat_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none" style="background-color: transparent;">
+                            <select name="direktorat_id" class="form-select form-select-sm border-0 p-0 fw-bold shadow-none select2">
                                 <option value="">-- Select Direktorat --</option>
                                 @foreach($direktorats as $dir)
                                     <option value="{{ $dir->id }}" {{ old('direktorat_id', $user->direktorat_id) == $dir->id ? 'selected' : '' }}>{{ $dir->name }}</option>
