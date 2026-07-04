@@ -52,6 +52,7 @@ class PspApplicationForm
                                 0 => 'Tahap 1 (Menunggu Department)',
                                 1 => 'Tahap 2 (Menunggu Group)',
                                 2 => 'Tahap 3 (Menunggu Direktorat)',
+                                3 => 'Tahap Selesai (Done)',
                             ])
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
@@ -86,7 +87,7 @@ class PspApplicationForm
 
                                 if ($isDeptHead) return !in_array($val, [0, 1]);
                                 if ($isGroupHead) return !in_array($val, [1, 2]);
-                                if ($isDirHead) return !in_array($val, [2]);
+                                if ($isDirHead) return !in_array($val, [2, 3]);
                                 
                                 return true; // Sisanya disable
                             })
@@ -117,8 +118,16 @@ class PspApplicationForm
                                 $stage = (int) $get('approval_stage');
                                 $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
                                 
-                                if ($state === 'approved' && $stage === 2 && $isDirHead) {
-                                    $set('direktorat_approver_id', $user->id);
+                                if ($state === 'approved' && ($stage === 2 || $stage === 3)) {
+                                    $set('approval_stage', 3);
+                                    if ($isDirHead) {
+                                        $set('direktorat_approver_id', $user->id);
+                                    }
+                                } elseif ($state !== 'approved' && $stage === 3) {
+                                    $set('approval_stage', 2);
+                                    if ($isDirHead) {
+                                        $set('direktorat_approver_id', null);
+                                    }
                                 } elseif ($state !== 'approved' && $stage === 2 && $isDirHead) {
                                     $set('direktorat_approver_id', null);
                                 }
