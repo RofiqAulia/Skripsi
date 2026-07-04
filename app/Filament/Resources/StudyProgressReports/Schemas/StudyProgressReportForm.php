@@ -185,8 +185,8 @@ class StudyProgressReportForm
                             \Filament\Forms\Components\Textarea::make('notes_pimpinan')
                                 ->label('Catatan Pimpinan (Wajib jika Revisi)')
                                 ->rows(4)
-                                ->visible(fn (\Filament\Forms\Get $get) => $get('status') === 'revisi')
-                                ->required(fn (\Filament\Forms\Get $get) => $get('status') === 'revisi'),
+                                ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('status') === 'revisi')
+                                ->required(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('status') === 'revisi'),
                         ])
                         ->visible(fn() => auth()->user() && (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('mentor') || auth()->user()->hasRole('pimpinan'))),
 
