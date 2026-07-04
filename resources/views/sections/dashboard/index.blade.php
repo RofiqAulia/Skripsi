@@ -222,6 +222,7 @@
                         <p>No mentoring sessions yet</p>
                         <a href="{{ route('mentoring') }}" class="btn-sm-action">Book a Session</a>
                     </div>
+                @endif
             </div>
 
         </div>
