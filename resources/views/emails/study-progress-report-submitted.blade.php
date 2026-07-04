@@ -27,7 +27,7 @@
         <br>
         <p>Thank you for your attention.</p>
         <br>
-        <p>Kind regards,</p>
+        <p>Regards,</p>
         <p><strong>Department of CLD</strong></p>
     </div>
 </body>
