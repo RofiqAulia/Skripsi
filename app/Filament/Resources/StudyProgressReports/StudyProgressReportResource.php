@@ -57,7 +57,7 @@ class StudyProgressReportResource extends Resource
         $query = parent::getEloquentQuery();
         $user = auth()->user();
 
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasRole('super_admin') || $user->hasRole('pimpinan')) {
             return $query;
         }
 

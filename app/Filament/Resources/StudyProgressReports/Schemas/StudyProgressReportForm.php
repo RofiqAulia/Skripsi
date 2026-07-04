@@ -169,11 +169,19 @@ class StudyProgressReportForm
                                     'rejected' => 'Rejected',
                                 ])
                                 ->default('submission')
-                                ->disabled(fn() => !auth()->user()->hasRole('super_admin'))
+                                ->disabled(function() {
+                                    $user = auth()->user();
+                                    if ($user->hasRole('super_admin')) return false;
+                                    if ($user->hasRole('pimpinan')) {
+                                        $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+                                        return strpos($dirName, 'human capital') === false;
+                                    }
+                                    return true;
+                                })
                                 ->dehydrated()
                                 ->required(),
                         ])
-                        ->visible(fn() => auth()->user() && (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('mentor'))),
+                        ->visible(fn() => auth()->user() && (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('mentor') || auth()->user()->hasRole('pimpinan'))),
 
                     \Filament\Schemas\Components\Tabs\Tab::make('Dokumen & Tanda Tangan')
                         ->schema([

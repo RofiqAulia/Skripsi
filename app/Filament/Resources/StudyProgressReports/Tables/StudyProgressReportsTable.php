@@ -39,7 +39,8 @@ class StudyProgressReportsTable
                 //
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
+                \Filament\Tables\Actions\ViewAction::make(),
+                \Filament\Tables\Actions\EditAction::make(),
             ])
             ->toolbarActions([
                 \Filament\Actions\BulkActionGroup::make([

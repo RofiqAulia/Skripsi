@@ -37,8 +37,15 @@ class StudyProgressReportPolicy
      */
     public function update(User $user, StudyProgressReport $studyProgressReport): bool
     {
-        // Pimpinan dan admin
-        return $user->hasAnyRole(['pimpinan', 'super_admin']);
+        // Hanya super_admin dan pimpinan Human Capital
+        if ($user->hasRole('super_admin')) return true;
+        
+        if ($user->hasRole('pimpinan')) {
+            $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+            return strpos($dirName, 'human capital') !== false;
+        }
+        
+        return false;
     }
 
     /**
@@ -47,7 +54,14 @@ class StudyProgressReportPolicy
     public function delete(User $user, StudyProgressReport $studyProgressReport): bool
     {
         // Pimpinan dan admin
-        return $user->hasAnyRole(['pimpinan', 'super_admin']);
+        if ($user->hasRole('super_admin')) return true;
+        
+        if ($user->hasRole('pimpinan')) {
+            $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+            return strpos($dirName, 'human capital') !== false;
+        }
+        
+        return false;
     }
 
     /**
