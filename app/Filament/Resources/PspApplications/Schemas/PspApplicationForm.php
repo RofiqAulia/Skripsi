@@ -60,11 +60,13 @@ class PspApplicationForm
                                 $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
                                 $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
 
-                                if ($state == 0 && $isDeptHead) {
+                                $stateNum = (int) $state;
+
+                                if ($isDeptHead && $stateNum < 1) {
                                     $component->state(1);
-                                } elseif ($state == 1 && $isGroupHead) {
+                                } elseif ($isGroupHead && $stateNum < 2) {
                                     $component->state(2);
-                                } elseif ($state == 2 && $isDirHead) {
+                                } elseif ($isDirHead && $stateNum < 3) {
                                     $component->state(3);
                                 }
                             })
