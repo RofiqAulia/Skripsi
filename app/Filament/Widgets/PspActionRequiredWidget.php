@@ -28,32 +28,32 @@ class PspActionRequiredWidget extends TableWidget
                             return;
                         }
 
-                        $dept = \App\Models\Department::where('head_id', $user->id)->first();
-                        $group = \App\Models\Group::where('head_id', $user->id)->first();
-                        $dir = \App\Models\Direktorat::where('head_id', $user->id)->first();
+                        $isDeptHead = $user->hasRole('pimpinan') && $user->department_id;
+                        $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
+                        $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
 
-                        $query->where(function ($q) use ($dept, $group, $dir) {
-                            if ($dept) {
-                                $q->orWhere(function ($sub) use ($dept) {
+                        $query->where(function ($q) use ($user, $isDeptHead, $isGroupHead, $isDirHead) {
+                            if ($isDeptHead) {
+                                $q->orWhere(function ($sub) use ($user) {
+                                    $sub->where('approval_stage', 0)
+                                      ->whereHas('user', fn($u) => $u->where('department_id', $user->department_id));
+                                });
+                            }
+                            if ($isGroupHead) {
+                                $q->orWhere(function ($sub) use ($user) {
                                     $sub->where('approval_stage', 1)
-                                      ->whereHas('user', fn($u) => $u->where('department_id', $dept->id));
+                                      ->whereHas('user', fn($u) => $u->where('group_id', $user->group_id));
                                 });
                             }
-                            if ($group) {
-                                $q->orWhere(function ($sub) use ($group) {
+                            if ($isDirHead) {
+                                $q->orWhere(function ($sub) use ($user) {
                                     $sub->where('approval_stage', 2)
-                                      ->whereHas('user', fn($u) => $u->where('group_id', $group->id));
-                                });
-                            }
-                            if ($dir) {
-                                $q->orWhere(function ($sub) use ($dir) {
-                                    $sub->where('approval_stage', 3)
-                                      ->whereHas('user', fn($u) => $u->where('direktorat_id', $dir->id));
+                                      ->whereHas('user', fn($u) => $u->where('direktorat_id', $user->direktorat_id));
                                 });
                             }
                             
                             // Jika bukan head sama sekali, tidak ada yang ditampilkan
-                            if (!$dept && !$group && !$dir) {
+                            if (!$isDeptHead && !$isGroupHead && !$isDirHead) {
                                 $q->whereRaw('1 = 0');
                             }
                         });

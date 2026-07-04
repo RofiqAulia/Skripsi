@@ -56,11 +56,15 @@ class PspApplicationForm
                             ])
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
-                                if ($state == 0 && \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                $isDeptHead = $user->hasRole('pimpinan') && $user->department_id;
+                                $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
+                                $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
+
+                                if ($state == 0 && $isDeptHead) {
                                     $component->state(1);
-                                } elseif ($state == 1 && \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                } elseif ($state == 1 && $isGroupHead) {
                                     $component->state(2);
-                                } elseif ($state == 2 && \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                } elseif ($state == 2 && $isDirHead) {
                                     $component->state(3);
                                 }
                             })
@@ -70,6 +74,10 @@ class PspApplicationForm
                                     return false; // all options enabled
                                 }
                                 
+                                $isDeptHead = $user->hasRole('pimpinan') && $user->department_id;
+                                $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
+                                $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
+
                                 $val = (int) $value;
                                 
                                 // 1. Selalu perbolehkan opsi yang saat ini tersimpan di database agar form bisa disimpan (tanpa mengubah stage)
@@ -79,22 +87,22 @@ class PspApplicationForm
 
                                 // 2. Jika opsi yang dievaluasi adalah 1 (Dept Approved), pastikan user adalah Dept Head
                                 if ($val === 1) {
-                                    return !\App\Models\Department::where('head_id', $user->id)->exists();
+                                    return !$isDeptHead;
                                 }
 
                                 // 3. Jika opsi yang dievaluasi adalah 2 (Group Approved), pastikan user adalah Group Head
                                 if ($val === 2) {
-                                    return !\App\Models\Group::where('head_id', $user->id)->exists();
+                                    return !$isGroupHead;
                                 }
 
                                 // 4. Jika opsi yang dievaluasi adalah 3 (Dir Approved), pastikan user adalah Dir Head
                                 if ($val === 3) {
-                                    return !\App\Models\Direktorat::where('head_id', $user->id)->exists();
+                                    return !$isDirHead;
                                 }
                                 
                                 // Opsi 0 (Submission) hanya bisa dipilih/dikembalikan oleh Dept Head
                                 if ($val === 0) {
-                                    return !\App\Models\Department::where('head_id', $user->id)->exists();
+                                    return !$isDeptHead;
                                 }
                                 
                                 return true; // Sisanya disable
@@ -136,7 +144,8 @@ class PspApplicationForm
                             ->dehydrated()
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
-                                if (!$state && \App\Models\Department::where('head_id', $user->id)->exists()) {
+                                $isDeptHead = $user->hasRole('pimpinan') && $user->department_id;
+                                if (!$state && $isDeptHead) {
                                     $component->state($user->id);
                                 }
                             }),
@@ -147,7 +156,8 @@ class PspApplicationForm
                             ->dehydrated()
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
-                                if (!$state && \App\Models\Group::where('head_id', $user->id)->exists()) {
+                                $isGroupHead = $user->hasRole('pimpinan') && !$user->department_id && $user->group_id;
+                                if (!$state && $isGroupHead) {
                                     $component->state($user->id);
                                 }
                             }),
@@ -158,7 +168,8 @@ class PspApplicationForm
                             ->dehydrated()
                             ->afterStateHydrated(function (\Filament\Forms\Components\Select $component, $state) {
                                 $user = auth()->user();
-                                if (!$state && \App\Models\Direktorat::where('head_id', $user->id)->exists()) {
+                                $isDirHead = $user->hasRole('pimpinan') && !$user->department_id && !$user->group_id && $user->direktorat_id;
+                                if (!$state && $isDirHead) {
                                     $component->state($user->id);
                                 }
                             }),
