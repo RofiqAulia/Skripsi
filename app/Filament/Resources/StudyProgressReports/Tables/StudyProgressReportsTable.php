@@ -27,7 +27,7 @@ class StudyProgressReportsTable
                 \Filament\Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'primary' => 'submission',
-                        'warning' => 'review',
+                        'warning' => 'revisi',
                         'success' => 'approved',
                         'danger' => 'rejected',
                     ]),

@@ -13,6 +13,7 @@ class StudyProgressReport extends Model
         'gpa',
         'max_gpa',
         'status',
+        'notes_pimpinan',
         'completed_courses',
         'ongoing_courses',
         'upcoming_courses',

@@ -303,6 +303,8 @@
                         <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
                         <h6 class="mb-0 fw-bold">Please correct the following errors:</h6>
                     </div>
+                <div class="alert alert-danger mb-4 shadow-sm">
+                    <strong>Terdapat beberapa kesalahan:</strong>
                     <ul class="mb-0">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -311,7 +313,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('study-progress-report.store') }}" method="POST">
+            <form action="{{ route('study-progress-report.store') }}" method="POST" enctype="multipart/form-data" id="studyProgressForm">
                 @csrf
 
                 <!-- 1. DATA KARYAWAN & STUDY (READONLY) -->
@@ -412,20 +414,17 @@
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-123 text-muted"></i></span>
                                     <input type="number" name="semester" id="semester" class="form-control border-start-0 ps-0" required min="1" value="{{ old('semester') }}" placeholder="e.g. 3">
                                 </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">Semester</label>
+                                <input type="number" name="semester" class="form-control" value="{{ old('semester') }}" min="1" required>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="gpa" class="form-label">Current GPA (IPK) <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-star-fill text-warning"></i></span>
-                                    <input type="number" step="0.01" name="gpa" id="gpa" class="form-control border-start-0 ps-0" required min="0" max="4" value="{{ old('gpa') }}" placeholder="e.g. 3.75">
-                                </div>
+                            <div class="col-md-5 mb-3">
+                                <label class="form-label">IPK (Semester Ini)</label>
+                                <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa') }}" required>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="max_gpa" class="form-label">Max GPA (Skala) <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-bar-chart-fill text-muted"></i></span>
-                                    <input type="number" step="0.01" name="max_gpa" id="max_gpa" class="form-control border-start-0 ps-0" required min="0" max="4" value="{{ old('max_gpa', 4.00) }}">
-                                </div>
+                            <div class="col-md-5 mb-3">
+                                <label class="form-label">Max IPK / GPA Scale</label>
+                                <input type="number" name="max_gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('max_gpa', 4.00) }}" required>
                             </div>
                         </div>
                     </div>
@@ -522,8 +521,8 @@
                                 <label class="form-label">Title Status</label>
                                 <select name="thesis_title_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="draft">Draft</option>
-                                    <option value="submitted">Submitted</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
                                     <option value="approved">Approved</option>
                                 </select>
                             </div>
@@ -536,8 +535,8 @@
                                 <label class="form-label">Proposal Status</label>
                                 <select name="thesis_proposal_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="draft">Draft</option>
-                                    <option value="submitted">Submitted</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
                                     <option value="approved">Approved</option>
                                 </select>
                             </div>
@@ -549,9 +548,9 @@
                                 <label class="form-label">Proposal Exam Status</label>
                                 <select name="proposal_exam_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -567,49 +566,58 @@
                                 <label class="form-label">Proposal Revision</label>
                                 <select name="proposal_revision_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="approved">Approved</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Research Impl.</label>
                                 <select name="research_implementation_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Data Collection</label>
                                 <select name="data_collection_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Data Analysis</label>
                                 <select name="data_analysis_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Thesis Writing</label>
+                                <select name="thesis_writing_status" class="form-select">
+                                    <option value="">-- Status --</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                         </div>
 
-                        <h6 class="section-title">Final Exam & Publication</h6>
-                        <div class="row">
+                        <h6 class="section-title mt-2">Final Thesis Exam</h6>
+                        <div class="row bg-light p-3 rounded-3 mx-0 border mb-4" style="border-color: #f1f5f9 !important;">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Thesis Exam Status</label>
                                 <select name="thesis_exam_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -618,35 +626,37 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Thesis Exam Score</label>
-                                <input type="text" name="thesis_exam_score" class="form-control" value="{{ old('thesis_exam_score') }}" placeholder="e.g. 90 or A+">
+                                <input type="text" name="thesis_exam_score" class="form-control" value="{{ old('thesis_exam_score') }}" placeholder="e.g. 90 or A">
                             </div>
-
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-12">
                                 <label class="form-label">Thesis Revision Status</label>
                                 <select name="thesis_revision_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="approved">Approved</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 mb-3">
+                        </div>
+
+                        <h6 class="section-title mt-2">Journal Publication</h6>
+                        <div class="row bg-light p-3 rounded-3 mx-0 border" style="border-color: #f1f5f9 !important;">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Journal Article Status</label>
                                 <select name="journal_article_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="draft">Draft</option>
-                                    <option value="submitted">Submitted</option>
-                                    <option value="accepted">Accepted</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Journal Publication</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Journal Publication Status</label>
                                 <select name="journal_publication_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_started">Not Started</option>
-                                    <option value="in_review">In Review</option>
-                                    <option value="published">Published</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="on_process">On Process</option>
+                                    <option value="finish">Finish</option>
                                 </select>
                             </div>
                         </div>
