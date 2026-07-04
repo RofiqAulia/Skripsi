@@ -26,9 +26,18 @@ class StudyProgressReportController extends Controller
 
         // Validasi dasar
         $request->validate([
-            'semester' => 'required|integer|min:1',
+            'nik' => 'nullable|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'semester' => 'required|numeric|min:1',
             'gpa' => 'required|numeric|min:0|max:4',
             'max_gpa' => 'required|numeric|min:0|max:4',
+        ]);
+
+        $user->update([
+            'nik' => $request->input('nik') ?? $user->nik,
+            'company' => $request->input('company') ?? $user->company,
+            'position' => $request->input('position') ?? $user->position,
         ]);
 
         $pspApplication = PspApplication::where('user_id', $user->id)->latest()->first();

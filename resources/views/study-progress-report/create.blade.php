@@ -306,12 +306,15 @@
                 </div>
             @endif
 
-            <!-- 1. DATA KARYAWAN & STUDY (READONLY) -->
-            <div class="glass-card">
-                <div class="card-header-modern">
-                    <div class="card-header-icon"><i class="bi bi-person-badge"></i></div>
-                    <h5>Employee & Study Profile</h5>
-                </div>
+            <form action="{{ route('study-progress-report.store') }}" method="POST">
+                @csrf
+
+                <!-- 1. DATA KARYAWAN & STUDY (READONLY) -->
+                <div class="glass-card">
+                    <div class="card-header-modern">
+                        <div class="card-header-icon"><i class="bi bi-person-badge"></i></div>
+                        <h5>Employee & Study Profile</h5>
+                    </div>
                 <div class="card-body-modern">
                     @php $user = auth()->user(); @endphp
                     <div class="info-grid mb-4">
@@ -319,13 +322,17 @@
                             <div class="info-label">Full Name</div>
                             <div class="info-value">{{ $user->name }}</div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">NIK</div>
-                            <div class="info-value">{{ $user->nik ?? '-' }}</div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">NIK</div>
+                            <input type="text" name="nik" class="form-control form-control-sm border-0 p-0 fw-bold" value="{{ old('nik', $user->nik) }}" placeholder="Enter NIK (Editable)">
                         </div>
-                        <div class="info-item">
-                            <div class="info-label">Company & Position</div>
-                            <div class="info-value">{{ $user->company ?? '-' }} · {{ $user->position ?? '-' }}</div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">Company</div>
+                            <input type="text" name="company" class="form-control form-control-sm border-0 p-0 fw-bold" value="{{ old('company', $user->company) }}" placeholder="Enter Company (Editable)">
+                        </div>
+                        <div class="info-item bg-white border-primary shadow-sm" style="border-color: rgba(37,99,235,0.2) !important;">
+                            <div class="info-label text-primary">Position</div>
+                            <input type="text" name="position" class="form-control form-control-sm border-0 p-0 fw-bold" value="{{ old('position', $user->position) }}" placeholder="Enter Position (Editable)">
                         </div>
                         <div class="info-item">
                             <div class="info-label">Department</div>
@@ -363,10 +370,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('study-progress-report.store') }}" method="POST">
-                @csrf
-
-                <!-- 2. BASIC INFORMATION -->
+            <!-- 2. BASIC INFORMATION -->
                 <div class="glass-card">
                     <div class="card-header-modern">
                         <div class="card-header-icon"><i class="bi bi-info-circle"></i></div>
