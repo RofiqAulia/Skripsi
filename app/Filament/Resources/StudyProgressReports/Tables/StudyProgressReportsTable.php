@@ -39,6 +39,75 @@ class StudyProgressReportsTable
                 //
             ])
             ->recordActions([
+                \Filament\Tables\Actions\Action::make('Approve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('notes_pimpinan')->label('Notes (Optional)')
+                    ])
+                    ->action(function (\App\Models\StudyProgressReport $record, array $data) {
+                        $record->update([
+                            'status' => 'approved',
+                            'notes_pimpinan' => $data['notes_pimpinan'] ?? null
+                        ]);
+                    })
+                    ->visible(function () {
+                        $user = auth()->user();
+                        if ($user->hasRole('super_admin')) return true;
+                        if ($user->hasRole('pimpinan')) {
+                            $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+                            return strpos($dirName, 'human capital') !== false;
+                        }
+                        return false;
+                    }),
+
+                \Filament\Tables\Actions\Action::make('Revisi')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('notes_pimpinan')->label('Notes (Wajib)')->required()
+                    ])
+                    ->action(function (\App\Models\StudyProgressReport $record, array $data) {
+                        $record->update([
+                            'status' => 'revisi',
+                            'notes_pimpinan' => $data['notes_pimpinan']
+                        ]);
+                    })
+                    ->visible(function () {
+                        $user = auth()->user();
+                        if ($user->hasRole('super_admin')) return true;
+                        if ($user->hasRole('pimpinan')) {
+                            $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+                            return strpos($dirName, 'human capital') !== false;
+                        }
+                        return false;
+                    }),
+
+                \Filament\Tables\Actions\Action::make('Reject')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('notes_pimpinan')->label('Notes (Wajib)')->required()
+                    ])
+                    ->action(function (\App\Models\StudyProgressReport $record, array $data) {
+                        $record->update([
+                            'status' => 'rejected',
+                            'notes_pimpinan' => $data['notes_pimpinan']
+                        ]);
+                    })
+                    ->visible(function () {
+                        $user = auth()->user();
+                        if ($user->hasRole('super_admin')) return true;
+                        if ($user->hasRole('pimpinan')) {
+                            $dirName = $user->direktorat ? strtolower($user->direktorat->name) : '';
+                            return strpos($dirName, 'human capital') !== false;
+                        }
+                        return false;
+                    }),
+
                 \Filament\Actions\ViewAction::make(),
                 \Filament\Actions\EditAction::make(),
             ])
