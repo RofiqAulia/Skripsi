@@ -91,6 +91,11 @@
                     <i class="bi bi-upload me-1"></i> Upload
                 </a>
             </div>
+            <div class="text-center mt-1">
+                <a href="{{ asset('templates/Laporan_Report_Study.docx') }}" download class="text-muted" style="font-size: 9px; text-decoration: underline;">
+                    <i class="bi bi-download"></i> Download Report Template
+                </a>
+            </div>
         </div>
 
         <!-- 5. OVERALL PROGRESS -->
