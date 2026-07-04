@@ -37,8 +37,8 @@ class StudyProgressReportController extends Controller
             'group_id' => 'nullable|exists:groups,id',
             'direktorat_id' => 'nullable|exists:direktorats,id',
             'semester' => 'required|numeric|min:1',
-            'gpa' => 'required|numeric|min:0|max:4',
-            'max_gpa' => 'required|numeric|min:0|max:4',
+            'gpa' => 'nullable|numeric|min:0|max:4',
+            'max_gpa' => 'nullable|numeric|min:0|max:4',
         ]);
 
         $user->update([

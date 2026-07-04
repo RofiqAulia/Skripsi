@@ -420,11 +420,11 @@
                             </div>
                             <div class="col-md-5 mb-3">
                                 <label class="form-label">IPK (Semester Ini)</label>
-                                <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa') }}" required>
+                                <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa') }}">
                             </div>
                             <div class="col-md-5 mb-3">
                                 <label class="form-label">Max IPK / GPA Scale</label>
-                                <input type="number" name="max_gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('max_gpa', 4.00) }}" required>
+                                <input type="number" name="max_gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('max_gpa', 4.00) }}">
                             </div>
                         </div>
                     </div>
