@@ -129,10 +129,6 @@ class StudyProgressReportController extends Controller
             ->latest()
             ->first();
 
-        if (!class_exists('\PhpOffice\PhpWord\TemplateProcessor')) {
-            return redirect()->back()->with('error', 'Template processor is not available.');
-        }
-
         $templatePath = public_path('templates/Laporan_Report_Study.docx');
         if (!file_exists($templatePath)) {
             return redirect()->back()->with('error', 'Template file not found.');
