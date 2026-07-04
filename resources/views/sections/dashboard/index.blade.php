@@ -83,17 +83,22 @@
                     <span class="stat-sub">Semester Report</span>
                 </div>
             </div>
-            <div class="mt-2 border-top pt-2 w-100 d-flex gap-2" style="border-color: rgba(0,0,0,0.05) !important;">
-                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
+            <div class="mt-2 border-top pt-2 w-100 d-flex flex-column gap-2" style="border-color: rgba(0,0,0,0.05) !important;">
+                @if(isset($latestStudyReport))
+                    <div style="font-size: 11px; font-weight: 500;">
+                        Status: 
+                        <span class="badge {{ $latestStudyReport->status == 'approved' ? 'bg-success' : ($latestStudyReport->status == 'revision' ? 'bg-warning text-dark' : ($latestStudyReport->status == 'rejected' ? 'bg-danger' : 'bg-secondary')) }}">
+                            {{ ucfirst($latestStudyReport->status) }}
+                        </span>
+                    </div>
+                    @if($latestStudyReport->notes_pimpinan)
+                        <div class="alert alert-info p-2 mb-0" style="font-size: 10px;">
+                            <strong>Note:</strong> {{ $latestStudyReport->notes_pimpinan }}
+                        </div>
+                    @endif
+                @endif
+                <a href="{{ route('study-progress-report.create') }}" class="btn btn-sm w-100 rounded-pill mt-1" style="font-size: 11px; font-weight: 500; color: #fff; background: var(--primary-grad); border: none;">
                     <i class="bi bi-pencil-square me-1"></i> Fill Form
-                </a>
-                <button type="button" class="btn btn-sm w-50 rounded-pill" style="font-size: 11px; font-weight: 500; color: var(--primary); background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2);" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
-                    <i class="bi bi-upload me-1"></i> Upload
-                </button>
-            </div>
-            <div class="text-center mt-1">
-                <a href="{{ route('study-progress-report.download-template') }}" class="text-muted" style="font-size: 9px; text-decoration: underline;">
-                    <i class="bi bi-download"></i> Download Report Template
                 </a>
             </div>
         </div>

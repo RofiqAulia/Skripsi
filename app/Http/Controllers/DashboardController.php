@@ -60,6 +60,9 @@ class DashboardController extends Controller
         $mentProgress = $sessionsTotal > 0 ? ($sessionsDone / $sessionsTotal) * 100 : 0;
         $overallProgress = round(($docProgress + $pspProgress + $mentProgress) / 3);
 
+        // ── Study Progress Report ──
+        $latestStudyReport = \App\Models\StudyProgressReport::where('user_id', $user->id)->latest()->first();
+
         // ── Scholarship Applications (preview) ──
         $scholarshipApps = $user->scholarshipApplications()
             ->with('scholarship', 'programStudy')
@@ -81,6 +84,7 @@ class DashboardController extends Controller
             'overallProgress',
             'scholarshipApps', 'scholarshipLolos', 'scholarshipTotal',
             'isEnglishQualified',
+            'latestStudyReport',
         ));
     }
 
