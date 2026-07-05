@@ -88,6 +88,25 @@ class StudyProgressReportController extends Controller
         return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
     }
 
+    public function show($id)
+    {
+        $user = auth()->user();
+        $report = StudyProgressReport::where('user_id', $user->id)->findOrFail($id);
+        
+        $pspApplication = PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
+        $departments = \App\Models\Department::all();
+        $groups = \App\Models\Group::all();
+        $direktorats = \App\Models\Direktorat::all();
+
+        $latestReport = $report;
+
+        return view('study-progress-report.show', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
+    }
+
     public function edit($id)
     {
         $user = auth()->user();
