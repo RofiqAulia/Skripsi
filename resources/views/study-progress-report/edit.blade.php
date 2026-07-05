@@ -415,12 +415,12 @@
                                 <label for="semester" class="form-label">Semester <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-123 text-muted"></i></span>
-                                    <input type="number" name="semester" id="semester" class="form-control border-start-0 ps-0" required min="1" value="{{ old('semester') }}" placeholder="e.g. 3">
+                                    <input type="number" name="semester" id="semester" class="form-control border-start-0 ps-0" required min="1" value="{{ old('semester', $latestReport->semester) }}" placeholder="e.g. 3">
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">IPK (Semester Ini)</label>
-                                <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa') }}">
+                                <input type="number" name="gpa" class="form-control" step="0.01" min="0" max="4" value="{{ old('gpa', $latestReport->gpa) }}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Max IPK / GPA Scale</label>
@@ -515,29 +515,29 @@
                         <div class="row">
                             <div class="col-md-8 mb-3">
                                 <label class="form-label">Thesis Title</label>
-                                <input type="text" name="thesis_title" class="form-control" value="{{ old('thesis_title') }}" placeholder="Enter your thesis title">
+                                <input type="text" name="thesis_title" class="form-control" value="{{ old('thesis_title', $latestReport->thesis_title) }}" placeholder="Enter your thesis title">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Title Status</label>
                                 <select name="thesis_title_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="approved">Approved</option>
+                                    <option value="not_yet" {{ old('thesis_title_status', $latestReport->thesis_title_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('thesis_title_status', $latestReport->thesis_title_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="approved" {{ old('thesis_title_status', $latestReport->thesis_title_status) == 'approved' ? 'selected' : '' }}>Approved</option>
                                 </select>
                             </div>
                             
                             <div class="col-md-8 mb-4">
                                 <label class="form-label">Thesis Proposal</label>
-                                <input type="text" name="thesis_proposal" class="form-control" value="{{ old('thesis_proposal') }}" placeholder="Enter your thesis proposal details">
+                                <input type="text" name="thesis_proposal" class="form-control" value="{{ old('thesis_proposal', $latestReport->thesis_proposal) }}" placeholder="Enter your thesis proposal details">
                             </div>
                             <div class="col-md-4 mb-4">
                                 <label class="form-label">Proposal Status</label>
                                 <select name="thesis_proposal_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="approved">Approved</option>
+                                    <option value="not_yet" {{ old('thesis_proposal_status', $latestReport->thesis_proposal_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('thesis_proposal_status', $latestReport->thesis_proposal_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="approved" {{ old('thesis_proposal_status', $latestReport->thesis_proposal_status) == 'approved' ? 'selected' : '' }}>Approved</option>
                                 </select>
                             </div>
                         </div>
@@ -548,63 +548,63 @@
                                 <label class="form-label">Proposal Exam Status</label>
                                 <select name="proposal_exam_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('proposal_exam_status', $latestReport->proposal_exam_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('proposal_exam_status', $latestReport->proposal_exam_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('proposal_exam_status', $latestReport->proposal_exam_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Proposal Exam Date</label>
-                                <input type="date" name="proposal_exam_date" class="form-control" value="{{ old('proposal_exam_date') }}">
+                                <input type="date" name="proposal_exam_date" class="form-control" value="{{ old('proposal_exam_date', $latestReport->proposal_exam_date) }}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Proposal Exam Score</label>
-                                <input type="text" name="proposal_exam_score" class="form-control" value="{{ old('proposal_exam_score') }}" placeholder="e.g. 85 or A">
+                                <input type="text" name="proposal_exam_score" class="form-control" value="{{ old('proposal_exam_score', $latestReport->proposal_exam_score) }}" placeholder="e.g. 85 or A">
                             </div>
 
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Proposal Revision</label>
                                 <select name="proposal_revision_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="approved">Approved</option>
+                                    <option value="not_yet" {{ old('proposal_revision_status', $latestReport->proposal_revision_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('proposal_revision_status', $latestReport->proposal_revision_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="approved" {{ old('proposal_revision_status', $latestReport->proposal_revision_status) == 'approved' ? 'selected' : '' }}>Approved</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Research Impl.</label>
                                 <select name="research_implementation_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('research_implementation_status', $latestReport->research_implementation_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('research_implementation_status', $latestReport->research_implementation_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('research_implementation_status', $latestReport->research_implementation_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Data Collection</label>
                                 <select name="data_collection_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('data_collection_status', $latestReport->data_collection_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('data_collection_status', $latestReport->data_collection_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('data_collection_status', $latestReport->data_collection_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Data Analysis</label>
                                 <select name="data_analysis_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('data_analysis_status', $latestReport->data_analysis_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('data_analysis_status', $latestReport->data_analysis_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('data_analysis_status', $latestReport->data_analysis_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Thesis Writing</label>
                                 <select name="thesis_writing_status" class="form-select">
                                     <option value="">-- Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('thesis_writing_status', $latestReport->thesis_writing_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('thesis_writing_status', $latestReport->thesis_writing_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('thesis_writing_status', $latestReport->thesis_writing_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                         </div>
@@ -615,26 +615,26 @@
                                 <label class="form-label">Thesis Exam Status</label>
                                 <select name="thesis_exam_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('thesis_exam_status', $latestReport->thesis_exam_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('thesis_exam_status', $latestReport->thesis_exam_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('thesis_exam_status', $latestReport->thesis_exam_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Thesis Exam Date</label>
-                                <input type="date" name="thesis_exam_date" class="form-control" value="{{ old('thesis_exam_date') }}">
+                                <input type="date" name="thesis_exam_date" class="form-control" value="{{ old('thesis_exam_date', $latestReport->thesis_exam_date) }}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Thesis Exam Score</label>
-                                <input type="text" name="thesis_exam_score" class="form-control" value="{{ old('thesis_exam_score') }}" placeholder="e.g. 90 or A">
+                                <input type="text" name="thesis_exam_score" class="form-control" value="{{ old('thesis_exam_score', $latestReport->thesis_exam_score) }}" placeholder="e.g. 90 or A">
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Thesis Revision Status</label>
                                 <select name="thesis_revision_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="approved">Approved</option>
+                                    <option value="not_yet" {{ old('thesis_revision_status', $latestReport->thesis_revision_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('thesis_revision_status', $latestReport->thesis_revision_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="approved" {{ old('thesis_revision_status', $latestReport->thesis_revision_status) == 'approved' ? 'selected' : '' }}>Approved</option>
                                 </select>
                             </div>
                         </div>
@@ -645,18 +645,18 @@
                                 <label class="form-label">Journal Article Status</label>
                                 <select name="journal_article_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('journal_article_status', $latestReport->journal_article_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('journal_article_status', $latestReport->journal_article_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('journal_article_status', $latestReport->journal_article_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Journal Publication Status</label>
                                 <select name="journal_publication_status" class="form-select">
                                     <option value="">-- Select Status --</option>
-                                    <option value="not_yet">Not Yet</option>
-                                    <option value="on_process">On Process</option>
-                                    <option value="finish">Finish</option>
+                                    <option value="not_yet" {{ old('journal_publication_status', $latestReport->journal_publication_status) == 'not_yet' ? 'selected' : '' }}>Not Yet</option>
+                                    <option value="on_process" {{ old('journal_publication_status', $latestReport->journal_publication_status) == 'on_process' ? 'selected' : '' }}>On Process</option>
+                                    <option value="finish" {{ old('journal_publication_status', $latestReport->journal_publication_status) == 'finish' ? 'selected' : '' }}>Finish</option>
                                 </select>
                             </div>
                         </div>
@@ -831,9 +831,9 @@
                  .replace(/'/g, "&#039;");
         }
 
-        let oldCompletedName = {!! json_encode(old('completed_courses_name', [])) !!};
-        let oldCompletedCredits = {!! json_encode(old('completed_courses_credits', [])) !!};
-        let oldCompletedGrade = {!! json_encode(old('completed_courses_grade', [])) !!};
+        let oldCompletedName = {!! json_encode(old('completed_courses_name', array_column($latestReport->completed_courses ?? [], 'course_name') ?: [])) !!};
+        let oldCompletedCredits = {!! json_encode(old('completed_courses_credits', array_column($latestReport->completed_courses ?? [], 'credits') ?: [])) !!};
+        let oldCompletedGrade = {!! json_encode(old('completed_courses_grade', array_column($latestReport->completed_courses ?? [], 'grade') ?: [])) !!};
         
         if (oldCompletedName && oldCompletedName.length > 0) {
             let tbody = document.querySelector('#completedCoursesTable tbody');
@@ -850,8 +850,8 @@
             });
         }
 
-        let oldOngoingName = {!! json_encode(old('ongoing_courses_name', [])) !!};
-        let oldOngoingCredits = {!! json_encode(old('ongoing_courses_credits', [])) !!};
+        let oldOngoingName = {!! json_encode(old('ongoing_courses_name', array_column($latestReport->ongoing_courses ?? [], 'course_name') ?: [])) !!};
+        let oldOngoingCredits = {!! json_encode(old('ongoing_courses_credits', array_column($latestReport->ongoing_courses ?? [], 'credits') ?: [])) !!};
         if (oldOngoingName && oldOngoingName.length > 0) {
             let tbody = document.querySelector('#ongoingCoursesTable tbody');
             tbody.innerHTML = ''; 
@@ -865,8 +865,8 @@
             });
         }
 
-        let oldUpcomingName = {!! json_encode(old('upcoming_courses_name', [])) !!};
-        let oldUpcomingCredits = {!! json_encode(old('upcoming_courses_credits', [])) !!};
+        let oldUpcomingName = {!! json_encode(old('upcoming_courses_name', array_column($latestReport->upcoming_courses ?? [], 'course_name') ?: [])) !!};
+        let oldUpcomingCredits = {!! json_encode(old('upcoming_courses_credits', array_column($latestReport->upcoming_courses ?? [], 'credits') ?: [])) !!};
         if (oldUpcomingName && oldUpcomingName.length > 0) {
             let tbody = document.querySelector('#upcomingCoursesTable tbody');
             tbody.innerHTML = ''; 
@@ -880,9 +880,9 @@
             });
         }
 
-        let oldActivityName = {!! json_encode(old('activity_name', [])) !!};
-        let oldActivityDate = {!! json_encode(old('activity_date', [])) !!};
-        let oldActivityDesc = {!! json_encode(old('activity_description', [])) !!};
+        let oldActivityName = {!! json_encode(old('activity_name', array_column($latestReport->other_academic_activities ?? [], 'activity_name') ?: [])) !!};
+        let oldActivityDate = {!! json_encode(old('activity_date', array_column($latestReport->other_academic_activities ?? [], 'activity_date') ?: [])) !!};
+        let oldActivityDesc = {!! json_encode(old('activity_description', array_column($latestReport->other_academic_activities ?? [], 'description') ?: [])) !!};
         if (oldActivityName && oldActivityName.length > 0) {
             let tbody = document.querySelector('#activitiesTable tbody');
             tbody.innerHTML = ''; 

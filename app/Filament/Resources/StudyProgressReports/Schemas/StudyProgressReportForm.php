@@ -216,7 +216,7 @@ class StudyProgressReportForm
                                         ->label('Tanda Tangan (Pad)')
                                         ->content(function ($record) {
                                             if ($record && $record->signature_pad) {
-                                                return \Illuminate\Support\HtmlString::make('<img src="' . $record->signature_pad . '" style="max-height: 100px;">');
+                                                return new \Illuminate\Support\HtmlString('<img src="' . $record->signature_pad . '" style="max-height: 100px;">');
                                             }
                                             return '-';
                                         }),

@@ -63,25 +63,26 @@ class StudyProgressReportController extends Controller
             
             // Format arrays back into separate arrays for name, credits, etc.
             if ($latestReport->completed_courses) {
-                $flashData['completed_courses_name'] = array_column($latestReport->completed_courses, 'name');
+                $flashData['completed_courses_name'] = array_column($latestReport->completed_courses, 'course_name');
                 $flashData['completed_courses_credits'] = array_column($latestReport->completed_courses, 'credits');
                 $flashData['completed_courses_grade'] = array_column($latestReport->completed_courses, 'grade');
             }
             if ($latestReport->ongoing_courses) {
-                $flashData['ongoing_courses_name'] = array_column($latestReport->ongoing_courses, 'name');
+                $flashData['ongoing_courses_name'] = array_column($latestReport->ongoing_courses, 'course_name');
                 $flashData['ongoing_courses_credits'] = array_column($latestReport->ongoing_courses, 'credits');
             }
             if ($latestReport->upcoming_courses) {
-                $flashData['upcoming_courses_name'] = array_column($latestReport->upcoming_courses, 'name');
+                $flashData['upcoming_courses_name'] = array_column($latestReport->upcoming_courses, 'course_name');
                 $flashData['upcoming_courses_credits'] = array_column($latestReport->upcoming_courses, 'credits');
             }
             if ($latestReport->other_academic_activities) {
-                $flashData['activity_name'] = array_column($latestReport->other_academic_activities, 'name');
-                $flashData['activity_date'] = array_column($latestReport->other_academic_activities, 'date');
+                $flashData['activity_name'] = array_column($latestReport->other_academic_activities, 'activity_name');
+                $flashData['activity_date'] = array_column($latestReport->other_academic_activities, 'activity_date');
                 $flashData['activity_description'] = array_column($latestReport->other_academic_activities, 'description');
             }
             
-            session()->flashInput($flashData);
+            // Flash for current and next request
+            request()->session()->put('_old_input', $flashData);
         }
 
         return view('study-progress-report.create', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
@@ -107,25 +108,26 @@ class StudyProgressReportController extends Controller
             
             // Format arrays back into separate arrays for name, credits, etc.
             if ($report->completed_courses) {
-                $flashData['completed_courses_name'] = array_column($report->completed_courses, 'name');
+                $flashData['completed_courses_name'] = array_column($report->completed_courses, 'course_name');
                 $flashData['completed_courses_credits'] = array_column($report->completed_courses, 'credits');
                 $flashData['completed_courses_grade'] = array_column($report->completed_courses, 'grade');
             }
             if ($report->ongoing_courses) {
-                $flashData['ongoing_courses_name'] = array_column($report->ongoing_courses, 'name');
+                $flashData['ongoing_courses_name'] = array_column($report->ongoing_courses, 'course_name');
                 $flashData['ongoing_courses_credits'] = array_column($report->ongoing_courses, 'credits');
             }
             if ($report->upcoming_courses) {
-                $flashData['upcoming_courses_name'] = array_column($report->upcoming_courses, 'name');
+                $flashData['upcoming_courses_name'] = array_column($report->upcoming_courses, 'course_name');
                 $flashData['upcoming_courses_credits'] = array_column($report->upcoming_courses, 'credits');
             }
             if ($report->other_academic_activities) {
-                $flashData['activity_name'] = array_column($report->other_academic_activities, 'name');
-                $flashData['activity_date'] = array_column($report->other_academic_activities, 'date');
+                $flashData['activity_name'] = array_column($report->other_academic_activities, 'activity_name');
+                $flashData['activity_date'] = array_column($report->other_academic_activities, 'activity_date');
                 $flashData['activity_description'] = array_column($report->other_academic_activities, 'description');
             }
             
-            session()->flashInput($flashData);
+            // Flash for current and next request
+            request()->session()->put('_old_input', $flashData);
         }
 
         // Kita gunakan view edit.blade.php
