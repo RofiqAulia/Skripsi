@@ -110,9 +110,9 @@
                             <a href="{{ route('study-progress-report.show', $app->id) }}" class="sa-btn-expand" style="text-decoration: none; margin-right: 8px;">
                                 <i class="bi bi-eye"></i> View Detail
                             </a>
-                            <button class="sa-btn-expand" onclick="alert('View PDF Feature Coming Soon!')">
+                            <a href="{{ route('study-progress-report.pdf', $app->id) }}" target="_blank" class="sa-btn-expand" style="text-decoration: none;">
                                 <i class="bi bi-file-earmark-pdf"></i> View PDF
-                            </button>
+                            </a>
                         @endif
                     </div>
                 </div>

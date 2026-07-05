@@ -107,6 +107,20 @@ class StudyProgressReportController extends Controller
         return view('study-progress-report.show', compact('pspApplication', 'departments', 'groups', 'direktorats', 'latestReport'));
     }
 
+    public function viewPdf($id)
+    {
+        $user = auth()->user();
+        $report = StudyProgressReport::where('user_id', $user->id)->findOrFail($id);
+        
+        $pspApplication = PspApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->first();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.study-progress-report', compact('report', 'user', 'pspApplication'));
+        return $pdf->stream('Study_Progress_Report_Semester_'.$report->semester.'.pdf');
+    }
+
     public function edit($id)
     {
         $user = auth()->user();
