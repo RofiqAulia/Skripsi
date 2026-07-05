@@ -704,14 +704,34 @@
 
                         <div class="mb-4">
                             <label for="certificates" class="form-label">Upload Certificates <span class="text-muted">(Optional)</span></label>
+                            @if(!empty($latestReport->certificates) && is_array($latestReport->certificates))
+                                <div class="mb-2 p-2 border rounded bg-light">
+                                    <span class="d-block text-muted small mb-1 fw-bold">Current File(s):</span>
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach($latestReport->certificates as $cert)
+                                            <li><a href="{{ Storage::url($cert) }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-earmark-check text-primary"></i> {{ basename($cert) }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <input class="form-control" type="file" id="certificates" name="certificates[]" accept=".pdf,image/*" multiple>
-                            <div class="form-text">You can select multiple files. PDF or Image max 5MB.</div>
+                            <div class="form-text">You can select multiple files. PDF or Image max 5MB. <strong class="text-danger">Note: Uploading new files will overwrite the currently saved files.</strong></div>
                         </div>
 
                         <div class="mb-4">
                             <label for="other_files" class="form-label">File Pendukung Lainnya <span class="text-muted">(Optional)</span></label>
+                            @if(!empty($latestReport->other_files) && is_array($latestReport->other_files))
+                                <div class="mb-2 p-2 border rounded bg-light">
+                                    <span class="d-block text-muted small mb-1 fw-bold">Current File(s):</span>
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach($latestReport->other_files as $file)
+                                            <li><a href="{{ Storage::url($file) }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-earmark-check text-primary"></i> {{ basename($file) }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <input class="form-control" type="file" id="other_files" name="other_files[]" accept=".pdf,.doc,.docx,.ppt,.pptx,image/*" multiple>
-                            <div class="form-text">Boleh berupa PDF, Word, PPT, atau Gambar. Anda dapat memilih lebih dari satu file sekaligus.</div>
+                            <div class="form-text">Boleh berupa PDF, Word, PPT, atau Gambar. <strong class="text-danger">Note: Uploading new files will overwrite the currently saved files.</strong></div>
                         </div>
 
                         <div class="mb-4">
@@ -737,7 +757,14 @@
                                     </button>
                                 </div>
                                 <div class="tab-pane fade" id="pills-upload" role="tabpanel">
+                                    @if(!empty($latestReport->signature_image))
+                                        <div class="mb-3 p-2 border rounded bg-light">
+                                            <span class="d-block text-muted small mb-2 fw-bold">Current Uploaded Signature:</span>
+                                            <img src="{{ Storage::url($latestReport->signature_image) }}" alt="Signature" style="max-height: 100px;">
+                                        </div>
+                                    @endif
                                     <input class="form-control" type="file" name="signature_image" accept="image/*">
+                                    <div class="form-text mt-2"><strong class="text-danger">Note: Uploading a new image will overwrite the currently saved signature image.</strong></div>
                                 </div>
                             </div>
                         </div>
