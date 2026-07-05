@@ -731,7 +731,7 @@
                                     <div class="border rounded-3" style="background: #f8fafc; overflow: hidden; width: fit-content;">
                                         <canvas id="signature-pad" class="signature-pad" width="400" height="200"></canvas>
                                     </div>
-                                    <input type="hidden" name="signature_pad" id="signature_pad_input">
+                                    <input type="hidden" name="signature_pad" id="signature_pad_input" value="{{ old('signature_pad', $latestReport->signature_pad) }}">
                                     <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">
                                         <i class="bi bi-eraser me-1"></i> Clear
                                     </button>
@@ -916,6 +916,12 @@
             backgroundColor: 'rgba(255, 255, 255, 0)',
             penColor: 'rgb(0, 0, 0)'
         });
+        
+        // Load existing signature if any
+        var existingSignature = document.getElementById('signature_pad_input').value;
+        if (existingSignature) {
+            signaturePad.fromDataURL(existingSignature);
+        }
 
         document.getElementById('clear-signature').addEventListener('click', function () {
             signaturePad.clear();
