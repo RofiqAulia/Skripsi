@@ -107,9 +107,6 @@
                                 <i class="bi bi-pencil-square"></i> Edit / Revise
                             </a>
                         @else
-                            <a href="{{ route('study-progress-report.show', $app->id) }}" class="sa-btn-expand" style="text-decoration: none; margin-right: 8px;">
-                                <i class="bi bi-eye"></i> View Detail
-                            </a>
                             <a href="{{ route('study-progress-report.pdf', $app->id) }}" target="_blank" class="sa-btn-expand" style="text-decoration: none;">
                                 <i class="bi bi-file-earmark-pdf"></i> View PDF
                             </a>
