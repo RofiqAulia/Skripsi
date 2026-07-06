@@ -38,7 +38,7 @@ class ProgramStudyForm
                             ->columnSpanFull(),
                         Select::make('competency')
                             ->label('Competency')
-                            ->options(function (?Illuminate\Database\Eloquent\Model $record) {
+                            ->options(function (?\Illuminate\Database\Eloquent\Model $record) {
                                 $options = \App\Models\Competency::active()->pluck('name', 'name')->toArray();
                                 if ($record && $record->competency && !array_key_exists($record->competency, $options)) {
                                     $options[$record->competency] = $record->competency;
