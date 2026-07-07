@@ -15,9 +15,17 @@ use Illuminate\Support\Facades\DB;
 class ExecutiveDashboard extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartBar;
-    protected static ?string $navigationLabel = 'Executive Dashboard';
-    protected static ?string $title = 'Executive Dashboard';
     protected static ?int $navigationSort = -1;
+
+    public static function getNavigationLabel(): string
+    {
+        return auth()->user()?->hasRole('super_admin') ? 'Dashboard Monitoring' : 'Executive Dashboard';
+    }
+
+    public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
+    {
+        return auth()->user()?->hasRole('super_admin') ? 'Dashboard Monitoring' : 'Executive Dashboard';
+    }
 
     protected string $view = 'filament.pages.executive-dashboard';
 

@@ -151,6 +151,7 @@
     </div>
 
     <!-- 3. JUMLAH PESERTA LOLOS TOEFL/IELTS STATUS ACCEPTED -->
+    @if(auth()->user()?->hasRole('super_admin'))
     <div class="ed-kpi accent-sky">
         <div class="ed-kpi-icon"><x-heroicon-o-academic-cap style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
@@ -179,6 +180,7 @@
             <small>sessions completed (done)</small>
         </div>
     </div>
+    @endif
 
     <!-- 6. SCHOLARSHIP ACCEPTED -->
     <div class="ed-kpi accent-emerald">
@@ -201,6 +203,7 @@
     </div>
 
     <!-- 8. SUCCESS RATE -->
+    @if(auth()->user()?->hasRole('super_admin'))
     <div class="ed-kpi accent-rose">
         <div class="ed-kpi-icon"><x-heroicon-o-chart-pie style="width:2rem;height:2rem;"/></div>
         <div class="ed-kpi-body">
@@ -209,6 +212,7 @@
             <small>Average across milestones</small>
         </div>
     </div>
+    @endif
 </div>
 
 {{-- ══════════════════════════════════════════════════════
@@ -280,6 +284,7 @@
 {{-- ══════════════════════════════════════════════════════
      ROW 3: Grouped Bar — Mentoring per Bulan (full width)
 ══════════════════════════════════════════════════════ --}}
+@if(auth()->user()?->hasRole('super_admin'))
 <div class="ed-panel">
     <h3><x-heroicon-m-chart-bar style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Mentoring Sessions per Period
         <small style="font-weight:400;color:var(--text-muted);font-size:.8rem;margin-left:auto;">
@@ -290,13 +295,14 @@
         <canvas id="mentoringBarChart"></canvas>
     </div>
 </div>
+@endif
 
 {{-- ══════════════════════════════════════════════════════
      TABLES ROW
 ══════════════════════════════════════════════════════ --}}
 <div class="ed-row">
     {{-- Top Scholarships --}}
-    <div class="ed-panel" style="padding:0;overflow:hidden;">
+    <div class="ed-panel" style="padding:0;overflow:hidden; @if(!auth()->user()?->hasRole('super_admin')) grid-column: span 2; @endif">
         <h3 style="padding:1.5rem 1.5rem 0.5rem;margin:0;"><x-heroicon-m-academic-cap style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Top Scholarships</h3>
         <div class="ed-table-wrap">
             <table class="ed-table">
@@ -325,6 +331,7 @@
     </div>
 
     {{-- Per Study Program --}}
+    @if(auth()->user()?->hasRole('super_admin'))
     <div class="ed-panel" style="padding:0;overflow:hidden;">
         <h3 style="padding:1.5rem 1.5rem 0.5rem;margin:0;"><x-heroicon-m-book-open style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> By Study Program</h3>
         <div class="ed-table-wrap">
@@ -351,11 +358,13 @@
             </table>
         </div>
     </div>
+    @endif
 </div>
 
 {{-- ══════════════════════════════════════════════════════
      MENTEE PROGRESS TABLE (full width)
 ══════════════════════════════════════════════════════ --}}
+@if(auth()->user()?->hasRole('super_admin'))
 <div class="ed-panel" style="padding:0;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.5rem 0.5rem;">
         <h3 style="margin:0;"><x-heroicon-m-user-group style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Individual Mentee Progress</h3>
@@ -431,6 +440,7 @@
         </table>
     </div>
 </div>
+@endif
 
 {{-- ══════════════════════════════════════════════════════
      CHART.JS INITIALIZATION
