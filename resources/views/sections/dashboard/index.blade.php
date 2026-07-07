@@ -9,6 +9,26 @@
         <span class="dash-date"><i class="bi bi-calendar3"></i> {{ now()->format('l, d F Y') }}</span>
     </div>
 
+    <!-- ═══ MANUAL BOOK BANNER ═══ -->
+    <div class="mb-4">
+        <div class="p-4 rounded-4" style="background: linear-gradient(135deg, rgba(166, 0, 0, 0.05) 0%, rgba(139, 0, 0, 0.02) 100%); border: 1px solid rgba(166, 0, 0, 0.15); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; background: white; color: #a60000; font-size: 22px;">
+                    <i class="bi bi-book-half"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1" style="font-weight: 600; color: #7f1d1d; font-size: 16px;">Buku Panduan Peserta (Mentee)</h5>
+                    <p class="mb-0 text-muted" style="font-size: 13px;">Pelajari cara menggunakan sistem SOVIA, mulai dari unggah dokumen hingga pengajuan beasiswa.</p>
+                </div>
+            </div>
+            <div>
+                <a href="{{ asset('Manual_Book_Aplikasi_SOVIA.pdf') }}" target="_blank" class="btn rounded-pill shadow-sm hover-elevate" style="background: var(--primary-grad); color: white; border: none; font-weight: 500; font-size: 13px; padding: 8px 24px; transition: all 0.3s ease;">
+                    <i class="bi bi-download me-2"></i> Download PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══ STAT CARDS ═══ -->
     <div class="stat-row">
         <!-- 2. PSP -->
