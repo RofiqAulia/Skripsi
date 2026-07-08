@@ -547,15 +547,34 @@
             data: {
                 labels: countryLabels,
                 datasets: [
-                    { label: 'Accepted', data: countryLolos, backgroundColor: '#10b981', borderRadius: 4 },
+                    { 
+                        label: 'Accepted', 
+                        data: countryLolos, 
+                        backgroundColor: 'rgba(16, 185, 129, 0.85)', 
+                        hoverBackgroundColor: '#10b981',
+                        borderRadius: 6,
+                        maxBarThickness: 40
+                    },
                 ]
             },
             options: {
                 indexAxis: 'y',
                 ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: { display: false }
+                },
                 scales: { 
-                    x: { beginAtZero: true, ticks: { stepSize: 1, color: textColor }, grid: gridOptions },
-                    y: { grid: gridOptions, ticks: { color: textColor } }
+                    x: { 
+                        beginAtZero: true, 
+                        suggestedMax: 10,
+                        ticks: { stepSize: 1, color: textColor }, 
+                        grid: gridOptions 
+                    },
+                    y: { 
+                        grid: { display: false }, 
+                        ticks: { color: textColor, font: { weight: '500' } } 
+                    }
                 }
             }
         });
