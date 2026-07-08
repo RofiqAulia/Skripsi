@@ -64,7 +64,7 @@ class StudyProgressReportResource extends Resource
         if ($user->hasRole('mentor')) {
             // Mentor sees their mentees' reports
             return $query->whereHas('user', function ($q) use ($user) {
-                $q->whereHas('mentoringSessions', function ($sq) use ($user) {
+                $q->whereHas('sessions', function ($sq) use ($user) {
                     $sq->where('mentor_id', $user->mentor->id ?? null);
                 });
             });
