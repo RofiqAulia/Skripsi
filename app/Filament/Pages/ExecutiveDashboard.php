@@ -202,7 +202,7 @@ class ExecutiveDashboard extends Page
         }
 
         // ── Table: Top 15 Mentees by GPA ──
-        $topStudentsByGpa = User::role('user')
+        $topStudentsByGpa = User::role('mentee')
             ->whereHas('scholarshipApplications')
             ->withAvg('studyProgressReports', 'gpa')
             ->orderByDesc('study_progress_reports_avg_gpa')
@@ -220,7 +220,7 @@ class ExecutiveDashboard extends Page
 
         // ── Table: Mentee Progress (top 15) ──
         try {
-            $menteesRaw = User::role('user')
+            $menteesRaw = User::role('mentee')
                 ->with([
                     'documents',
                     'pspApplication',
