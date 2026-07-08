@@ -98,6 +98,10 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Bantuan')
                     ->sort(99)
                     ->visible(fn () => auth()->user()?->hasRole('mentor')),
+                \Filament\Navigation\NavigationItem::make('Log Out')
+                    ->url(fn (): string => route('admin.logout.shortcut'))
+                    ->icon('heroicon-o-arrow-right-on-rectangle')
+                    ->sort(100),
             ]);
     }
 }

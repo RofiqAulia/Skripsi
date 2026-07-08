@@ -142,6 +142,13 @@ Route::middleware(['auth', 'redirect.admin'])->group(function () {
     Route::post('/program-study-request', [\App\Http\Controllers\ProgramStudyRequestController::class, 'store'])->name('program-study-request.store');
     Route::put('/program-study-request/{id}', [\App\Http\Controllers\ProgramStudyRequestController::class, 'update'])->name('program-study-request.update');
 
+    Route::get('/admin-logout-shortcut', function () {
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect('/admin/login');
+    })->name('admin.logout.shortcut');
+
 });
 
 require __DIR__.'/auth.php';
