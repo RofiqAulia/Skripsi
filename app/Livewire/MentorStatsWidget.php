@@ -41,7 +41,10 @@ class MentorStatsWidget extends StatsOverviewWidget
 
         [$from, $to] = $this->dateRange();
 
-        $totalMentees = MentoringSession::where('mentor_id', $mentorId)->distinct('user_id')->count('user_id');
+        $totalMentees = MentoringSession::where('mentor_id', $mentorId)
+            ->whereBetween('created_at', [$from, $to])
+            ->distinct('user_id')
+            ->count('user_id');
         
         $sessionsCompleted = MentoringSession::where('mentor_id', $mentorId)
             ->where('status', 'done')
@@ -60,7 +63,7 @@ class MentorStatsWidget extends StatsOverviewWidget
 
         return [
             Stat::make('Total Mentees', $totalMentees)
-                ->description('Total active mentees assigned')
+                ->description('Active mentees in selected period')
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('primary'),
             Stat::make('Sessions Completed', $sessionsCompleted)
