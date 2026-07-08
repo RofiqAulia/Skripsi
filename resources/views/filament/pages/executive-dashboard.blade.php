@@ -273,8 +273,8 @@
         <div class="ed-legend">
             @foreach($pspPie as $status => $count)
             <span>
-                <span class="dot" style="background:{{ ['submission'=>'#3b82f6','review'=>'#f59e0b','approved'=>'#10b981','rejected'=>'#f43f5e'][$status] ?? '#94a3b8' }}"></span>
-                {{ ucfirst($status) }}: {{ $count }}
+                <span class="dot" style="background:{{ ['Pending Department'=>'#3b82f6','Pending Group Head'=>'#0ea5e9','Pending Directorate'=>'#6366f1','Revision'=>'#f59e0b','Approved'=>'#10b981','Rejected'=>'#f43f5e'][$status] ?? '#94a3b8' }}"></span>
+                {{ $status }}: {{ $count }}
             </span>
             @endforeach
         </div>
@@ -303,27 +303,20 @@
 <div class="ed-row">
     {{-- Top Scholarships --}}
     <div class="ed-panel" style="padding:0;overflow:hidden; @if(!auth()->user()?->hasRole('super_admin')) grid-column: span 2; @endif">
-        <h3 style="padding:1.5rem 1.5rem 0.5rem;margin:0;"><x-heroicon-m-academic-cap style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Top Scholarships</h3>
+        <h3 style="padding:1.5rem 1.5rem 0.5rem;margin:0;"><x-heroicon-m-academic-cap style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Top 15 Scholarship Applicants</h3>
         <div class="ed-table-wrap">
             <table class="ed-table">
-                <thead><tr><th>Scholarship</th><th>Country</th><th style="text-align:center;">Total</th><th style="text-align:center;">Accepted</th><th>Rate</th></tr></thead>
+                <thead><tr><th>Mentee Name</th><th style="text-align:center;">Average GPA</th><th style="text-align:center;">Scholarships Applied</th><th style="text-align:center;">Scholarships Accepted</th></tr></thead>
                 <tbody>
-                    @forelse($topScholarships as $row)
-                    @php $rate = $row->total > 0 ? round($row->lolos/$row->total*100) : 0; @endphp
+                    @forelse($topStudentsByGpa as $row)
                     <tr>
-                        <td style="font-weight:500;">{{ Str::limit($row->title, 28) }}</td>
-                        <td style="color:var(--text-muted);">{{ $row->country ?: '—' }}</td>
-                        <td style="text-align:center;">{{ $row->total }}</td>
-                        <td style="text-align:center;"><x-filament::badge color="success">{{ $row->lolos }}</x-filament::badge></td>
-                        <td>
-                            <div style="display:flex;align-items:center;gap:.5rem;">
-                                <div class="ed-mini-bar"><div class="ed-mini-fill" style="width:{{ $rate }}%;background:#10b981;"></div></div>
-                                <small style="color:var(--text-muted);">{{ $rate }}%</small>
-                            </div>
-                        </td>
+                        <td style="font-weight:500;">{{ Str::limit($row->name, 28) }}</td>
+                        <td style="text-align:center;">{{ number_format((float) $row->study_progress_reports_avg_gpa, 2) }}</td>
+                        <td style="text-align:center;">{{ $row->scholarshipApplications->count() }}</td>
+                        <td style="text-align:center;"><x-filament::badge color="success">{{ $row->scholarshipApplications->where('status', 'lolos')->count() }}</x-filament::badge></td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="ed-empty-row">No data for this period</td></tr>
+                    <tr><td colspan="4" class="ed-empty-row">No data for this period</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -496,7 +489,6 @@
 
         const countryLabels = @json($byCountry->pluck('country'));
         const countryLolos  = @json($byCountry->pluck('lolos'));
-        const countryTotal  = @json($byCountry->pluck('total'));
 
         const pspLabels     = @json(array_keys($pspPie));
         const pspValues     = @json(array_values($pspPie));
@@ -549,7 +541,6 @@
                 labels: countryLabels,
                 datasets: [
                     { label: 'Accepted', data: countryLolos, backgroundColor: '#10b981', borderRadius: 4 },
-                    { label: 'Total', data: countryTotal, backgroundColor: isDark ? '#3f3f46' : '#e4e4e7', borderRadius: 4 },
                 ]
             },
             options: {
@@ -566,10 +557,10 @@
         charts.pspPieChart = new Chart(document.getElementById('pspPieChart'), {
             type: 'pie',
             data: {
-                labels: pspLabels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
+                labels: pspLabels,
                 datasets: [{
                     data: pspValues,
-                    backgroundColor: ['#3b82f6','#f59e0b','#10b981','#ef4444'],
+                    backgroundColor: ['#3b82f6','#0ea5e9','#6366f1','#f59e0b','#10b981','#f43f5e'],
                     borderWidth: 2, 
                     borderColor: isDark ? '#18181b' : '#ffffff',
                     hoverOffset: 4

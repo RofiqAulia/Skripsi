@@ -169,7 +169,8 @@ class ExecutiveDashboard extends Page
 
         // ── Horizontal Bar: Lolos per Negara ──
         $byCountry = ScholarshipApplication::join('scholarships', 'scholarship_applications.scholarship_id', '=', 'scholarships.id')
-            ->selectRaw('scholarships.country, SUM(scholarship_applications.status = "lolos") as lolos, count(*) as total')
+            ->selectRaw('scholarships.country, count(*) as lolos, count(*) as total')
+            ->where('scholarship_applications.status', 'lolos')
             ->whereBetween('scholarship_applications.updated_date', [$from, $to])
             ->whereNotNull('scholarships.country')
             ->groupBy('scholarships.country')
@@ -178,10 +179,14 @@ class ExecutiveDashboard extends Page
             ->get();
 
         // ── Pie: PSP Status ──
-        $pspPie = PspApplication::selectRaw('status, count(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
+        $pspPie = [
+            'Pending Department' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'submission')->where('approval_stage', 0)->count(),
+            'Pending Group Head' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'submission')->where('approval_stage', 1)->count(),
+            'Pending Directorate' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'submission')->where('approval_stage', 2)->count(),
+            'Revision' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'review')->count(),
+            'Approved' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'approved')->where('approval_stage', 3)->count(),
+            'Rejected' => PspApplication::whereBetween('created_at', [$from, $to])->where('status', 'rejected')->count(),
+        ];
 
         // ── Grouped Bar: Mentoring per Periode (filter-aware) ──
         $mentPeriods  = $this->linePeriods();
@@ -196,13 +201,12 @@ class ExecutiveDashboard extends Page
                                 ->whereBetween('created_at', [$p['from'], $p['to']])->count();
         }
 
-        // ── Table: Top Beasiswa ──
-        $topScholarships = ScholarshipApplication::join('scholarships', 'scholarship_applications.scholarship_id', '=', 'scholarships.id')
-            ->selectRaw('scholarships.title, scholarships.country, count(*) as total, SUM(scholarship_applications.status="lolos") as lolos')
-            ->whereBetween('scholarship_applications.updated_date', [$from, $to])
-            ->groupBy('scholarships.id', 'scholarships.title', 'scholarships.country')
-            ->orderByDesc('lolos')
-            ->limit(10)
+        // ── Table: Top 15 Mentees by GPA ──
+        $topStudentsByGpa = User::role('user')
+            ->whereHas('scholarshipApplications')
+            ->withAvg('studyProgressReports', 'gpa')
+            ->orderByDesc('study_progress_reports_avg_gpa')
+            ->limit(15)
             ->get();
 
         // ── Table: Per Program Studi ──
@@ -216,7 +220,7 @@ class ExecutiveDashboard extends Page
 
         // ── Table: Mentee Progress (top 15) ──
         try {
-            $menteeProgress = User::role('user')
+            $menteesRaw = User::role('user')
                 ->with([
                     'documents',
                     'pspApplication',
@@ -224,19 +228,42 @@ class ExecutiveDashboard extends Page
                     'scholarshipApplications',
                     'financialPlans',
                 ])
-                ->limit(15)
-                ->get()
-                ->map(fn ($u) => [
+                ->get();
+                
+            $menteeProgress = $menteesRaw->map(function ($u) {
+                $docs_total = count(Document::REQUIRED_TYPES) + $u->documents->where('category', 'other')->count();
+                $docs_uploaded = $u->documents->count();
+                $docs_approved = $u->documents->where('status', 'approved')->count();
+                
+                $docsPct = $docs_total > 0 ? ($docs_approved / $docs_total) * 100 : 0;
+                $pspPct = ($u->pspApplication?->status === 'approved' && $u->pspApplication?->approval_stage == 3) ? 100 : 0;
+                $toeflPct = $u->documents->where('type', 'ielts_toefl')->where('status', 'approved')->count() > 0 ? 100 : 0;
+                
+                $sa_total = $u->scholarshipApplications->count();
+                $sa_lolos = $u->scholarshipApplications->where('status', 'lolos')->count();
+                $saPct = $sa_lolos > 0 ? 100 : 0; 
+                
+                $fp_approved = $u->financialPlans->where('status', 'approved')->count();
+                $fpPct = $fp_approved > 0 ? 100 : 0;
+                
+                $overallScore = ($pspPct + $toeflPct + $docsPct + $saPct + $fpPct) / 5;
+
+                return [
                     'name'         => $u->name,
-                    'docs_uploaded' => $u->documents->count(),
-                    'docs_approved' => $u->documents->where('status', 'approved')->count(),
-                    'docs_total'   => count(Document::REQUIRED_TYPES) + $u->documents->where('category', 'other')->count(),
+                    'docs_uploaded' => $docs_uploaded,
+                    'docs_approved' => $docs_approved,
+                    'docs_total'   => $docs_total,
                     'psp'          => $u->pspApplication?->status ?? '—',
                     'sessions_done'=> $u->sessions->where('status', 'done')->count(),
                     'sessions_total'=> $u->sessions->count(),
-                    'sa_lolos'     => $u->scholarshipApplications->where('status', 'lolos')->count(),
+                    'sa_lolos'     => $sa_lolos,
                     'fp'           => $u->financialPlans->first()?->status ?? '—',
-                ]);
+                    'overall_score' => $overallScore
+                ];
+            })
+            ->sortByDesc('overall_score')
+            ->take(15)
+            ->values();
         } catch (\Exception) {
             $menteeProgress = collect();
         }
@@ -324,7 +351,7 @@ class ExecutiveDashboard extends Page
             'byCountry',
             'pspPie',
             'mentLabels', 'mentDone', 'mentPending', 'mentCancelled',
-            'topScholarships', 'byProgram', 'menteeProgress',
+            'topStudentsByGpa', 'byProgram', 'menteeProgress',
             'years', 'toeflLolos', 'docsTotal',
             'pendingPsp', 'pendingDocs', 'pendingMentoring',
             'pendingFinancialPlan', 'pendingProgramStudy',
