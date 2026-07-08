@@ -78,6 +78,8 @@ class AdminPanelProvider extends PanelProvider
                     ->label('User Management'),
                 NavigationGroup::make()
                     ->label('Bantuan'),
+                NavigationGroup::make()
+                    ->label('Lainnya'),
             ])
             ->navigationItems([
                 \Filament\Navigation\NavigationItem::make('Buku Panduan Admin')
@@ -101,6 +103,7 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationItem::make('Log Out')
                     ->url(fn (): string => route('admin.logout.shortcut'))
                     ->icon('heroicon-o-arrow-right-on-rectangle')
+                    ->group('Lainnya')
                     ->sort(100),
             ]);
     }
