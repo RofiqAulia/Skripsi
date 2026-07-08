@@ -306,17 +306,24 @@
         <h3 style="padding:1.5rem 1.5rem 0.5rem;margin:0;"><x-heroicon-m-academic-cap style="width:1.25rem;height:1.25rem;color:#3b82f6;"/> Top 15 Scholarship Applicants</h3>
         <div class="ed-table-wrap">
             <table class="ed-table">
-                <thead><tr><th>Mentee Name</th><th style="text-align:center;">Average GPA</th><th style="text-align:center;">Scholarships Applied</th><th style="text-align:center;">Scholarships Accepted</th></tr></thead>
+                <thead><tr><th>Mentee Name</th><th style="text-align:center;">Average GPA</th><th>University</th><th>Program Study</th><th style="text-align:center;">Country</th></tr></thead>
                 <tbody>
                     @forelse($topStudentsByGpa as $row)
                     <tr>
                         <td style="font-weight:500;">{{ Str::limit($row->name, 28) }}</td>
                         <td style="text-align:center;">{{ number_format((float) $row->study_progress_reports_avg_gpa, 2) }}</td>
-                        <td style="text-align:center;">{{ $row->scholarshipApplications->count() }}</td>
-                        <td style="text-align:center;"><x-filament::badge color="success">{{ $row->scholarshipApplications->where('status', 'lolos')->count() }}</x-filament::badge></td>
+                        <td style="color:var(--text-muted);font-size:0.8rem;">
+                            {{ $row->scholarshipApplications->pluck('university')->filter()->unique()->join(', ') ?: '—' }}
+                        </td>
+                        <td style="color:var(--text-muted);font-size:0.8rem;">
+                            {{ $row->scholarshipApplications->map(fn($a) => $a->programStudy?->name)->filter()->unique()->join(', ') ?: '—' }}
+                        </td>
+                        <td style="text-align:center;font-size:0.8rem;">
+                            {{ $row->scholarshipApplications->map(fn($a) => $a->programStudy?->country)->filter()->unique()->join(', ') ?: '—' }}
+                        </td>
                     </tr>
                     @empty
-                    <tr><td colspan="4" class="ed-empty-row">No data for this period</td></tr>
+                    <tr><td colspan="5" class="ed-empty-row">No data for this period</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -487,7 +494,7 @@
 
         const doughnutData  = [@json($doughnut['lolos']), @json($doughnut['pending']), @json($doughnut['tidak_lolos'])];
 
-        const countryLabels = @json($byCountry->pluck('country'));
+        const countryLabels = @json($byCountry->pluck('country_label'));
         const countryLolos  = @json($byCountry->pluck('lolos'));
 
         const pspLabels     = @json(array_keys($pspPie));

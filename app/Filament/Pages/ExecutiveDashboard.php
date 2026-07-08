@@ -168,15 +168,18 @@ class ExecutiveDashboard extends Page
         ];
 
         // ── Horizontal Bar: Lolos per Negara ──
-        $byCountry = ScholarshipApplication::join('scholarships', 'scholarship_applications.scholarship_id', '=', 'scholarships.id')
-            ->selectRaw('scholarships.country, count(*) as lolos, count(*) as total')
-            ->where('scholarship_applications.status', 'lolos')
-            ->whereBetween('scholarship_applications.updated_date', [$from, $to])
-            ->whereNotNull('scholarships.country')
-            ->groupBy('scholarships.country')
-            ->orderByDesc('lolos')
-            ->limit(10)
-            ->get();
+        $byCountry = ScholarshipApplication::with('programStudy')
+            ->where('status', 'lolos')
+            ->whereBetween('updated_date', [$from, $to])
+            ->get()
+            ->groupBy(fn($app) => $app->programStudy?->country ?: 'Unknown')
+            ->map(fn($group, $country) => (object) [
+                'country_label' => $country,
+                'lolos' => $group->count(),
+            ])
+            ->sortByDesc('lolos')
+            ->take(10)
+            ->values();
 
         // ── Pie: PSP Status ──
         $pspPie = [
@@ -204,6 +207,7 @@ class ExecutiveDashboard extends Page
         // ── Table: Top 15 Mentees by GPA ──
         $topStudentsByGpa = User::role('mentee')
             ->whereHas('scholarshipApplications')
+            ->with(['scholarshipApplications.scholarship', 'scholarshipApplications.programStudy'])
             ->withAvg('studyProgressReports', 'gpa')
             ->orderByDesc('study_progress_reports_avg_gpa')
             ->limit(15)
@@ -261,6 +265,7 @@ class ExecutiveDashboard extends Page
                     'overall_score' => $overallScore
                 ];
             })
+            ->filter(fn($m) => $m['overall_score'] > 0)
             ->sortByDesc('overall_score')
             ->take(15)
             ->values();
